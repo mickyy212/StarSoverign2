@@ -1,6 +1,10 @@
-# Netlify settings: no build step, publish the files at the top of the repository.
+# Netlify settings: no build step. The site is the files at the top of the repository.
+# The shared scoreboard is a Netlify Function in netlify/functions/scores.mjs, stored with Netlify Blobs.
 [build]
   publish = "."
+
+[functions]
+  directory = "netlify/functions"
 
 [[headers]]
   for = "/index.html"

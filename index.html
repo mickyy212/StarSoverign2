@@ -388,6 +388,10 @@ body,.card p{line-height:1.5}
 .introbox{background:rgba(10,14,32,.88);border:4px solid var(--edge);padding:8px 10px;margin:0 0 14px}.intro{font-size:20px;color:#d6dcf2;margin:0 0 8px;max-width:60ch}.intro:last-child{margin:0}
 .beststat{display:inline-flex;align-items:center;gap:6px;margin-left:8px;padding:0 8px;background:#1b3a2e;border:2px solid #2f6b52;color:#9be7c4;font-size:20px;vertical-align:middle}.beststat img,.beststat svg{width:16px;height:16px;flex:none;image-rendering:pixelated}.beststat{white-space:nowrap;margin:6px 0 2px}
 small.gain{display:flex;align-items:center;gap:6px;width:max-content;max-width:100%;margin-top:6px;padding:0 6px;background:#1b3a2e;border:2px solid #2f6b52;color:#9be7c4;font-size:20px}small.gain svg{width:16px;height:16px;flex:none}
+.arcin{width:100%;box-sizing:border-box;font:inherit;font-size:20px;letter-spacing:2px;padding:8px 10px;background:#0a1020;color:#fff;border:4px solid var(--edge);text-transform:uppercase}.arcin:focus{outline:none;border-color:var(--acc)}
+.tabs{display:flex;gap:6px;margin:0 0 10px}.tabs button{flex:1;text-align:center;margin:0}.tabs button.on{border-color:var(--acc);color:var(--acc)}
+.brow{padding:6px 8px;margin:0 0 6px;background:rgba(10,14,32,.7);border:2px solid var(--edge);font-size:20px}.brow.me{border-color:var(--good)}.brow b{display:block}
+.brow .bc{display:flex;flex-wrap:wrap;gap:4px 12px;color:var(--dim)}.brow i{font-style:normal;color:#7d87a8}
 </style>
 </head>
 <body>
@@ -732,8 +736,37 @@ function clearSave(){try{localStorage.removeItem(SAVE)}catch(_){}}
 function loadSave(){try{const g=JSON.parse(localStorage.getItem(SAVE));return g&&EMPIRES[g.e]&&TRAITS[g.t]&&g.deck&&g.deck.every(t=>EVENTS.some(e=>e.t===t)||DLC_EVENTS.some(e=>e.t===t))?g:null}catch(_){return null}}
 function resume(){const g=loadSave();if(!g){clearSave();return start()}
  emp=EMPIRES[g.e];trait=TRAITS[g.t];S=g.S;turn=g.turn;deck=g.deck.map(t=>EVENTS.find(e=>e.t===t)||DLC_EVENTS.find(e=>e.t===t));dlc=!!g.dlc;prog=g.prog||0;look=g.look||null;mem=g.mem||[];news=g.news||'';if(g.route)route=g.route;log=g.log||[];threat=g.threat;hp=g.hp;injT=g.injT;aug=g.aug;cores=g.cores;closeUsed=g.closeUsed;renown=g.renown||0;showEvent()}
+
+// ---- Arcade name + lifetime scoreboard (per device; shared online when /api/scores exists) ----
+const ARC='ss2arcade',DIFFS=['Easy','Normal','Hard'];
+function blankLife(){const z=()=>({Easy:{w:0,n:0},Normal:{w:0,n:0},Hard:{w:0,n:0}});return {main:z(),dlc:z()}}
+let ARCADE=(()=>{try{const a=JSON.parse(localStorage.getItem(ARC));if(a&&a.id&&a.name){a.life=a.life||blankLife();return a}}catch(e){}return null})();
+function saveArcade(){try{localStorage.setItem(ARC,JSON.stringify(ARCADE))}catch(e){}}
+function escH(t){return String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function pushScore(){if(!ARCADE)return;try{fetch('/api/scores',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(ARCADE)}).catch(()=>{})}catch(e){}}
+function lifeRecord(isDlc,d,win){if(!ARCADE||!d)return;const r=ARCADE.life[isDlc?'dlc':'main'][d];r.n++;if(win)r.w++;saveArcade();pushScore()}
+function showName(again){
+ app.innerHTML=`<h1 class="logo"><span class="l1">STAR SOVEREIGN</span> <span class="l2">II</span></h1><div class="card"><h2>${again?'Change your arcade name':'Enter your arcade name'}</h2><p class="note" style="margin:0 0 10px">It goes on the scoreboard with your lifetime win rates from this device.</p><input id="arcname" class="arcin" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${again?escH(ARCADE.name):''}" placeholder="ACE-7"><p id="namerr" class="down" style="min-height:30px;margin:6px 0"></p><button class="personal" style="text-align:center" onclick="setName()">${again?'Save name':'Start'}</button>${again?'<button style="text-align:center" onclick="showBoard()">Back</button>':''}</div>`;
+ const i=document.getElementById('arcname');i.onkeydown=e=>{if(e.key==='Enter')setName()};try{i.focus()}catch(e){}}
+function setName(){const v=document.getElementById('arcname').value.replace(/[^A-Za-z0-9 _.-]/g,'').trim().slice(0,12).toUpperCase();
+ if(v.length<2){document.getElementById('namerr').textContent='Use 2 to 12 letters or numbers.';return}
+ if(!ARCADE)ARCADE={id:(window.crypto&&crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2)),name:v,life:blankLife()};else ARCADE.name=v;
+ saveArcade();pushScore();start()}
+let boardTab='main';
+function cell(r,d){const x=r&&r[d];return x&&x.n?`${Math.round(100*x.w/x.n)}% <i>(${x.w}/${x.n})</i>`:'—'}
+async function showBoard(tab){if(tab)boardTab=tab;const T=boardTab;
+ app.innerHTML=`<div class="card"><h2>Scoreboard</h2><div class="tabs"><button class="${T==='main'?'on':''}" onclick="showBoard('main')">Main story</button><button class="${T==='dlc'?'on':''}" onclick="showBoard('dlc')">DLC</button></div><div id="board"><p class="note">Loading…</p></div><button style="text-align:center" onclick="showName(true)">Change name</button><button style="text-align:center" onclick="start()">Back</button></div>`;
+ let rows=null;try{const r=await fetch('/api/scores?me='+encodeURIComponent(ARCADE.id),{cache:'no-store'});if(r.ok)rows=await r.json()}catch(e){}
+ if(boardTab!==T||!document.getElementById('board'))return;
+ const online=Array.isArray(rows);if(!online)rows=[];
+ rows=rows.filter(x=>!x.me);rows.push({name:ARCADE.name,life:ARCADE.life,me:true});
+ const games=x=>DIFFS.reduce((a,d)=>a+((x.life&&x.life[T]&&x.life[T][d]&&x.life[T][d].n)||0),0),wins=x=>DIFFS.reduce((a,d)=>a+((x.life&&x.life[T]&&x.life[T][d]&&x.life[T][d].w)||0),0);
+ rows.sort((a,b)=>wins(b)-wins(a)||games(b)-games(a));
+ document.getElementById('board').innerHTML=(online?'':`<p class="note">The shared scoreboard works on the website. Here it shows this device only.</p>`)+rows.map((x,k)=>`<div class="brow${x.me?' me':''}"><b>${k+1}. ${escH(x.name)}${x.me?' (you)':''}</b><span class="bc"><span>Easy ${cell(x.life&&x.life[T],'Easy')}</span><span>Normal ${cell(x.life&&x.life[T],'Normal')}</span><span>Hard ${cell(x.life&&x.life[T],'Hard')}</span></span></div>`).join('');
+}
 function start(){
- app.innerHTML=`${splash()?`<img class="splash" src="${splash()}" alt="">`:''}<h1 class="logo"><span class="l1">STAR SOVEREIGN</span> <span class="l2">II</span></h1><p class="note" style="margin:0 0 10px">3rd Edition</p><p class="sub">Twelve turns. Then it arrives.</p><div class="introbox"><p class="intro">Build your empire, then defend it. Choose ⚔ to go in person: bigger rewards, real danger. Keep your people loyal and the Thal in check.</p></div><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="openHelp(RULES)">Rules</button><button class="rs" style="float:none;margin:-6px 0 14px" onclick="openHelp()">How to play</button>
+ if(!ARCADE)return showName();
+ app.innerHTML=`${splash()?`<img class="splash" src="${splash()}" alt="">`:''}<h1 class="logo"><span class="l1">STAR SOVEREIGN</span> <span class="l2">II</span></h1><p class="note" style="margin:0 0 10px">3rd Edition</p><p class="sub">Twelve turns. Then it arrives.</p><div class="introbox"><p class="intro">Build your empire, then defend it. Choose ⚔ to go in person: bigger rewards, real danger. Keep your people loyal and the Thal in check.</p></div><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="openHelp(RULES)">Rules</button><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="openHelp()">How to play</button><button class="rs" style="float:none;margin:-6px 0 14px" onclick="showBoard()">Scoreboard</button><p class="note" style="margin:0 0 10px">Playing as <b>${escH(ARCADE.name)}</b></p>
  ${loadSave()?`<div class="card"><h2>Game in progress</h2><button onclick="resume()">Resume your game</button></div>`:''}<div class="card"><h2>Choose your empire</h2><p class="note" style="margin:0 0 10px">Skilled max is about the best a good player typically wins over many games.</p>${EMPIRES.map((e,i)=>`<button onclick="pickEmp(${i})"><b>${e.name}</b> <span class="diff d-${e.diff}">${e.diff}</span><small>${e.desc}<br><span class="warn">${e.perk}</span><br>${recLine(e.diff)}</small></button>`).join('')}<button class="rs" style="float:none;display:block;margin:6px auto 0" onclick="resetRec(this)">Reset win rates</button></div>`;
 }
 function pickEmp(i){
@@ -1002,7 +1035,7 @@ let endToken=0;
 function end(win,title,msg,fight){
  clearSave();
  const before=header();
- const wasDlc=dlc;if(!wasDlc)record(emp.diff,win);
+ const wasDlc=dlc;if(!wasDlc)record(emp.diff,win);lifeRecord(wasDlc,emp&&emp.diff,win);
  const unlock=win&&!wasDlc&&title==='Victory';dlc=false;
  const dlcThreat=wasDlc?(win?0:10):null; // the campaign settles the Thal for good: 0/10 on a win, 10/10 on a loss
  const result=`<div class="stampban ${win?'sw':'sl'}">${title}</div><p>${msg}</p>${unlock?`<button class="personal" style="text-align:center" onclick="startDLC()">DLC: The Thal Reckoning<small>10 more turns to deal with the Thal for good, using your ${LABELS[route]}. Your empire carries over.</small></button>`:''}<button style="text-align:center" onclick="start()">Play again</button>`;
