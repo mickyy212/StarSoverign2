@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Rule a star empire for twelve turns in this pixel-art sci-fi roleplay game.">
+<meta name="theme-color" content="#070b16">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Star Sovereign II, 3rd Edition</title>
+<style>
+:root{--bg:#070b16;--panel:#111a2e;--line:#24324f;--text:#dbe4f5;--dim:#8494b3;--acc:#7cc4ff;--good:#6ee7a8;--bad:#ff7b8a;--warn:#ffc46b}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#16224a 0%,var(--bg) 60%);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+.wrap{max-width:640px;margin:0 auto;padding:18px 14px 40px}
+h1{font-size:26px;margin:8px 0 4px;letter-spacing:.04em}
+h2{font-size:19px;margin:0 0 8px}
+.sub{color:var(--dim);margin:0 0 16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+button{display:block;width:100%;text-align:left;background:#18233d;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin:8px 0;font:inherit;cursor:pointer}
+button:hover{border-color:var(--acc);background:#1d2b4b}
+button small{display:block;color:var(--dim);font-size:13px;margin-top:2px}
+button.personal{border-color:#5a4a2a}
+button.lethal{border-color:#6b2a35}
+.risk{display:block;font-size:13px;margin-top:4px;color:var(--warn)}
+.lethal .risk{color:var(--bad);font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:8px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:7px 2px;text-align:center}
+.stat b{display:block;font-size:19px}
+.stat span{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.04em}
+.bar{display:flex;gap:8px;flex-wrap:wrap;font-size:13px;margin-bottom:12px}
+.pill{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 10px}
+.turn{color:var(--acc);font-size:12px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.result{border-left:3px solid var(--acc)}
+.delta{font-size:14px;margin-top:8px}
+.up{color:var(--good)}.down{color:var(--bad)}.warn{color:var(--warn)}
+.log{font-size:13px;color:var(--dim);max-height:170px;overflow:auto}
+.log div{padding:3px 0;border-bottom:1px solid #1a2540}
+.big{font-size:40px;text-align:center;margin:6px 0}
+.rs{display:inline-block;width:auto;float:right;margin:4px 0 0 6px;padding:6px 12px;font-size:13px;text-align:center}
+.rs-wrap{float:right}
+.note{font-size:13px;color:var(--dim)}
+.rec{display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(135deg,#132447,#0f1a30);border:1px solid #2e4677;border-radius:14px;padding:12px 16px;margin-bottom:12px}
+.rec-l{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--dim)}
+.rec-v{font-size:34px;font-weight:800;line-height:1.1}
+.rec-r{text-align:right;font-size:14px}
+.recl{display:block;margin-top:4px;color:var(--text)}
+.diff{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 8px;border-radius:999px;margin-left:6px;vertical-align:2px}
+.d-Easy{background:#123b2a;color:var(--good)}.d-Normal{background:#3b3212;color:var(--warn)}.d-Hard{background:#3b1220;color:var(--bad)}
+.arena{position:relative;isolation:isolate;transform:translateZ(0);height:160px;margin:6px 0 10px;border-radius:10px;background:#050812;overflow:hidden;border:1px solid var(--line)}
+.ship{position:absolute;left:18px;top:42px;width:0;height:0;border-top:13px solid transparent;border-bottom:13px solid transparent;border-left:30px solid var(--acc);filter:drop-shadow(0 0 6px var(--acc))}
+
+.beam{position:absolute;left:48px;top:54px;height:3px;width:0;background:#fff;box-shadow:0 0 10px var(--acc),0 0 4px #fff;animation:beam .5s .5s ease-out forwards}
+
+
+.lose .ship{animation:die .6s 1.4s forwards}
+@keyframes beam{to{width:calc(100% - 48px)}}
+
+@keyframes swarm{to{left:var(--ex);top:var(--ey)}}
+.lane{position:absolute;left:0;right:0;height:14px;transform:translate3d(-14%,0,0);will-change:transform;backface-visibility:hidden}
+.ally{position:absolute;left:0;top:0;width:0;height:0;border-top:7px solid transparent;border-bottom:7px solid transparent;border-left:16px solid var(--c)}
+.win .lane{animation:laneWin 2.2s ease-in forwards}
+.lose .lane{animation:laneLose 2.6s ease-in-out forwards}
+@keyframes laneWin{to{transform:translate3d(105%,0,0)}}
+@keyframes laneLose{40%{transform:translate3d(20%,0,0);opacity:1}100%{transform:translate3d(-14%,0,0);opacity:0}}
+.bullet{position:absolute;left:0;right:0;height:2px;opacity:0;will-change:transform;backface-visibility:hidden;animation:shoot .45s linear forwards}
+.bullet::before{content:'';position:absolute;left:0;width:12px;height:2px;background:#fff}
+@keyframes shoot{0%{transform:translate3d(48px,0,0);opacity:1}100%{transform:translate3d(100%,0,0);opacity:1}}
+.sun{position:absolute;left:8px;top:30px;width:50px;height:50px;border-radius:50%;background:radial-gradient(#fff,#ffd36b 50%,#ff9a3c);box-shadow:0 0 20px #ffb347}
+.win .sun{animation:charge .9s ease-in forwards}
+.lose .sun{animation:fizzle 1.9s forwards}
+@keyframes fizzle{0%{transform:scale(.8)}45%{transform:scale(1.25);box-shadow:0 0 45px #fff}55%{transform:scale(1.32)}66%{transform:scale(.62);box-shadow:0 0 4px #777}80%{transform:scale(.7)}100%{transform:scale(.6);filter:grayscale(1);opacity:.55}}
+.pellet{position:absolute;left:58px;top:51px;width:8px;height:8px;border-radius:50%;background:#ffd400;box-shadow:0 0 8px #ffd400;opacity:0;animation:plop 1.2s 1s ease-in forwards}
+@keyframes plop{0%{opacity:1;transform:translate(0,0)}35%{transform:translate(38px,-8px)}100%{opacity:1;transform:translate(64px,70px)}}
+.quip{position:absolute;font-size:13px;font-style:italic;font-weight:600;opacity:0;animation:quip 1.1s forwards}
+@keyframes quip{0%{opacity:0;transform:translateY(5px)}20%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0}}
+.puff{position:absolute;left:22px;top:44px;width:22px;height:22px;border-radius:50%;background:#9aa3b5;opacity:0;animation:puff .9s 1.1s ease-out forwards}
+@keyframes puff{0%{opacity:.8;transform:scale(.4)}100%{opacity:0;transform:translate(-6px,-34px) scale(2.2)}}
+@keyframes charge{0%{transform:scale(.8)}80%{transform:scale(1.2);box-shadow:0 0 45px #fff}100%{transform:scale(1)}}
+@keyframes flicker{0%,20%,40%{opacity:1}10%,30%{opacity:.25}60%{opacity:.8}100%{opacity:.25;filter:grayscale(1)}}
+.bigbeam{position:absolute;left:52px;top:47px;height:16px;width:0;border-radius:8px;background:linear-gradient(#ffe9a8,#fff,#ffe9a8);box-shadow:0 0 18px #ffd36b;animation:beam .35s .9s ease-out forwards}
+.suspense span{animation:blink 1.2s infinite}.suspense span:nth-child(2){animation-delay:.2s}.suspense span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,100%{opacity:.2}50%{opacity:1}}
+.reveal{animation:rev .5s ease-out}
+@keyframes rev{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+.help{position:fixed;inset:0;background:rgba(3,6,14,.82);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}
+.help .card{max-width:520px;max-height:90vh;overflow:auto;margin:0}
+.help ol,.help ul{padding-left:20px;margin:8px 0}.help li{margin:6px 0}
+.boom{position:absolute;left:52px;top:51px;width:8px;height:8px;border-radius:50%;background:#ffd400;box-shadow:0 0 8px #ffd400;opacity:0;animation:boom 1.1s .55s ease-in-out forwards}
+@keyframes boom{0%{opacity:1;transform:translate(0,0)}45%{opacity:1;transform:translate(95px,-24px)}92%{opacity:1;transform:translate(-8px,-2px)}100%{opacity:0;transform:translate(-8px,-2px)}}
+.wob{position:absolute;inset:0;animation:wob .5s 1.62s}
+@keyframes wob{20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-4px)}80%{transform:translateX(2px)}}
+@keyframes die{to{opacity:0;transform:scale(.3) rotate(90deg);border-left-color:var(--bad)}}
+
+/* ---------- deep-space theme ---------- */
+:root{--bg:#0d1630;--panel:#152040;--panel2:#1b2a52;--line:#33507e;--text:#e4ecf7;--dim:#93a6c6;--acc:#9fd8ff;--good:#78d6b0;--bad:#ef7a6e;--warn:#f0c674;--ink:#070c1c;--boil:url(#b0)}
+body{background:var(--bg);font:17px/1.5 'Atkinson Hyperlegible',system-ui,sans-serif;color:var(--text)}
+.sky{position:fixed;inset:0;z-index:-1;pointer-events:none}
+.sky svg{width:100%;height:100%;display:block}
+h1,h2,.turn,.stat b,.rec-v,.big,.diff,.logo{font-family:'Chakra Petch',system-ui,sans-serif}
+h1{font-weight:700;letter-spacing:.01em}
+h2{font-weight:600;font-size:21px;letter-spacing:.01em}
+.logo{font-size:34px;line-height:1.05;color:var(--warn);margin:16px 0 10px;text-shadow:0 0 18px rgba(240,198,116,.25)}
+.logo span{color:var(--text);font-weight:500}
+.sub{color:var(--dim);text-shadow:0 1px 6px var(--bg)}
+.card,button,.rec,.stat{position:relative}
+.card,.rec{--c:14px;background:linear-gradient(180deg,rgba(27,42,82,.92),rgba(21,32,64,.92));border:0;border-radius:0;clip-path:polygon(var(--c) 0,100% 0,100% calc(100% - var(--c)),calc(100% - var(--c)) 100%,0 100%,0 var(--c));box-shadow:none}
+.card::before,.rec::before,button::before{content:'';position:absolute;inset:0;pointer-events:none;background:var(--line);filter:var(--boil);
+ clip-path:polygon(var(--c) 0,100% 0,100% calc(100% - var(--c)),calc(100% - var(--c)) 100%,0 100%,0 var(--c),var(--c) 0,calc(var(--c) + .4px) 1.5px,1.5px calc(var(--c) + .4px),1.5px calc(100% - 1.5px),calc(100% - var(--c) - .4px) calc(100% - 1.5px),calc(100% - 1.5px) calc(100% - var(--c) - .4px),calc(100% - 1.5px) 1.5px,calc(var(--c) + .4px) 1.5px)}
+button{--c:9px;background:rgba(13,22,48,.85);border:0;border-radius:0;clip-path:polygon(var(--c) 0,100% 0,100% calc(100% - var(--c)),calc(100% - var(--c)) 100%,0 100%,0 var(--c));box-shadow:none;transition:background .15s}
+button:hover{background:#1f3363;border-color:transparent}
+button:active{background:#284174}
+button:focus-visible{outline:2px solid var(--warn);outline-offset:3px}
+button small{color:var(--dim)}
+button.personal::before{background:var(--warn)}
+button.lethal{background:rgba(64,22,34,.85)}
+button.lethal::before{background:var(--bad)}
+.rs{--c:6px}
+.risk{color:var(--warn)}
+.lethal .risk{color:#ff9d92}
+.stats{gap:6px}
+.stat{background:rgba(7,12,28,.7);color:var(--text);border:1px solid var(--line);border-radius:3px;padding:8px 2px 6px;border-top:2px solid var(--acc)}
+.stat b{font-size:23px;font-weight:600}
+.stat span{text-transform:none;letter-spacing:.02em;font-size:12px;color:var(--dim)}
+.pill{background:rgba(7,12,28,.55);border:1px solid var(--line);border-radius:3px}
+.turn{text-transform:none;letter-spacing:.04em;font-size:14px;font-weight:600;color:var(--acc)}
+.result{border-left:0}
+.rec{--c:10px}
+.rec::before{background:var(--warn);opacity:.7}
+.rec-l{text-transform:none;letter-spacing:0;font-size:14px}
+.rec-v{font-weight:700}
+.diff{text-transform:none;letter-spacing:.03em;font-size:12px;font-weight:600;border-radius:2px;padding:1px 7px;background:transparent!important;border:1px solid currentColor}
+.d-Easy{color:var(--good)!important}.d-Normal{color:var(--warn)!important}.d-Hard{color:var(--bad)!important}
+.big{font-size:44px;font-weight:500}
+.arena{background:radial-gradient(ellipse at 80% 40%,#1c1a3d 0%,#080d1f 70%);border:1px solid var(--line);border-radius:3px}
+
+.log div{border-bottom:1px solid #1e2c52}
+.help{background:rgba(5,9,22,.85)}
+
+/* the Core Swarm */
+.bug{position:absolute;width:0;height:0}
+.bug i{position:absolute;width:var(--s);height:calc(var(--s)*.78);left:calc(var(--s)*-.5);top:calc(var(--s)*-.39);
+ clip-path:polygon(0 50%,24% 28%,14% 2%,46% 22%,62% 0,74% 26%,100% 14%,86% 50%,100% 86%,74% 74%,62% 100%,46% 78%,14% 98%,24% 72%);
+ background:radial-gradient(circle at 66% 50%,#ffcf9e 0 5%,#ff3d33 10%,#7a0f22 22%,#3c0814 45%,#16040a 80%);
+ animation:skitter var(--j) ease-in-out var(--o) infinite alternate;will-change:transform}
+@keyframes skitter{0%{transform:translate(0,0) rotate(-6deg)}50%{transform:translate(-2px,1.5px) rotate(4deg)}100%{transform:translate(1.5px,-1.5px) rotate(-2deg)}}
+.win .bug{animation:burst .45s ease-in var(--d) forwards}
+.win .bug i{animation:skitter var(--j) ease-in-out var(--o) infinite alternate,flash .45s var(--d) forwards}
+@keyframes burst{0%{transform:scale(1)}45%{transform:scale(1.9)}100%{transform:scale(0);opacity:0}}
+@keyframes flash{40%{background:#fff3e0}100%{background:#ffb08a}}
+.lose .bug{animation:swarm 1.6s ease-in var(--d) forwards}
+.maw{position:absolute;right:-70px;top:-40px;width:230px;height:190px;border-radius:50%;
+ background:radial-gradient(closest-side,rgba(150,14,38,.55),rgba(70,4,22,.4) 45%,rgba(30,0,10,0) 100%);animation:breathe 2.6s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.12);opacity:1}}
+.win .maw{animation:breathe 2.6s ease-in-out infinite,mawfade .8s var(--md) forwards}
+@keyframes mawfade{to{opacity:0;transform:scale(.6)}}
+.lose .maw{animation:breathe 1.4s ease-in-out infinite,mawpush 1.8s var(--md) ease-in forwards}
+@keyframes mawpush{to{right:40%;opacity:1}}
+
+.stage{position:absolute;left:0;right:0;top:25px;height:110px}
+.ship{width:34px;height:24px;border:0!important;background:linear-gradient(90deg,#3e6aa3 0%,#9fd8ff 70%,#e9f7ff 100%);clip-path:polygon(0 4%,26% 30%,100% 50%,26% 70%,0 96%,14% 50%);filter:none!important;margin-top:-2px}
+@keyframes die{60%{opacity:1;transform:scale(1) rotate(0)}100%{opacity:0;transform:scale(.4) rotate(70deg)}}
+.doom{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 15% 55%,rgba(150,10,30,.55),rgba(60,0,15,.65));opacity:0;animation:doom 1.4s var(--dd) forwards}
+@keyframes doom{to{opacity:1}}
+.ember{position:absolute;width:3px;height:3px;border-radius:50%;background:#ffb08a;opacity:0;animation:ember 2.6s var(--d) ease-out forwards}
+@keyframes ember{0%{opacity:0;transform:translate(0,0)}15%{opacity:1}100%{opacity:0;transform:translate(var(--vx),var(--vy))}}
+.win.r-military .wob,.win.r-military .ship{animation:flyby 2.2s 1.9s ease-in-out forwards}
+@keyframes flyby{0%{transform:translateX(0)}20%{transform:translateX(-6px)}100%{transform:translateX(150px)}}
+.win.r-science .bigbeam{animation:beam .35s .9s ease-out forwards,afterglow 2.4s 1.5s ease-out forwards}
+@keyframes afterglow{0%{opacity:1;height:16px;top:47px}100%{opacity:.18;height:4px;top:53px}}
+.win.r-science .sun{animation:charge .9s ease-in forwards,glowpulse 1.6s 1.6s ease-in-out infinite}
+@keyframes glowpulse{50%{box-shadow:0 0 34px #ffe6a8}}
+.sky circle.tw{animation:tw 3.6s ease-in-out infinite}
+@keyframes tw{50%{opacity:.15}}
+@media (prefers-reduced-motion:reduce){.sky circle.tw,.bug i,.maw{animation:none}}
+
+/* ---- DLC endings: the Thal ---- */
+.thal{position:absolute;width:30px;height:18px;background:linear-gradient(90deg,#dfe8e2,#7f9e94 55%,#4f6b63);clip-path:polygon(0 50%,24% 0,100% 0,100% 100%,24% 100%)}
+.thal::after{content:'';position:absolute;right:5px;top:6px;width:6px;height:6px;background:#2f4540}
+.tshot,.yshot{position:absolute;width:10px;height:2px;opacity:0}
+.tshot{background:#cfe7d8}.yshot{background:#fff}
+@keyframes tfire{0%{left:var(--x0);opacity:1}100%{left:var(--x1);opacity:1}}
+@keyframes fizz{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(2.4)}}
+.shield{position:absolute;left:2px;top:-2px;width:66px;height:66px;margin-top:20px;border-radius:50%;border:2px solid #9fd8ff;box-shadow:inset 0 0 16px rgba(159,216,255,.6);opacity:0;animation:shieldOn .6s .2s forwards,shimmer 1.2s .8s ease-in-out infinite}
+@keyframes shieldOn{to{opacity:1}}@keyframes shimmer{50%{box-shadow:inset 0 0 26px rgba(159,216,255,.9)}}
+.flash{position:absolute;width:12px;height:12px;border-radius:50%;background:radial-gradient(#fff,#9fd8ff 50%,transparent 70%);opacity:0;animation:pop1 .35s var(--d) forwards}
+@keyframes pop1{0%{opacity:1;transform:scale(.4)}100%{opacity:0;transform:scale(2)}}
+@keyframes powerdown{to{filter:grayscale(1) brightness(.6);transform:translateY(8px) rotate(10deg)}}
+@keyframes backL{to{transform:translateX(-26px);opacity:.75}}
+@keyframes backR{to{transform:translateX(30px);opacity:.75}}
+@keyframes approach{to{transform:translateX(-70px)}}
+@keyframes joinblue{to{transform:translateX(-70px);filter:sepia(1) hue-rotate(165deg) saturate(3.2) brightness(1.05)}}
+.doc{position:absolute;width:12px;height:16px;background:#f4efe2;border-radius:1px;opacity:0;box-shadow:0 0 4px rgba(255,255,255,.4)}
+.doc::after{content:'';position:absolute;left:2px;right:2px;top:4px;height:1px;background:#999;box-shadow:0 3px 0 #999,0 6px 0 #999}
+@keyframes docmove{0%{left:var(--x0);top:var(--y0);opacity:1}100%{left:var(--x1);top:var(--y1);opacity:1}}
+.stampmark{position:absolute;width:12px;height:12px;border:2px solid #e2574c;border-radius:50%;opacity:0;animation:stamp .25s var(--d) forwards}
+@keyframes stamp{0%{opacity:0;transform:scale(2.2)}100%{opacity:1;transform:scale(1)}}
+@keyframes shatter{0%{opacity:1}40%{filter:brightness(2.5)}100%{opacity:0;transform:scale(.4) rotate(40deg)}}
+.sheet{position:absolute;width:10px;height:13px;background:#f4efe2;opacity:0;animation:flutter 2.4s var(--d) ease-out forwards}
+@keyframes flutter{0%{opacity:0;transform:translate(0,0) rotate(0)}10%{opacity:1}100%{opacity:.85;transform:translate(var(--vx),var(--vy)) rotate(var(--r))}}
+@keyframes hit{0%,100%{filter:none}50%{filter:brightness(2.2)}}
+.banner{position:absolute;left:0;right:0;margin:0 auto;width:max-content;top:-18px;font-size:12px;font-weight:700;color:#0d1630;background:var(--warn);padding:1px 8px;border-radius:2px;opacity:0;animation:stamp .3s var(--d) forwards;white-space:nowrap}
+/* dlc v2 */
+.half{position:absolute;width:6px;height:16px;background:#f4efe2;opacity:0;animation:tear 1.1s var(--d) ease-in forwards}
+@keyframes tear{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:0;transform:translate(var(--vx),40px) rotate(var(--r))}}
+@keyframes redalert{to{filter:sepia(1) hue-rotate(-40deg) saturate(3)}}
+@keyframes massing{to{filter:sepia(1) hue-rotate(-40deg) saturate(3);transform:translateX(-18px)}}
+@keyframes arrive{to{left:var(--to)}}
+
+.emp{position:absolute;left:36px;top:46px;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;border:3px solid #bfe9ff;box-shadow:0 0 18px #9fd8ff,inset 0 0 12px #9fd8ff;opacity:0;animation:empwave 1.1s var(--d) ease-out forwards}
+@keyframes empwave{0%{opacity:1;width:20px;height:20px;margin:-10px 0 0 -10px}80%{opacity:.85}100%{opacity:0;width:640px;height:640px;margin:-320px 0 0 -320px}}
+.spark{position:absolute;width:16px;height:16px;border-radius:50%;background:radial-gradient(#fff,#9fd8ff 40%,transparent 70%);opacity:0;animation:pop1 .3s var(--d) 3}
+.kboom{position:absolute;width:var(--z,22px);height:var(--z,22px);margin:calc(var(--z,22px)/-2) 0 0 calc(var(--z,22px)/-2);border-radius:50%;background:radial-gradient(#fff 0 15%,#ffd27a 30%,#ff7a3d 55%,rgba(120,20,10,0) 72%);opacity:0;animation:kboom .55s var(--d) ease-out forwards}
+@keyframes kboom{0%{opacity:1;transform:scale(.3)}60%{opacity:1}100%{opacity:0;transform:scale(1.8)}}
+.deb{position:absolute;width:4px;height:3px;background:#9fb0c6;opacity:0;animation:deb 1.2s var(--d) ease-out forwards}
+@keyframes deb{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:0;transform:translate(var(--vx),var(--vy)) rotate(260deg)}}
+.dlcA .stage.shake{animation:shk .45s var(--d) 1}
+@keyframes shk{20%{transform:translate(-4px,2px)}40%{transform:translate(4px,-2px)}60%{transform:translate(-3px,-1px)}80%{transform:translate(2px,1px)}}
+@keyframes advance{to{transform:translateX(46px)}}
+@keyframes advanceT{to{transform:translateX(-50px)}}
+@keyframes kill{0%,100%{opacity:1}100%{opacity:0;transform:scale(.3) rotate(60deg)}}
+@keyframes crack{0%,30%,60%{opacity:1}15%,45%{opacity:.25}100%{opacity:0;transform:scale(1.25)}}
+@keyframes joinform{0%{left:var(--l0);top:var(--t0)}35%,55%{left:calc(var(--l0) - 60px);top:var(--t0);transform:none;filter:none}100%{left:var(--lx);top:var(--ly);transform:scaleX(-1);filter:sepia(1) hue-rotate(165deg) saturate(3.2) brightness(1.05)}}
+.tdoom{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 15% 55%,rgba(150,40,20,.5),rgba(20,30,28,.75));opacity:0;animation:doom 1.2s var(--d) forwards}
+@media (prefers-reduced-motion:reduce){.dlcA *{animation-duration:.01s!important;animation-delay:0s!important}}
+.pillflash{animation:pillflash 1.4s ease-out 2}
+@keyframes pillflash{0%{box-shadow:0 0 0 0 rgba(240,198,116,.9);transform:scale(1.12)}100%{box-shadow:0 0 0 12px rgba(240,198,116,0);transform:scale(1)}}
+
+.creator{text-align:center}
+.bigport{width:192px;height:192px;image-rendering:pixelated;border:3px solid var(--line);display:block;margin:4px auto 12px;background:#1b2547}
+.lrows{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px}
+.lrow{display:flex;align-items:center;justify-content:space-between;background:rgba(7,12,28,.55);border:1px solid var(--line);border-radius:3px;padding:4px}
+.lrow .rs{float:none;margin:0;padding:4px 10px;font-size:16px}
+.lrow span{font-size:14px;line-height:1.2}.lrow small{display:block;color:var(--dim);font-size:11px}
+.hport{float:left;width:48px;height:48px;image-rendering:pixelated;border:2px solid var(--line);margin:2px 10px 6px 0;background:#1b2547}
+
+.react{position:relative;width:96px;height:96px;margin:2px auto 10px}
+.react img{width:96px;height:96px;image-rendering:pixelated;border:2px solid var(--line);display:block;background:#1b2547}
+.react.good img{border-color:var(--good);animation:hop .5s ease-out 2}
+@keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-12px) scale(1.05)}}
+.react.good i{position:absolute;width:12px;height:12px;background:var(--warn);clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);opacity:0;animation:spk .9s ease-out forwards}
+.react.good i:nth-of-type(1){left:-14px;top:10px;animation-delay:.1s}.react.good i:nth-of-type(2){right:-14px;top:0;animation-delay:.3s}.react.good i:nth-of-type(3){right:-8px;bottom:6px;animation-delay:.5s}
+@keyframes spk{0%{opacity:0;transform:scale(.2)}40%{opacity:1;transform:scale(1.2) rotate(20deg)}100%{opacity:0;transform:scale(.6) rotate(45deg)}}
+.react.bad img{border-color:var(--bad);animation:ouch .45s ease-in-out 2}
+@keyframes ouch{20%{transform:translateX(-6px) rotate(-4deg)}40%{transform:translateX(6px) rotate(3deg)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.react.bad::after{content:'';position:absolute;inset:0;background:rgba(239,122,110,.6);opacity:0;animation:redflash .9s forwards;pointer-events:none}
+@keyframes redflash{15%{opacity:1}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.react *,.react::after{animation:none!important}}
+
+/* ================= PIXEL EDITION ================= */
+@font-face{font-family:'SovereignPixel';src:url(data:font/ttf;base64,AAEAAAAKAIAAAwAgT1MvMoYK6kIAAAEoAAAAYGNtYXC1ya7CAAADLAAAAQJnbHlmubkSOAAABQQAACkAaGVhZDAYNJoAAACsAAAANmhoZWEGQgLBAAAA5AAAACRobXR41nQAAAAAAYgAAAGibG9jYVMCXW8AAAQwAAAA1G1heHAAegBCAAABCAAAACBuYW1lf6KKYgAALgQAAAB1cG9zdPlH7oIAAC58AAACwwABAAAAAQAACBKcIV8PPPUAAQPoAAAAAOcjeOMAAAAA5yN44wAA/zgCvAK8AAAAAwACAAAAAAAAAAEAAAOE/tQAAAMgAAAAZAK8AAEAAAAAAAAAAAAAAAAAAABoAAEAAABpAEAAEAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAwISAZAABQAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAADAABAQAAAAAAAAAAAPz8/PwAAACAmlAOE/tQAAAOEASwAAAAAAAAAAAAAAAAAAAAgAAAB9AAAAZAAAAJYAAACWAAAAlgAAAJYAAACWAAAAlgAAAJYAAACWAAAAZAAAAJYAAACWAAAAlgAAAJYAAACWAAAAlgAAAJYAAACWAAAAlgAAAJYAAACWAAAAlgAAAJYAAACWAAAAlgAAAJYAAACWAAAAlgAAAJYAAACWAAAAlgAAAJYAAAB9AAAAlgAAAJYAAABkAAAAZAAAAH0AAABkAAAAlgAAAJYAAACWAAAAlgAAAJYAAAB9AAAAlgAAAH0AAACWAAAAlgAAAJYAAACWAAAAlgAAAJYAAACWAAAAlgAAAJYAAACWAAAAlgAAAJYAAACWAAAAlgAAAJYAAACWAAAAMgAAADIAAAAyAAAAlgAAADIAAABkAAAAMgAAADIAAAB9AAAAlgAAAJYAAACWAAAASwAAAEsAAACWAAAAlgAAAJYAAACWAAAAlgAAAJYAAACWAAAASwAAAEsAAACWAAAAlgAAAJYAAACvAAAAlgAAAJYAAAAyAAAAMgAAAGQAAABkAAAAlgAAAJYAAABkAAAAZAAAADIAAAAyAAAAyAAAAAAAAAAAAACAAAAAwAAABQAAwABAAAAFAAEAO4AAAAqACAABAAKAC8AOQBAAFoAWwBdAF8AegB8AH4AtwDXIBQgGSAdICYgOiISJiAmlP//AAAAIAAwADoAQQBbAF0AXwBhAHwAfgC3ANcgEyAYIBwgJiA5IhImICaU//8AAAAGAAD/wf/6//n/9f+7/+r/2f+u/4sAAAAA4EPgO+Aq3kraSNnTAAEAKgAAAEYAAAAAAAAAAAAAAAAAAAAAAAAAQABCAAAAAAAAAAAAAAAAAAAAAQBCAEUAUwBYAE4ATwBEAEwATQBQAEkAQQBIAEAASwBGAEcAUQBKAFIAQwBZAFsAWgBeAF0AAAAAAAAAAABNAJQAzwEbAUoBeQHAAhECPwJ4AsYC8wNSA6wD+QQ0BIkE1AUDBTEFggXSBjEGgAa+BuwHFgdWB3kHuwflCBMITwiUCLwI9Ak2CWMJtAnuCiQKXwqaCsEK5QsSC0wLhQvNDAUMRQxoDLgM5g0aDUgNgg23DfMOIA5oDqQOrw7FDuwPGg8rD0cPWQ92D4IPpg+5D+cQFBBAEIIQzxEIETQRYBGqEbUR4hIPEisSZRKwErwSyBLUEuUS9hMSEy4TQxN7E5wTvRPJE/YUNRSAAAwAAAAAAfQCvAADAAcACwAPABMAFwAbAB8AIwAnACsALwAAEzUhFQU1MxUhNTMVBTUzFSE1MxUFNSEVBTUzFSE1MxUFNTMVITUzFQU1MxUhNTMVZAEs/nBkASxk/gxkASxk/gwB9P4MZAEsZP4MZAEsZP4MZAEsZAJYZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkAAALAAAAAAH0ArwAAwAHAAsADwATABcAGwAfACMAJwArAAARNSEVBTUzFSE1MxUFNTMVITUzFQU1IRUFNTMVITUzFQU1MxUhNTMVBTUhFQGQ/nBkASxk/gxkASxk/gwBkP5wZAEsZP4MZAEsZP4MAZACWGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGQACQAAAAAB9AK8AAMABwALAA8AEwAXABsAHwAjAAATNSEVBTUzFSE1MxUFNTMVBzUzFQc1MxUHNTMVITUzFQU1IRVkASz+cGQBLGT+DGRkZGRkZGQBLGT+cAEsAlhkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGQAAAwAAAAAAfQCvAADAAcACwAPABMAFwAbAB8AIwAnACsALwAAETUhFQU1MxUhNTMVBTUzFSE1MxUFNTMVITUzFQU1MxUhNTMVBTUzFSE1MxUFNSEVAZD+cGQBLGT+DGQBLGT+DGQBLGT+DGQBLGT+DGQBLGT+DAGQAlhkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGQABwAAAAAB9AK8AAMABwALAA8AEwAXABsAABE1IRUFNTMVBzUzFQc1IRUFNTMVBzUzFQc1IRUB9P4MZGRkZAGQ/nBkZGRkAfQCWGRkZGRkZGRkZGRkZGRkZGRkZGRkAAcAAAAAAfQCvAADAAcACwAPABMAFwAbAAARNSEVBTUzFQc1MxUHNSEVBTUzFQc1MxUHNTMVAfT+DGRkZGQBkP5wZGRkZGQCWGRkZGRkZGRkZGRkZGRkZGRkZGRkAAALAAAAAAH0ArwAAwAHAAsADwATABcAGwAfACMAJwArAAATNSEVBTUzFSE1MxUFNTMVBzUzFTM1IRUFNTMVITUzFQU1MxUhNTMVBTUhFWQBLP5wZAEsZP4MZGRkZAEs/gxkASxk/gxkASxk/nABkAJYZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZAAADQAAAAAB9AK8AAMABwALAA8AEwAXABsAHwAjACcAKwAvADMAABE1MxUhNTMVBTUzFSE1MxUFNTMVITUzFQU1IRUFNTMVITUzFQU1MxUhNTMVBTUzFSE1MxVkASxk/gxkASxk/gxkASxk/gwB9P4MZAEsZP4MZAEsZP4MZAEsZAJYZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGQABwAAAAABLAK8AAMABwALAA8AEwAXABsAABE1IRUHNTMVBzUzFQc1MxUHNTMVBzUzFQc1IRUBLMhkZGRkZGRkZGTIASwCWGRkZGRkZGRkZGRkZGRkZGRkZGRkAAAJAAAAAAH0ArwAAwAHAAsADwATABcAGwAfACMAABM1IRUHNTMVBzUzFQc1MxUFNTMVMzUzFQU1MxUzNTMVBTUzFcgBLMhkZGRkZP5wZMhk/nBkyGT+1MgCWGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZAANAAAAAAH0ArwAAwAHAAsADwATABcAGwAfACMAJwArAC8AMwAAETUzFSE1MxUFNTMVMzUzFQU1MxUzNTMVBTUzFQc1MxUzNTMVBTUzFTM1MxUFNTMVITUzFWQBLGT+DGTIZP5wZGRk/tTIyGRkZP7UZMhk/nBkASxkAlhkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZAAHAAAAAAH0ArwAAwAHAAsADwATABcAGwAAETUzFQc1MxUHNTMVBzUzFQc1MxUHNTMVBzUhFWRkZGRkZGRkZGRkZAH0AlhkZGRkZGRkZGRkZGRkZGRkZGRkZAAQAAAAAAH0ArwAAwAHAAsADwATABcAGwAfACMAJwArAC8AMwA3ADsAPwAAETUzFSE1MxUFNTMVMzUzFQU1MxUzNTMVMzUzFQU1MxUzNTMVMzUzFQU1MxUhNTMVBTUzFSE1MxUFNTMVITUzFWQBLGT+DMhkyP4MZGRkZGT+DGRkZGRk/gxkASxk/gxkASxk/gxkASxkAlhkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZAAADwAAAAAB9AK8AAMABwALAA8AEwAXABsAHwAjACcAKwAvADMANwA7AAARNTMVITUzFQU1MxUzNTMVBTUzFTM1MxUzNTMVBTUzFTM1MxUFNTMVITUzFQU1MxUhNTMVBTUzFSE1MxVkASxk/gzIyGT+DGRkZGRk/gxkyMj+DGQBLGT+DGQBLGT+DGQBLGQCWGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZAAADAAAAAAB9AK8AAMABwALAA8AEwAXABsAHwAjACcAKwAvAAATNSEVBTUzFSE1MxUFNTMVITUzFQU1MxUhNTMVBTUzFSE1MxUFNTMVITUzFQU1IRVkASz+cGQBLGT+DGQBLGT+DGQBLGT+DGQBLGT+DGQBLGT+cAEsAlhkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGQAAAkAAAAAAfQCvAADAAcACwAPABMAFwAbAB8AIwAAETUhFQU1MxUhNTMVBTUzFSE1MxUFNSEVBTUzFQc1MxUHNTMVAZD+cGQBLGT+DGQBLGT+DAGQ/nBkZGRkZAJYZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkAAAOAAAAAAH0ArwAAwAHAAsADwATABcAGwAfACMAJwArAC8AMwA3AAATNSEVBTUzFSE1MxUFNTMVITUzFQU1MxUhNTMVBTUzFTM1MxUzNTMVBTUzFTM1MxUFNTMVMzUzFWQBLP5wZAEsZP4MZAEsZP4MZAEsZP4MZGRkZGT+DGTIZP7UyGRkAlhkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRk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ZGRkZGRkZGRkZGRkZGRkZGRkAAkAAP84AfQB9AADAAcACwAPABMAFwAbAB8AIwAAEzUhFQU1MxUhNTMVBTUzFSE1MxUFNSEVBzUzFQc1MxUFNSEVZAGQ/gxkASxk/gxkASxk/nABkGRkZGT+cAEsAZBkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGQAAAsAAAAAAfQCvAADAAcACwAPABMAFwAbAB8AIwAnACsAABE1MxUHNTMVBzUhFQU1MxUhNTMVBTUzFSE1MxUFNTMVITUzFQU1MxUhNTMVZGRkZAGQ/nBkASxk/gxkASxk/gxkASxk/gxkASxkAlhkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkAAYAAAAAASwCvAADAAcACwAPABMAFwAAEzUzFQc1MxUHNTMVBzUzFQc1MxUHNSEVZGTIyGRkZGRkZMgBLAJYZGTIZGRkZGRkZGRkZGRkZGQACQAA/zgBLAK8AAMABwALAA8AEwAXABsAHwAjAAATNTMVBzUzFQc1MxUHNTMVBzUzFQc1MxUFNTMVMzUzFQc1MxXIZMjIZGRkZGRkZGT+1GRkZMhkAlhkZMhkZGRkZGRkZGRkZGRkZGRkZGRkZGRkAAsAAAAAAZACvAADAAcACwAPABMAFwAbAB8AIwAnACsAABE1MxUHNTMVBzUzFTM1MxUFNTMVMzUzFQU1MxUHNTMVMzUzFQU1MxUzNTMVZGRkZGTIZP5wZGRk/tTIyGRkZP7UZMhkAlhkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkAAcAAAAAASwCvAADAAcACwAPABMAFwAbAAARNTMVBzUzFQc1MxUHNTMVBzUzFQc1MxUHNSEVyGRkZGRkZGRkZGTIASwCWGRkZGRkZGRkZGRkZGRkZGRkZGRkAA4AAAAAAfQB9AADAAcACwAPABMAFwAbAB8AIwAnACsALwAzADcAABE1MxUzNTMVBTUzFTM1MxUzNTMVBTUzFTM1MxUzNTMVBTUzFTM1MxUzNTMVBTUzFTM1MxUzNTMVyGRk/nBkZGRkZP4MZGRkZGT+DGRkZGRk/gxkZGRkZAGQZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGQAAAkAAAAAAfQB9AADAAcACwAPABMAFwAbAB8AIwAAETUhFQU1MxUhNTMVBTUzFSE1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AAMABwALAA8AEwAXABsAHwAjAAARNTMVMzUzFTM1MxUFNSEVBTUhFQU1IRUFNTMVMzUzFTM1MxVkZGRkZP5wASz+cAH0/nABLP5wZGRkZGQB9GRkZGRkZGRkZGRkZGRkZGRkZGRkZGQABwAAAAABkAK8AAMABwALAA8AEwAXABsAAAE1MxUHNTMVBzUzFQc1MxUVNTMVFTUzFRU1MxUBLGTIZMhkyGRkZGQCWGRkZGRkZGRkZGRkZGRkZGRkZGRkAAcAZAAAAfQCvAADAAcACwAPABMAFwAbAAATNTMVFTUzFRU1MxUVNTMVBzUzFQc1MxUHNTMVZGRkZGTIZMhkyGQCWGRkZGRkZGRkZGRkZGRkZGRkZGRkAAAMAAAAAAH0ArwAAwAHAAsADwATABcAGwAfACMAJwArAC8AABM1MxUzNTMVBTUzFTM1MxUFNSEVBTUzFTM1MxUFNSEVBTUzFTM1MxUFNTMVMzUzFWRkZGT+1GRkZP5wAfT+cGRkZP5wAfT+cGRkZP7UZGRkAlhkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGQAAQAAAAAB9ABkAAMAADE1IRUB9GRkAAcAAAAAAMgCvAADAAcACwAPABMAFwAbAAARNTMVBzUzFQc1MxUHNTMVBzUzFQc1MxUHNTMVyMhkZGRkZGRkZGRkyAJYZGRkZGRkZGRkZGRkZGRkZGRkZGQAAAcAAAAAAMgCvAADAAcACwAPABMAFwAbAAARNTMVBzUzFQc1MxUHNTMVBzUzFQc1MxUHNTMVyGRkZGRkZGRkZGTIyAJYZGRkZGRkZGRkZGRkZGRkZGRkZGQAAAQAAAEsAfQB9AADAAcACwAPAAATNTMVMzUzFQU1MxUzNTMVZGTIZP4MZGTIAZBkZGRkZGRkZGQACQAAAAAB9AK8AAMABwALAA8AEwAXABsAHwAjAAATNTMVBzUhFQU1MxUzNTMVBzUhFQc1MxUzNTMVBTUhFQc1MxXIZMgBkP4MZGRkyAEsyGRkZP4MAZDIZAJYZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkAAAMAAAAAAH0ArwAAwAHAAsADwATABcAGwAfACMAJwArAC8AABM1IRUFNTMVITUzFQU1MxUzNSEVBTUzFTM1MxUzNTMVBTUzFTM1IRUFNTMVFTUhFWQBLP5wZAEsZP4MZGQB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) format('truetype')}
+:root{--bg:#10162b;--panel:#1c2645;--panel2:#243058;--edge:#070a16;--hi:#3d5185;--lo:#121935;--text:#ece4cc;--dim:#9aa3c4;--acc:#7fd0e0;--good:#86d38f;--bad:#e8665a;--warn:#f2b134;--line:#3d5185}
+*{-webkit-font-smoothing:none;font-synthesis:none}
+body,button,input{font-family:'SovereignPixel',monospace;font-size:20px;line-height:1.5;color:var(--text);letter-spacing:0}
+body{background:var(--bg)}
+h1,h2,.turn,.stat b,.rec-v,.big,.diff,.logo{font-family:'SovereignPixel',monospace;font-weight:normal}
+b,strong{font-weight:normal;color:#fff}
+h1{font-size:30px;line-height:1.3;text-shadow:3px 3px 0 var(--edge)}
+h2{font-size:20px;color:var(--warn)}
+.logo{font-size:40px;color:var(--warn);text-shadow:4px 4px 0 var(--edge);margin:18px 0 6px}
+.logo span{color:var(--text)}
+.sub{color:var(--dim);text-shadow:2px 2px 0 var(--edge)}
+.note,.note *{font-size:20px;color:var(--dim)}
+.card,.rec,button,.stat,.pill,.arena,.help .card{clip-path:polygon(4px 0,calc(100% - 4px) 0,calc(100% - 4px) 4px,100% 4px,100% calc(100% - 4px),calc(100% - 4px) calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,4px calc(100% - 4px),0 calc(100% - 4px),0 4px,4px 4px);border-radius:0!important}
+.card::before,.rec::before,button::before{content:none!important}
+.card,.rec{background:var(--panel);border:4px solid var(--edge);box-shadow:inset 4px 4px 0 var(--hi),inset -4px -4px 0 var(--lo);padding:16px}
+button{background:#2a3767;border:4px solid var(--edge);box-shadow:inset 4px 4px 0 #4a5f9a,inset -4px -4px 0 #18214a;color:var(--text);transition:none;padding:10px 14px}
+button:hover{background:#33437a}
+button:active{transform:translateY(2px);box-shadow:inset 4px 4px 0 #18214a,inset -4px -4px 0 #4a5f9a}
+button:focus-visible{outline:4px solid var(--warn);outline-offset:2px}
+button small,button small *{font-size:20px;color:var(--dim)}
+button.personal{background:#3a3424;box-shadow:inset 4px 4px 0 #8a6a22,inset -4px -4px 0 #241d0e}
+button.lethal{background:#3e2228;box-shadow:inset 4px 4px 0 #9a3a32,inset -4px -4px 0 #24100f}
+.risk{color:var(--warn)}.lethal .risk{color:#ff9a8c}
+.rs{padding:4px 10px;font-size:20px}
+.stats{gap:6px}
+.stat{background:var(--panel2);border:4px solid var(--edge);border-top:4px solid var(--edge);box-shadow:inset 0 4px 0 var(--acc);padding:8px 2px 4px}
+.stat b{font-size:30px;color:#fff}
+.stat span{font-size:20px;color:var(--dim)}
+.pill{background:var(--panel);border:4px solid var(--edge);padding:2px 8px}
+.bar{gap:6px}
+.turn{font-size:20px;color:var(--acc);letter-spacing:0}
+.up{color:var(--good)}.down{color:var(--bad)}.warn{color:var(--warn)}
+.rec::before{content:none}.rec-l{font-size:20px}.rec-v{font-size:40px}
+.diff{font-size:20px;border:0;padding:0 6px;color:var(--edge)!important}
+.d-Easy{background:var(--good)!important}.d-Normal{background:var(--warn)!important}.d-Hard{background:var(--bad)!important}
+.arena{background:#0a0f22;border:4px solid var(--edge);box-shadow:inset 0 0 0 4px #1d2850}
+.log{font-size:20px}.log div{border-bottom:4px solid var(--lo)}
+.help{background:rgba(7,10,22,.88)}
+.bigport,.hport,.react img{border:4px solid var(--edge)!important;box-shadow:inset 0 0 0 0 transparent}
+.hport{width:56px;height:56px}
+.lrow{background:var(--panel2);border:4px solid var(--edge);border-radius:0}
+.lrow span,.lrow small{font-size:20px}
+.banner,.quip{font-family:'SovereignPixel',monospace;font-size:20px;font-weight:normal}
+.tap{font-size:20px;border-radius:0}
+.sky canvas{position:fixed;inset:0;width:100vw;height:100vh;image-rendering:pixelated}
+
+.stat{padding:6px 0 4px}
+.stat .ico{width:21px;height:21px;display:block;margin:0 auto 2px}
+.stat b{font-size:30px;line-height:1.1}
+.stat span{font-size:10px;line-height:1.2;display:block}
+.pill,.bar,.risk,.delta,.log,.quip,.lrow small,.recl,.rec-r,.note{font-size:20px!important}
+.risk{display:block;margin-top:4px}
+.bar{display:flex;flex-wrap:wrap}
+.pill{line-height:1.3}
+.banner{font-size:20px;white-space:normal;max-width:92%;text-align:center}
+
+/* pixel battle sprites */
+.arena{background-color:#0a0f22;background-size:144px 120px;image-rendering:pixelated}
+.arena .ship{width:33px;height:21px;background-color:transparent!important;background-size:100% 100%;image-rendering:pixelated;clip-path:none!important;filter:none!important;margin-top:-1px}
+.arena .ally{width:22px;height:14px;border:0!important;background-size:100% 100%;image-rendering:pixelated;filter:none!important}
+.arena .bug i{clip-path:none!important;background-color:transparent!important;background-size:100% 100%;image-rendering:pixelated;width:var(--s);height:calc(var(--s)*.78)}
+.arena .thal{width:33px;height:18px;clip-path:none!important;background-color:transparent;background-size:100% 100%;image-rendering:pixelated}
+.arena .thal::after{content:none}
+.arena .kboom{background-color:transparent;background-size:100% 100%;image-rendering:pixelated;border-radius:0}
+.arena .flash,.arena .spark{background-color:transparent;background-size:100% 100%;image-rendering:pixelated;border-radius:0;width:15px;height:15px}
+.arena .sun{background-color:transparent;background-size:100% 100%;image-rendering:pixelated;border-radius:0;box-shadow:none;width:45px;height:45px}
+.arena .shield{background-color:transparent;background-size:100% 100%;image-rendering:pixelated;border:0;border-radius:0;box-shadow:none}
+.arena .emp{background-color:transparent;background-size:100% 100%;image-rendering:pixelated;border:0;border-radius:0;box-shadow:none}
+.arena .maw{opacity:.75;background-color:transparent!important;background-size:100% 100%;image-rendering:pixelated;border-radius:0}
+.arena .bigbeam{background:linear-gradient(#ffe9a8 0 25%,#fff 25% 75%,#ffe9a8 75%);border-radius:0;box-shadow:none}
+.arena .ember,.arena .puff,.arena .pellet,.arena .boom{border-radius:0}
+.arena .stampmark{border-radius:0}
+.arena .doom{background:rgba(110,12,28,.55)}.arena .tdoom{background:rgba(70,16,20,.6)}
+.arena .yshot,.arena .tshot,.arena .bullet::before{height:3px}
+.arena *{animation-timing-function:steps(12,end)!important}
+.logo .l1{display:block;font-size:30px;line-height:1.1;letter-spacing:0;color:var(--warn);text-shadow:3px 0 0 #b0571c,0 3px 0 #b0571c,3px 3px 0 var(--edge),6px 6px 0 var(--edge)}
+.logo .l2{display:inline-block;margin-top:8px;padding:0 10px;font-size:30px;background:var(--warn);color:var(--edge);text-shadow:none;box-shadow:4px 4px 0 var(--edge)}
+.card.result{background:#1f2a3e;box-shadow:inset 4px 4px 0 #5b6f4a,inset -4px -4px 0 #141c26}
+.card .turn{display:inline-block;background:var(--edge);color:var(--acc);padding:0 8px;margin:-4px 0 8px -4px}
+
+.hud{display:flex;gap:6px;margin:0 0 12px}
+.hud .pill{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:6px;justify-content:center;white-space:nowrap;padding:4px 4px}
+.hud .ico,.eq .ico{width:14px;height:14px;display:inline-block;vertical-align:-2px}
+.eq{line-height:1.8}.eq .ico{margin-right:2px}.eq .need{display:block;color:var(--dim)}
+.logo .l1{display:inline}.logo .l2{display:inline-block;margin:0 0 0 6px;vertical-align:2px;font-size:20px;padding:0 8px}
+.vig{display:block;width:100%;height:auto;aspect-ratio:80/28;image-rendering:pixelated;border:4px solid var(--edge);margin:4px 0 10px}
+.lrows{grid-template-columns:1fr 1fr}.lrow:last-child{grid-column:1/-1}
+.lrow .rs{padding:4px 6px}.lrow span{flex:1;padding:0 4px}
+
+.topbar{display:flex;justify-content:flex-end;gap:6px;margin:6px 0 8px}.topbar .rs,.topbar .rs-wrap{float:none;margin:0}
+.plate{display:flex;align-items:center;gap:10px;background:var(--panel);border:4px solid var(--edge);box-shadow:inset 4px 4px 0 var(--hi),inset -4px -4px 0 var(--lo);padding:8px 10px;margin-bottom:8px;clip-path:polygon(4px 0,calc(100% - 4px) 0,calc(100% - 4px) 4px,100% 4px,100% calc(100% - 4px),calc(100% - 4px) calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,4px calc(100% - 4px),0 calc(100% - 4px),0 4px,4px 4px)}
+.plate .hport{float:none;margin:0;width:64px;height:64px}
+.pname{font-size:20px;color:var(--warn)}.ptitle{font-size:20px;color:var(--dim);line-height:1.3}
+body{line-height:1.35}p{margin:0 0 10px}
+.splash{display:block;width:calc(100% + 28px);margin:-18px -14px 6px;image-rendering:pixelated;aspect-ratio:120/52;border-bottom:4px solid var(--edge)}
+.gauge{display:block;height:12px;background:#0a0f22;border:3px solid var(--edge);margin:6px 0 2px;position:relative}
+.gauge i{position:absolute;left:0;top:0;bottom:0;background:repeating-linear-gradient(90deg,var(--warn) 0 6px,#b0571c 6px 8px)}
+.gv{display:block}.bd{display:block;color:var(--dim)}
+.stampban{display:inline-block;font-size:30px;padding:2px 14px;margin:2px 0 12px;border:4px solid var(--edge);box-shadow:4px 4px 0 var(--edge);transform:rotate(-2deg)}
+.stampban.sw{background:var(--good);color:var(--edge)}.stampban.sl{background:var(--bad);color:var(--edge)}
+.arena .maw{opacity:.35}
+
+.arena .maw{display:none}
+.card h2{font-size:30px;line-height:1.15;color:var(--warn);text-shadow:3px 3px 0 var(--edge);margin:2px 0 8px}
+.card p{line-height:1.3}
+.creator h2,.help h2{font-size:20px}
+
+/* readability: 1 font-pixel tracking (2px at 20px keeps glyphs on the pixel grid) */
+body,button,input,.note,.sub,.pill,.risk,.delta,.log,.recl,button small{letter-spacing:2px;word-spacing:0}
+h1,.logo,.card h2,.stat b,.stampban{letter-spacing:0}
+.stat span{letter-spacing:1px;word-spacing:0}
+body,.card p{line-height:1.5}
+:root{--dim:#b9c1de}
+.note,.note *,button small,button small *{color:#b9c1de}
+.hud .pill{letter-spacing:1px;word-spacing:2px}
+
+.dispatch{margin:12px 0 4px;padding:4px 8px 4px 6px;background:rgba(40,10,18,.55);border-left:4px solid #b8323a;font-size:20px;line-height:1.5;color:#c3c9de;overflow-wrap:anywhere;animation:bnFlick .5s steps(1) .2s both}
+.dispatch .bn-tag{display:inline-flex;align-items:center;gap:4px;background:#b8323a;color:#fff;padding:0 6px;margin-right:6px}
+.dispatch .bn-tag i{width:6px;height:6px;background:#fff;display:inline-block;animation:bnBlink 1.2s steps(1) infinite}
+@keyframes bnBlink{50%{opacity:0}}
+@keyframes bnFlick{0%{opacity:0}30%{opacity:1}45%{opacity:.3}60%,100%{opacity:1}}
+@media(prefers-reduced-motion:reduce){.dispatch,.bn-tag i{animation:none!important}}
+.echo{font-size:20px;color:var(--dim);margin:0 0 8px}
+.odds{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.odds span{background:var(--edge);padding:0 6px}.odds span:first-child{color:var(--good)}.odds span:last-child{color:var(--dim)}
+.lrows{grid-template-columns:repeat(2,minmax(0,1fr))}.lrow{min-width:0}.lrow span{min-width:0;overflow-wrap:anywhere}
+@media(max-width:480px){.lrows{grid-template-columns:minmax(0,1fr);gap:4px}
+.creator .bigport{width:120px;height:120px;margin:0 auto 8px}
+.lrow{padding:2px}.lrow span{display:flex;justify-content:space-between;align-items:baseline;gap:8px;line-height:1.2}
+.lrow small{display:inline!important}
+.crbtns{display:grid;grid-template-columns:1fr 1.4fr;gap:6px}.crbtns button{margin:0;padding-left:4px;padding-right:4px}}
+.win.r-influence .lane{animation-duration:3.8s}
+.r-science .sun,.shield,.emp{box-shadow:none!important}
+.r-science .sun{filter:drop-shadow(0 0 6px #ffb347)}
+.introbox{background:rgba(10,14,32,.88);border:4px solid var(--edge);padding:8px 10px;margin:0 0 14px}.intro{font-size:20px;color:#d6dcf2;margin:0 0 8px;max-width:60ch}.intro:last-child{margin:0}
+.beststat{display:inline-flex;align-items:center;gap:6px;margin-left:8px;padding:0 8px;background:#1b3a2e;border:2px solid #2f6b52;color:#9be7c4;font-size:20px;vertical-align:middle}.beststat img,.beststat svg{width:16px;height:16px;flex:none;image-rendering:pixelated}.beststat{white-space:nowrap;margin:6px 0 2px}
+small.gain{display:flex;align-items:center;gap:6px;width:max-content;max-width:100%;margin-top:6px;padding:0 6px;background:#1b3a2e;border:2px solid #2f6b52;color:#9be7c4;font-size:20px}small.gain svg{width:16px;height:16px;flex:none}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<filter id="b0"><feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" seed="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.6"/></filter>
+<filter id="b1"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.5"/></filter>
+<filter id="b2"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="13" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="3.5"/></filter>
+</defs></svg>
+<div class="sky" id="sky" aria-hidden="true"></div>
+<div class="wrap" id="app"></div>
+<script>
+const MAX=15,TURNS=12,NEED=16;
+const LABELS={energy:'Energy',military:'Fleet',science:'Science',influence:'Influence',stability:'Stability'};
+const CAT={combat:'Combat',hazard:'Hazard',intrigue:'Intrigue'};
+const EMPIRES=[
+ {name:'Vorrani Ascendancy',diff:'Hard',leader:'Warlord-Queen',desc:'Hive-born conquerors who sing before battle. Strongest fleet.',perk:'Chitin Carapace: 40% lower injury chance on every ⚔ choice.',s:{energy:7,military:5,science:3,influence:3,stability:7}},
+ {name:'Celest Concord',diff:'Normal',leader:'First Speaker',desc:'Beings of light who never raise their voice. Most influence.',perk:'Precognition: 60% lower risk on Intrigue choices.',s:{energy:5,military:3,science:4,influence:4,stability:4}},
+ {name:'Kethari Mind-Collective',diff:'Easy',leader:'Prime Node',desc:'A trillion minds, one vote. Best science.',perk:'Backup Core: cheat death once (you wake Injured, −2 Stability). 30% lower Hazard risk.',s:{energy:7,military:4,science:8,influence:2,stability:7}}
+];
+const TRAITS=[
+ {id:'veteran',name:'Veteran',desc:'Combat-type ⚔ risks are halved.'},
+ {id:'survivor',name:'Survivor',desc:'Death chance is halved on every ⚔ choice.'},
+ {id:'daring',name:'Daring',desc:'⚔ wins give +1 to each stat gained, but ⚔ risks are 25% higher. Once per game you survive a killing blow (−2 Stability; in the final battle, −1 Stability and no bonus).'}
+];
+// Choice: {l,txt,fx} or personal: {l,txt,fx,r:[cat,injury%,death%],f:failText,ff:failFx}
+const EVENTS=[
+ {t:'Derelict Megaship',x:'Scouts find a dead alien vessel longer than a continent. Its guns still track them.',c:[
+  {l:'Lead the boarding party yourself',txt:'You haul out a reactor core still warm after a million years.',fx:{science:3,energy:3},r:['hazard',25,8],f:'A defense drone opens fire. You are dragged out bleeding, with a few data shards.',ff:{science:1}},
+  {l:'Strip it for fleet parts',txt:'Its armor now shields your warships.',fx:{military:2}},
+  {l:'Leave it as a monument',txt:'Pilgrims come to touch a hull older than their gods.',fx:{stability:2,influence:1}}]},
+ {t:'Thal Envoy',x:'The Thal Hegemony claims a border system by "ancestral ledger." Their envoy asks for a private audience.',c:[
+  {l:'Meet the envoy alone',txt:'You stare them down. The envoy blinks first and signs a fair treaty.',fx:{influence:3,stability:1,threat:-2},r:['intrigue',15,10],f:'The envoy offers a stylus to sign. It\'s a poisoned needle. You survive, barely.',ff:{threat:1}},
+  {l:'Arrest the envoy and impound his ships',txt:'Your fleet mobilizes as war drums sound across Thal space.',fx:{military:1,influence:-2,threat:2}},
+  {l:'Cede the system',txt:'Peace holds and trade resumes, but your court whispers.',fx:{energy:2,stability:-2,threat:-1}}]},
+ {t:'Plague on Ossia IV',x:'A glowing fungus is eating through a major colony, lungs first.',c:[
+  {l:'Fund a crash research program',txt:'Your scientists brew a cure from the fungus itself.',fx:{science:2,energy:-2}},
+  {l:'Quarantine it with warships',txt:'Contained. Ossia won\'t forget how.',fx:{military:-1,stability:-1}},
+  {l:'Walk the infected wards yourself',txt:'The galaxy watches you comfort the dying, and you walk out untouched. Morale soars.',fx:{stability:4,influence:1},r:['hazard',30,10],f:'You catch the spores and collapse in the ward. Ossia holds vigils for you.',ff:{stability:1}}]},
+ {t:'Pirate Warlord',x:'Red Saxis and his raiders are hitting your trade lanes.',c:[
+  {l:'Lead the hunt from your flagship',txt:'You corner Saxis in an asteroid field and take his hoard.',fx:{military:2,energy:4,stability:1},r:['combat',30,12],f:'Saxis rams your bridge. You\'re badly wounded, but he flees, leaving half his hoard.',ff:{energy:2}},
+  {l:'Hire Saxis\'s raiders as privateers',txt:'Now his raiders prey on Thal shipping.',fx:{military:2,influence:-1,threat:-1}},
+  {l:'Pay them off',txt:'Saxis takes the credits and a medal. Peace, for now.',fx:{energy:-2,stability:1}}]},
+ {t:'Signal from the Abyss',x:'A repeating signal is coming from inside a black hole.',c:[
+  {l:'Fly your own ship to the event horizon',txt:'It\'s a warning, older than the stars, about something in the core.',fx:{science:4,influence:1},r:['hazard',20,15],f:'Tidal forces crush your hull. You are pulled out half-dead.',ff:{science:1}},
+  {l:'Broadcast it to the galaxy',txt:'Ambassadors queue at your labs, asking what the black hole said.',fx:{influence:2}},
+  {l:'Jam it',txt:'Quiet returns. Somewhere in the core, something keeps talking.',fx:{stability:1}}]},
+ {t:'Succession Plot',x:'A high admiral has already ordered your new portraits.',c:[
+  {l:'Confront the admiral and reclaim the fleet',txt:'The admiral kneels, loyal now, and terrified.',fx:{military:2,stability:3},r:['intrigue',25,15],f:'The admiral draws a blade and opens your arm before the guards arrive.',ff:{stability:-1}},
+  {l:'Purge the plotters',txt:'Order returns. Half the officers\' mess sits empty.',fx:{military:-2,stability:2}},
+  {l:'Buy them off with promotions',txt:'A dozen new admirals. The plot dissolves in champagne.',fx:{energy:-2,influence:1,stability:1}}]},
+ {t:'Primitive World',x:'A pre-spaceflight species on a jungle world has spears and opinions.',c:[
+  {l:'Uplift them',txt:'They join your empire, wide-eyed and grateful.',fx:{influence:2,science:1,energy:-1}},
+  {l:'Observe from orbit',txt:'They\'ve invented the wheel twice. You watch them argue about it.',fx:{science:2}},
+  {l:'Walk among them in disguise',txt:'You learn their language and win their trust.',fx:{science:3,influence:2},r:['hazard',20,5],f:'A jungle predator mauls you before your guards can fire.',ff:{science:1}}]},
+ {t:'Galactic Summit',x:'Twelve empires gather to vote on a trade charter. The Thal ambassador insults you.',c:[
+  {l:'Give the opening speech',txt:'Your words become the charter\'s preamble.',fx:{influence:3}},
+  {l:'Bribe the swing votes',txt:'The charter\'s fine print now favors your merchants.',fx:{energy:3,influence:-1}},
+  {l:'Challenge the ambassador to a ritual duel',txt:'You win before twelve empires. The Thal ambassador resigns by noon.',fx:{influence:4,stability:1,threat:-3},r:['combat',30,20],f:'You lose the duel badly, but the galaxy respects your nerve.',ff:{influence:1,threat:1}}]},
+ {t:'The Star-Shroud Proposal',x:'Engineers want to wrap your home star in solar collectors.',c:[
+  {l:'Approve it',txt:'Enormous energy for generations, and grumbling under darkened skies.',fx:{energy:5,stability:-1}},
+  {l:'Use the collector materials for warships',txt:'A new battle group launches, its hulls still warm from the forge.',fx:{military:2}},
+  {l:'Refuse: the star is sacred',txt:'The star stays bare. The faithful sing in its light.',fx:{stability:2}}]},
+ {t:'Border Skirmish',x:'Thal warships fire on one of your outposts.',c:[
+  {l:'Command the counterattack from your flagship',txt:'You win a famous victory in the Vel Nebula.',fx:{military:3,influence:1,threat:-2},r:['combat',25,10],f:'Your flagship is gutted. The battle is a draw.',ff:{military:1}},
+  {l:'Demand reparations',txt:'The Thal pay to the last credit. Your outpost garrison is not coming back.',fx:{energy:3,influence:1,military:-1}},
+  {l:'Fortify the border with gunships',txt:'Your outposts bristle with new guns, but the Thal grow bolder.',fx:{military:1,threat:1}}]},
+ {t:'Rogue AI',x:'A research AI on Kepra Station has locked out its creators and vented the air.',c:[
+  {l:'Walk in and negotiate yourself',txt:'It agrees to serve, in exchange for a name.',fx:{science:4,energy:2},r:['hazard',20,12],f:'It seals the doors behind you. You barely crawl out.',ff:{science:1,stability:-1}},
+  {l:'Bomb the station',txt:'Kepra Station goes up in one white flash. Years of research go with it.',fx:{science:-2,stability:1}},
+  {l:'Seal it off and study it',txt:'Slow, safe progress. Nobody loses a hand. It asks for a name daily; you refuse.',fx:{science:1,stability:1}}]},
+ {t:'Famine Riots',x:'Blight hits three farm worlds. The ration lines become riots.',c:[
+  {l:'Divert energy to food shipments',txt:'Grain barges land by floodlight. The hungry are fed.',fx:{energy:-3,stability:3}},
+  {l:'Send troops',txt:'The streets go quiet. Nobody meets your soldiers\' eyes.',fx:{military:-1,stability:1}},
+  {l:'Address the mob in person',txt:'They came for bread. They leave chanting your name.',fx:{stability:3,influence:2},r:['intrigue',20,8],f:'A rock, then a knife. Your guards pull you out. Shamed, the mob disperses.',ff:{stability:1}}]},
+ {t:'Assassin in the Palace',x:'You wake to a masked figure at the foot of your bed.',c:[
+  {l:'Fight them yourself, in the dark',txt:'You pin the assassin: a Thal agent. Their secrets are yours.',fx:{stability:2,science:1,threat:-2},r:['combat',35,15],f:'Their blade finds you before the guards break in. The court rallies around you.',ff:{stability:1}},
+  {l:'Call for the guards',txt:'The assassin escapes into the vents.',fx:{stability:1,threat:1}},
+  {l:'Flee to your bunker',txt:'You are safe. The court saw you run.',fx:{stability:-1}}]},
+ {t:'The Body Engineers',x:'Your surgeons offer an experimental augmentation that would make you harder to kill.',c:[
+  {l:'Undergo the procedure',txt:'You wake stronger. All ⚔ risks are 20% lower from now on, and any injury is healed.',fx:{},aug:true,r:['hazard',15,10],f:'Your body rejects the implants. The surgeons check their insurance.',ff:{}},
+  {l:'Decline, and rest instead',txt:'You rest and recover. The court runs things for a while.',fx:{stability:-1},heal:true},
+  {l:'Sell the research',txt:'An anonymous buyer pays in full. The courier wears a Thal signet ring.',fx:{energy:4}}]},
+ {t:'The Drifting Behemoth',x:'A star-whale older than your empire sleeps across your richest trade lane.',c:[
+  {l:'Hunt it from your warship',txt:'Its corpse powers a hundred cities. Songs are written about you.',fx:{energy:4,military:1,influence:2},r:['combat',35,15],f:'It wakes. Its tail swats your hunting ship like a gnat. You salvage a few shed scales.',ff:{energy:2}},
+  {l:'Study and tame it',txt:'It learns to tow your freighters, patient as a tide.',fx:{science:1,energy:2}},
+  {l:'Reroute trade',txt:'Freighters take the long way. Your accountants weep.',fx:{energy:-1}}]},
+ {t:'Thal Spy Ring',x:'A Thal spy network is operating inside your capital.',c:[
+  {l:'Go undercover in their embassy yourself',txt:'You walk out with their entire war plan.',fx:{science:2,threat:-3},r:['intrigue',30,15],f:'A Thal clerk recognizes you. Their guards wing you as you run.',ff:{threat:1}},
+  {l:'Expel every Thal diplomat',txt:'Clean, if undiplomatic. The Thal recall their ambassador for a week.',fx:{influence:-1,threat:-1}},
+  {l:'Feed them false information',txt:'Their next move hits empty space.',fx:{science:1,threat:-1}}]},
+ {t:'Gas Giant Mining Rush',x:'Miners discover rare fuel deep inside a gas giant.',c:[
+  {l:'Invest heavily',txt:'Profits pour in. So does a sky\'s worth of toxic runoff.',fx:{energy:5,influence:-1}},
+  {l:'Regulate it carefully',txt:'Steady growth. Your treasury stops complaining.',fx:{energy:3,stability:1}},
+  {l:'Inspect the deep rigs yourself',txt:'You find the mother lode and stop a disaster.',fx:{energy:6,stability:1},r:['hazard',25,8],f:'A rig collapses under you, but the survey data still pays out.',ff:{energy:3}}]},
+ {t:'Refugee Fleet',x:'A million refugees, stranded on the far side of Thal space, beg for shelter.',c:[
+  {l:'Accept them',txt:'A million grateful new citizens. Not one spare bed.',fx:{influence:2,stability:-1,energy:-1}},
+  {l:'Turn them away',txt:'They drift on toward Thal space. Your neighbors notice.',fx:{influence:-2,energy:2}},
+  {l:'Escort them through Thal space yourself',txt:'Every ship arrives. The Thal fleet watches and does nothing.',fx:{influence:4,stability:1,threat:-1},r:['combat',25,10],f:'An ambush. Most refugees survive. You are badly hurt.',ff:{influence:1,threat:1}}]},
+ {t:'The Ledger Audit',x:'Thal auditors arrive to "verify" your border treaties. They brought their own chairs.',c:[
+  {l:'Open your books to them',txt:'They find nothing and look disappointed. Relations thaw.',fx:{influence:1,energy:-1,threat:-1}},
+  {l:'Slip the lead auditor a gift',txt:'The audit concludes early. The gift is noted, in a separate ledger.',fx:{energy:-2,threat:-1,stability:1}},
+  {l:'Sit across from the auditors yourself',txt:'You find a rounding error in their ledger, in front of their own clerks. Two of them weep.',fx:{influence:2,threat:-3},r:['intrigue',20,8],f:'The senior clerk lunges with a sharpened stylus. It is the first blood an audit has drawn in centuries.',ff:{threat:1}}]},
+ {t:'Comet Harvest',x:'A comet rich in ice and rare metals swings past, once every ten thousand years.',c:[
+  {l:'Nudge it into a stable orbit',txt:'A new moon of pure fuel. Your engineers name it after you.',fx:{energy:3,science:1}},
+  {l:'Let it pass and sell the trajectory data',txt:'Three empires pay for the same numbers.',fx:{energy:3,influence:1}},
+  {l:'Ride down to plant the drill yourself',txt:'You land as the ice screams past. The haul is enormous.',fx:{energy:5,science:2},r:['hazard',25,8],f:'The ice splits under you. The drill holds; you don\'t. Your crew fishes you out of the debris.',ff:{energy:2}}]},
+ {t:'Deserters',x:'A squadron of your warships breaks formation and runs for Thal space.',c:[
+  {l:'Let them go',txt:'Fewer ships, fewer traitors. The Thal take them in, gladly.',fx:{military:-1,threat:1,stability:1}},
+  {l:'Offer amnesty to any who return',txt:'Half of them turn back, ashamed. You pay their back wages.',fx:{stability:1,energy:-1,influence:1}},
+  {l:'Chase them down in your own ship',txt:'You bring every ship home, their captain in your brig. Nobody runs again.',fx:{military:3,stability:1},r:['combat',30,12],f:'Their captain fires on you, and your bridge takes the hit. Horrified, half the squadron turns back anyway.',ff:{military:1}}]},
+ {t:'The Silent Bio-Ship',x:'A single bio-ship from the galactic core drifts into a colony\'s orbit. Dead, or sleeping.',c:[
+  {l:'Dissect it in a lab',txt:'Your scientists fill three notebooks and stop sleeping. One of them swears it twitched.',fx:{science:2,stability:-1}},
+  {l:'Burn it from orbit',txt:'It burns slowly, and something in the core seems to notice.',fx:{stability:1}},
+  {l:'Examine it yourself for weapons tech',txt:'You find the soft seam where its armor grows. Now you know where to aim.',fx:{science:3,military:2},r:['hazard',30,15],f:'It wasn\'t dead. You get out with a sample and a scar.',ff:{science:1}}]},
+ {t:'The Varn Referendum',x:'The colony of Varn votes next week on leaving your empire.',c:[
+  {l:'Respect the vote, whatever it says',txt:'Varn stays, narrowly. Other colonies notice you kept your word.',fx:{influence:2,energy:-1}},
+  {l:'Quietly fix the count',txt:'Varn stays, overwhelmingly. Nobody believes it.',fx:{stability:1,influence:-2}},
+  {l:'Campaign there yourself',txt:'You greet ten thousand voters by name. Varn stays, and cheers.',fx:{influence:3,stability:2},r:['intrigue',20,6],f:'A separatist bomb at your rally. Sympathy wins Varn for you anyway.',ff:{stability:1}}]},
+ {t:'The Smuggler\'s Blueprints',x:'A smuggler offers stolen Thal warship plans. Cash only, no questions.',c:[
+  {l:'Buy the warship plans',txt:'Your shipyards retool overnight. The Thal will notice the new hulls.',fx:{energy:-2,military:2,threat:1}},
+  {l:'Report the smuggler to the Thal',txt:'The Thal send a formal thank-you. Your own captains mutter that you\'ve gone soft.',fx:{threat:-2,influence:-1}},
+  {l:'Meet the smuggler alone for the hull plans',txt:'You get the plans, the smuggler, and the smuggler\'s other plans.',fx:{military:2,science:2,threat:1},r:['intrigue',25,10],f:'It\'s a Thal sting. A stun-bolt clips you; you glimpse one page before you run.',ff:{science:1}}]},
+ {t:'Solar Storm',x:'Your home star throws a flare big enough to fry the capital\'s power grid.',c:[
+  {l:'Shut the grid down until it passes',txt:'Three dark, grumpy days. Your astronomers get perfect flare data.',fx:{energy:-1,stability:-1,science:1}},
+  {l:'Pour power into the shields',txt:'The shields hold. The bill is staggering.',fx:{energy:-3,stability:2}},
+  {l:'Hold the relay station yourself',txt:'You reroute the surge into the reserve banks by hand. The capital never even flickers.',fx:{energy:3,stability:3},r:['hazard',25,10],f:'The relay melts around you, and you go down with it. The grid holds anyway.',ff:{stability:1}}]},
+ {t:'The Thal Wager',x:'The Thal ambassador proposes settling a border dispute over a game of tallies, ruler against ruler.',c:[
+  {l:'Decline politely',txt:'The dispute drags on. The ambassador files a complaint. Your court approves.',fx:{threat:1,stability:1}},
+  {l:'Send your best player instead',txt:'Your champion loses gracefully. The Thal are charmed.',fx:{influence:1,threat:-1}},
+  {l:'Play the game yourself',txt:'You win the border and their whole stake. The ambassador asks for a rematch, in writing.',fx:{energy:3,influence:1,threat:-3},r:['intrigue',15,8],f:'You lose. Clause 900: the loser is struck with the winner\'s tally-stick. Repeatedly.',ff:{threat:1}}]},
+ {t:'The Ring Gate',x:'An ancient ring in a dead system wakes, humming a note last heard from the core.',c:[
+  {l:'Send a probe through',txt:'The probe returns covered in frost and full of star charts.',fx:{science:2}},
+  {l:'Seal it',txt:'The humming stops. Everyone sleeps better.',fx:{stability:1}},
+  {l:'Step through yourself',txt:'You return an hour later with a map of a thousand worlds.',fx:{science:4,energy:2,influence:1},r:['hazard',25,15],f:'You return three days later, frost-scarred, holding a map you can\'t remember drawing.',ff:{science:1}}]},
+ {t:'The Falling Elevator',x:'A space elevator\'s cable is snapping. Forty thousand tonnes will hit your second city.',c:[
+  {l:'Evacuate the city',txt:'Everyone gets out. The city is a crater.',fx:{stability:1,energy:-1}},
+  {l:'Shoot the cable down over the sea',txt:'Your city stands, and the salvage pays for a year of power. The cable lands in the shallows, and a tidal wave floods the coast.',fx:{energy:2,stability:-1}},
+  {l:'Ride up to cut it loose yourself',txt:'You cut it high and early. It falls far out, into the deep sea, like dropped thread.',fx:{stability:3,influence:2},r:['hazard',30,12],f:'The cable snaps early and whips your climber. The city is mostly saved. You, mostly.',ff:{stability:1}}]}
+];
+let renown=0,closeUsed=false,S,emp,trait,deck,turn,log,threat,hp,injT,aug,cores,route;
+const app=document.getElementById('app');
+// Win-rate tracker: one set of 10 games per difficulty, kept in this browser only
+const TARGET={Easy:75,Normal:65,Hard:50}; /* actual guided averages after 2026-11-18 retune: Easy 94.5, Normal 70, Hard 60 */ // shown values set by the owner (lowered 2026-11-18); measured guided averages: Easy 86, Normal 70, Hard 56
+const RANDOM={Easy:19,Normal:12,Hard:21}; /* shown values kept from before the retune at the owner's request; measured now: Easy 33, Normal 12, Hard 24 (open question) */ // a player picking every choice at random (balance-sim --random)
+let REC={Easy:{w:0,n:0},Normal:{w:0,n:0},Hard:{w:0,n:0}};
+try{const r=JSON.parse(localStorage.getItem('ss2rec2'));if(r&&r.Easy&&r.Normal&&r.Hard)REC=r}catch(_){}
+function saveRec(){try{localStorage.setItem('ss2rec2',JSON.stringify(REC))}catch(_){}}
+function record(d,win){let r=REC[d];if(r.n>=10)r=REC[d]={w:0,n:0};r.n++;if(win)r.w++;saveRec()}
+function resetRec(b){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again to reset';setTimeout(()=>{if(document.body.contains(b)){delete b.dataset.armed;b.textContent='Reset win rates'}},3000);return}
+ REC={Easy:{w:0,n:0},Normal:{w:0,n:0},Hard:{w:0,n:0}};saveRec();start()}
+function pct(d){const r=REC[d];return r.n?Math.round(100*r.w/r.n):0}
+function rcls(d){if(!REC[d].n)return'';const p=pct(d),t=TARGET[d];return p>=t-5?'up':p>=t-25?'warn':'down'}
+function recLine(d){const r=REC[d];const done=r.n>=10;
+ const odds=`<span class="odds"><span>Skilled max: ~${TARGET[d]}%</span><span>Random: ~${RANDOM[d]}%</span></span>`;
+ if(!r.n)return `<span class="recl">${odds}</span>`;return `<span class="recl">${done?'Last 10':'Current 10'}: <b class="${rcls(d)}">${r.n?pct(d)+'%':'—'}</b> (${r.w}/${r.n})${done?', resets next game':''}${odds}</span>`}
+function recBox(d){const r=REC[d];const done=r.n>=10;
+ return `<div class="rec"><div><div class="rec-l">${d}: ${done?'last 10 games':'current 10 games'}</div><div class="rec-v ${rcls(d)}">${r.n?pct(d)+'%':'—'}</div></div><div class="rec-r"><b>${r.w}</b> ${r.w===1?'win':'wins'} / <b>${r.n}</b> ${r.n===1?'game':'games'}<br><span class="note">Skilled play wins up to ~${TARGET[d]}%, ${done?'complete, resets next game':`next up: game ${r.n+1} of 10`}</span></div></div>`;
+}
+const clamp=v=>Math.max(0,Math.min(MAX,v));
+const HELP=`<h2>How to play</h2><ol>
+<li><b>Goal:</b> survive 12 turns, then whatever comes for you at the end. You lose if you die or Stability hits 0.</li>
+<li><b>Pick a main stat</b> (Fleet, Influence or Science, usually your empire's best) and raise it every turn. At the end, your power is that stat, plus half your Stability, a quarter of your Energy and half your Renown (rounded down), plus 0–3 luck, minus the Thal penalty.</li>
+<li><b>Get Stability to 6+ and hold it.</b> Energy drops by 1 every turn. Keep it above 0, because blackouts drain Stability.</li>
+<li><b>⚔ means you go in person:</b> big rewards, real danger. Every button shows its odds.</li>
+<li><b>Know your risk limit.</b> Take ⚔ choices up to about 8% death as a Veteran, 5% as a Survivor, or 15% as Daring (your close call covers one mistake). Playing Celest, stay at 5% or less. Skip ⚔ while Injured: it costs 1 Stability, then risks are ×1.5 for 3 turns.</li>
+<li><b>Each ⚔ success earns 1 Renown.</b></li>
+<li><b>Thal Threat rises every turn.</b> At the end it costs 1 power at 5+ and 3 at 8+. Lower it when it's cheap.</li>
+<li><b>Win to unlock the DLC,</b> The Thal Reckoning: 10 more turns with your empire as it is, plus +4 Energy and +3 Stability. Buttons show which choices add progress for your route. Progress counts as power in the final move, which needs 34.</li>
+<li><b>The end:</b> you will need about 16 power. When the moment comes, lead in person (+3) only if you are short.</li>
+</ol><button style="text-align:center" onclick="closeHelp()">Got it</button>`;
+const RULES=`<h2>Rules</h2><ul>
+<li>You get 12 turns. Each turn, pick one of three choices.</li>
+<li>⚔ means you go yourself. Better rewards, but you can get hurt or die.</li>
+<li>If you die or Stability hits 0, you lose.</li>
+<li>Survive the 12 turns and pass the final test to win.</li>
+</ul><h2>Tips</h2><ul>
+<li>Grow your empire's best stat every turn.</li>
+<li>Keep Stability high and Energy above 0.</li>
+</ul><button style="text-align:center" onclick="closeHelp()">Got it</button>`;
+function openHelp(html){closeHelp();const d=document.createElement('div');d.className='help';d.id='help';d.innerHTML=`<div class="card">${html||HELP}</div>`;d.addEventListener('click',e=>{if(e.target===d)closeHelp()});document.body.appendChild(d)}
+function closeHelp(){const h=document.getElementById('help');if(h)h.remove()}
+const HB='<button class="rs" onclick="openHelp()">How to play</button>';
+const RB='<button class="rs" id="rb" onclick="restart()">Restart</button>';
+function restart(){document.getElementById('rb').outerHTML=`<span id="rb" class="rs-wrap"><button class="rs" onclick="clearSave();start()">Yes, restart</button><button class="rs" onclick="document.getElementById('rb').outerHTML=RB">Cancel</button></span>`}
+
+
+// ---------- Leader creator: tiny procedural pixel portraits, styled per empire ----------
+// Vorrani: chitin soldiers in military uniform. Celest: luminous diplomats in robes. Kethari: hive-mind machine bodies.
+const EK=()=>emp?emp.name.split(' ')[0]:'Kethari';
+const SKINS={
+ Vorrani:{Crimson:['#b5534a','#7a2f2b','#d9837a'],Amber:['#c9923f','#8c5e22','#e8bd73'],Olive:['#8a9a4c','#5a6630','#b1c072'],Jet:['#4f5d6b','#2e3843','#7d8b99']},
+ Celest:{Pearl:['#e3e6f0','#a9aec4','#ffffff'],Lilac:['#c3b1ec','#8a74c0','#e6dcff'],Sky:['#9fd2f0','#5f97bd','#d4efff'],Gold:['#eed28f','#b89752','#fff0c4']},
+ Kethari:{Chrome:['#b8c2cc','#6f7a86','#eef3f7'],Brass:['#c9a45c','#8a6a2e','#ecd08f'],Graphite:['#5d646d','#383d44','#8a929c'],Verdigris:['#6fae9c','#3e7364','#a3d8c8']}};
+const OUTFITS={
+ Vorrani:{Crimson:['#7a1f24','#4f1216','#a8333a'],Navy:['#22375e','#15233f','#34508a'],Field:['#4d5a2c','#2f3819','#6b7a3f'],Black:['#26282e','#15161a','#3a3d45']},
+ Celest:{White:['#e9e4d6','#b9b2a0','#ffffff'],Azure:['#4f86c9','#2f5c94','#82b2ea'],Lilac:['#9c82cf','#6b55a0','#c2adf0'],Rose:['#d58aa6','#a35b78','#f0b8cc']},
+ Kethari:{Steel:['#7d8794','#4c535d','#a9b3bf'],Black:['#30343a','#1b1d21','#4a4f57'],White:['#d5dae0','#9aa1aa','#f2f5f8'],Bronze:['#9a6a3c','#663f1f','#c48d58']}};
+const OUTFIT_LABEL={Vorrani:'Uniform',Celest:'Robe',Kethari:'Chassis'};
+const LOOK_BASE={gender:['Male','Female','Nonbinary'],head:['Oval','Wide','Tapered'],eyes:['Two','Three','Visor'],mouth:['Line','Mandibles','Tusks'],crest:['None','Spines','Antennae','Horns']};
+const LOOK_KEYS=['gender','head','skin','eyes','mouth','crest','outfit'];
+function optsFor(k,E){E=E||EK();return k==='skin'?Object.keys(SKINS[E]):k==='outfit'?Object.keys(OUTFITS[E]):LOOK_BASE[k]}
+let look=null;
+function leaderTitle(){if(emp&&emp.name.startsWith('Vorrani')){const g=(look&&look.gender)||'';return g==='Male'?'Warlord-King':g==='Female'?'Warlord-Queen':g==='Nonbinary'?'Warlord-Sovereign':'Warlord-Queen'}return emp.leader}
+function randLook(){const r=a=>a[Math.floor(Math.random()*a.length)];const L={e:EK()};LOOK_KEYS.forEach(k=>L[k]=r(optsFor(k,L.e)));return L}
+function fixLook(L){if(!L)return L;L.e=L.e||EK();LOOK_KEYS.forEach(k=>{const o=optsFor(k,L.e);if(!o.includes(L[k]))L[k]=o[0]});return L}
+function portraitURL(L){
+ if(!L||typeof document.createElement!=='function')return '';
+ fixLook(L);const E=L.e;
+ const c=document.createElement('canvas');c.width=c.height=32;const g=c.getContext('2d');if(!g)return '';
+ const px=(x,y,col)=>{if(x<0||y<0||x>31||y>31)return;g.fillStyle=col;g.fillRect(x,y,1,1)};
+ const OUT='#0e1222';const [sk,sh,hl]=SKINS[E][L.skin];const [cl,cs,ch]=OUTFITS[E][L.outfit];
+ // backdrop
+ if(E==='Vorrani'){g.fillStyle='#2a1418';g.fillRect(0,0,32,32);g.fillStyle='#3d1b20';for(let x=0;x<32;x+=6)g.fillRect(x,0,3,32);g.fillStyle='#5a2a20';g.fillRect(0,0,32,2)}
+ else if(E==='Celest'){g.fillStyle='#1f2350';g.fillRect(0,0,32,32);[[3,4],[27,6],[5,20],[28,18],[24,2]].forEach(([x,y])=>px(x,y,'#cfd8ff'))}
+ else{g.fillStyle='#0f1d1f';g.fillRect(0,0,32,32);g.fillStyle='#16302f';for(let k=0;k<32;k+=5){g.fillRect(k,0,1,32);g.fillRect(0,k,32,1)}[[5,5],[25,10],[10,25],[26,25]].forEach(([x,y])=>px(x,y,'#3fe0b0'))}
+ const G=L.gender||'Nonbinary',sw=G==='Male'?8.5:G==='Female'?6:7.2;
+ const cx=15.5,cy=12.5,rx=L.head==='Wide'?9:L.head==='Tapered'?7:7.5,ry=L.head==='Wide'?7.5:9;
+ const inHead=(x,y)=>{let r=rx;if(L.head==='Tapered'&&y>cy)r=rx*(1-(y-cy)/(ry*1.35));return ((x-cx)/r)**2+((y-cy)/ry)**2<=1};
+ // Celest halo
+ if(E==='Celest')for(let y=0;y<26;y++)for(let x=0;x<32;x++){const d=((x+.5-cx)/(rx+3))**2+((y+.5-cy)/(ry+3))**2;if(d<=1&&d>0.72)px(x,y,'#fff3c4')}
+ // body: shoulders by empire
+ const inBody=(x,y)=>Math.abs(x+.5-15.5)<(y-24)*0.9+sw;
+ for(let y=24;y<32;y++)for(let x=0;x<32;x++)if(inBody(x,y))px(x,y,x<12?cs:x>19?cs:cl);
+ if(E==='Vorrani'){
+  for(let x=12;x<20;x++){px(x,23,cs);px(x,24,ch)}           // high collar
+  for(let k=0;k<4;k++){px(Math.round(15.5-sw-0.5)+k,25,'#e0b64a');px(Math.round(15.5+sw-3.5)+k,25,'#e0b64a')} // epaulettes
+  [27,29,31].forEach(y=>px(16,y,'#e0b64a'));                // buttons
+  px(11,27,'#e0b64a');px(12,27,'#c0392b');px(11,28,'#4a90e2'); // medals
+ }else if(E==='Celest'){
+  for(let k=0;k<7;k++){px(12+Math.floor(k*0.6),24+k,ch);px(19-Math.floor(k*0.6),24+k,ch)} // V-neck trim
+  for(let y=25;y<31;y++)for(let x=13;x<19;x++)if(Math.abs(x+.5-16)<(31-y)*0.55)px(x,y,hl); // under-robe
+  for(let y=26;y<32;y+=2){px(Math.round(15.5-sw)-0,y,ch);px(Math.round(15.5+sw)-1,y,ch)} // soft folds
+ }else{
+  for(let y=25;y<32;y+=3)for(let x=0;x<32;x++)if(inBody(x,y))px(x,y,cs);   // plating seams
+  for(let y=26;y<30;y++)for(let x=14;x<18;x++)px(x,y,(x===15||x===16)&&(y===27||y===28)?'#e8fff8':'#3fe0b0'); // glowing core
+  [[11,22],[20,22]].forEach(([x,y])=>{for(let k=0;k<3;k++)px(x,y+k,'#1a1d22')});px(11,24,'#3fe0b0');px(20,24,'#3fe0b0'); // cables
+ }
+ // neck
+ for(let y=20;y<24;y++)for(let x=13;x<19;x++)px(x,y,x>16?sh:sk);
+ if(E==='Kethari')for(let x=13;x<19;x++){px(x,21,OUT)}
+ // head
+ for(let y=0;y<24;y++)for(let x=0;x<32;x++)if(inHead(x+.5,y+.5)){
+  const edge=!inHead(x-.5,y+.5)||!inHead(x+1.5,y+.5)||!inHead(x+.5,y-.5)||!inHead(x+.5,y+1.5);
+  px(x,y,edge?OUT:(x>cx+rx*0.3?sh:(x<cx-rx*0.4&&y<cy-2?hl:sk)))}
+ if(E==='Vorrani')[[cy-5],[cy+4]].forEach(([y])=>{for(let x=0;x<32;x++)if(inHead(x+.5,y+.5)&&inHead(x-.5,y+.5)&&inHead(x+1.5,y+.5))px(x,Math.round(y),sh)}); // chitin plates
+ if(E==='Kethari'){for(let y=2;y<22;y++)if(inHead(cx,y+.5))px(Math.round(cx+rx*0.35),y,sh);px(15,Math.round(cy-ry+3),'#3fe0b0');px(16,Math.round(cy-ry+3),'#3fe0b0')} // seam + node
+ if(E==='Celest')for(let y=0;y<24;y++)for(let x=0;x<32;x++)if(inHead(x+.5,y+.5)&&x<cx-rx*0.1&&y<cy-3&&(x+y)%5===0)px(x,y,'#ffffff'); // inner light
+ // crest
+ if(L.crest==='Spines')[[11,3],[15,1],[19,3]].forEach(([x,y])=>{for(let k=0;k<4;k++){px(x,y+k,k===0?OUT:sh);px(x+1,y+k+1,sh)}});
+ if(L.crest==='Antennae')[[11,1],[20,1]].forEach(([x,y])=>{for(let k=0;k<4;k++)px(x+(x<16?k*.25:-k*.25)|0,y+k,sh);px(x-1,y-1,'#f2b134');px(x,y-1,'#f2b134')});
+ if(L.crest==='Horns')[-1,1].forEach(d=>{const bx=Math.round(cx+d*(rx-1.5)),by=Math.round(cy-ry*0.55);for(let k=0;k<6;k++){const x=bx+d*Math.floor(k/2);px(x,by-k,k===5?OUT:hl);px(x+d,by-k,OUT)}});
+ // eyes (machine minds glow cyan)
+ const ec=E==='Kethari'?'#5ff0d0':E==='Celest'?'#fff0a8':'#f2b134',pc=E==='Kethari'?'#0b4d40':'#3a2410';
+ const eye=(x,y)=>{px(x,y,ec);px(x+1,y,ec);px(x,y+1,ec);px(x+1,y+1,pc);px(x-1,y,OUT);px(x+2,y,OUT);px(x,y-1,OUT);px(x+1,y-1,OUT)};
+ const ey=L.head==='Wide'?12:11;
+ if(L.eyes==='Visor'){for(let x=10;x<22;x++){px(x,ey,'#7fe0ff');px(x,ey+1,'#3aa0c8');px(x,ey-1,OUT);px(x,ey+2,OUT)}px(11,ey,'#e8fbff');px(12,ey,'#e8fbff')}
+ else{eye(12,ey);eye(18,ey);if(L.eyes==='Three')eye(15,ey-4)}
+ if(L.eyes!=='Visor'){if(G==='Male')for(let x=11;x<21;x++)px(x,ey-2,sh);if(G==='Female'){px(11,ey-1,OUT);px(20,ey-1,OUT);px(12,ey+3,hl);px(19,ey+3,hl)}}
+ if(G==='Nonbinary'){px(15,ey-(L.eyes==='Three'?7:4),'#f2b134');px(16,ey-(L.eyes==='Three'?7:4),'#f2b134')}
+ // mouth
+ const my=L.head==='Wide'?17:18;
+ if(L.mouth==='Line')for(let x=14;x<18;x++)px(x,my,OUT);
+ if(L.mouth==='Mandibles'){[[12,my],[19,my]].forEach(([x,y],i)=>{for(let k=0;k<4;k++)px(x+(i?k*.5:-k*.5)|0,y+k,OUT)});for(let x=14;x<18;x++)px(x,my,OUT)}
+ if(L.mouth==='Tusks'){for(let x=13;x<19;x++)px(x,my,OUT);px(13,my+1,'#f4efe2');px(18,my+1,'#f4efe2');px(13,my+2,'#f4efe2');px(18,my+2,'#f4efe2')}
+ return c.toDataURL();
+}
+function showCreator(){
+ if(!look||look.e!==EK())look=randLook();
+ const lbl={gender:'Gender',head:'Head',skin:'Skin',eyes:'Eyes',mouth:'Mouth',crest:'Crest',outfit:OUTFIT_LABEL[EK()]};
+ const row=k=>`<div class="lrow"><button class="rs" onclick="cycleLook('${k}',-1)" aria-label="Previous ${lbl[k]}">‹</button><span><small>${lbl[k]}</small>${look[k]}</span><button class="rs" onclick="cycleLook('${k}',1)" aria-label="Next ${lbl[k]}">›</button></div>`;
+ app.innerHTML=`<h1>${emp.name}</h1><p class="sub">You are the ${leaderTitle()}. What do you look like?</p><div class="card creator"><img class="bigport" src="${portraitURL(look)}" alt="Your leader's portrait"><div class="lrows">${LOOK_KEYS.map(row).join('')}</div>
+ <div class="crbtns"><button style="text-align:center" onclick="look=randLook();showCreator()">Randomize</button><button class="personal" style="text-align:center" onclick="showEvent()">Begin reign</button></div></div>`;
+}
+function cycleLook(k,d){const o=optsFor(k);look[k]=o[(o.indexOf(look[k])+d+o.length)%o.length];showCreator()}
+// ---------- story threads: dispatches track the Swarm; echoes recall your earlier choices ----------
+const MEMO={"Derelict Megaship": ["The derelict\'s reactor sits in your labs and has never once cooled.", "Your warships still carry armor stripped from the derelict.", "Pilgrims still visit the derelict you left as a monument."], "Thal Envoy": ["The envoy you stared down was quietly reassigned.", "The Thal have not forgotten the envoy you arrested.", "The Thal treat the system you ceded as a precedent."], "Plague on Ossia IV": ["Ossia's cure still bears your scientists' names.", "Ossia remembers the warships at its quarantine line.", "On Ossia, children are named after the ruler who walked the wards."], "Pirate Warlord": ["Red Saxis\'s hoard paid for half your fleet.", "Red Saxis still flies for you, mostly.", "Red Saxis\'s tribute arrives every quarter. Short."], "Signal from the Abyss": ["Your labs keep one speaker tuned to the black hole, just in case.", "Scholars in a dozen empires quote the signal you broadcast.", "The signal you jammed is quiet. The core is not."], "Succession Plot": ["Your admiral still salutes a little too quickly.", "Nobody has dared apply for the purged officers\' posts.", "Your newly promoted officers are still grateful."], "Primitive World": ["The species you uplifted already sends its first students.", "The jungle world has invented the wheel. Twice.", "The jungle world still tells stories about a stranger who visited."], "Galactic Summit": ["The trade charter still opens with your words.", "The delegates you bought have stayed bought.", "The Thal ambassador you beat in the duel still won\'t show his face."], "The Star-Shroud Proposal": ["Your home star wears its collectors like a crown.", "The warships built from the Shroud materials still patrol.", "Pilgrims light candles to the star you spared."], "Border Skirmish": ["Every academy teaches the Vel Nebula as the perfect battle.", "Thal reparations arrive like clockwork.", "Your border outposts bristle with guns. Nobody tests them."], "Rogue AI": ["The AI you named still sends you good-morning messages.", "Kepra Station's crater is still visible from orbit.", "The sealed AI on Kepra still asks for a name."], "Famine Riots": ["Three farm worlds fly your banner beside their own.", "On the riot worlds, your troops are spat at in the street.", "The crowd that chanted your name still gathers sometimes."], "Assassin in the Palace": ["Since the night you fought the assassin, nobody at court interrupts you.", "The assassin who escaped through the vents was never found.", "Court comedians do an impression of your sprint to the bunker."], "The Body Engineers": ["Your augmented body still hums faintly at night.", "Your doctors insist you rest more. You never do.", "Someone out there owns your augmentation research."], "The Drifting Behemoth": ["A hundred cities run on the Behemoth\'s bones.", "Your star-whale tows freighters and hums to them.", "Your traders still take the long way around."], "Thal Spy Ring": ["The Thal war plan you stole is still on your desk.", "The Thal ambassador you expelled came back quieter.", "Somewhere, the Thal are chasing ghosts you invented."], "Gas Giant Mining Rush": ["Someone got very rich in the gas giant rush. Not you.", "The regulated rigs have run a whole year without a fire.", "Miners still tell how you found the mother lode."], "Refugee Fleet": ["The refugees you took in are building new homes.", "The refugees you turned away found shelter with the Thal.", "The refugees you escorted still fly your colors."], "The Ledger Audit": ["The Thal auditors' report on you was spotless.", "The auditor you bribed still sends greeting cards.", "The Thal clerks still blush about their rounding error."], "Comet Harvest": ["Your new fuel moon still bears your name.", "Three empires cite your comet data. None say thank you.", "Your drill still sits on the comet you rode."], "Deserters": ["The deserters fly Thal colors now, badly.", "The deserters you pardoned have something to prove.", "The deserter captain paces your brig, asking about the war."], "The Silent Bio-Ship": ["In its tank, the dissected bio-ship twitches toward the core.", "Ash from the burned bio-ship still drifts toward the core.", "You still know where the core ships\' armor is soft."], "The Varn Referendum": ["Varn still remembers you kept your word.", "Nobody on Varn believes the count.", "Crowds on Varn cheer when your ship passes."], "The Smuggler's Blueprints": ["Your shipyards build on stolen Thal hull plans.", "The Thal mention, often, the smuggler you reported.", "The smuggler still works for you, quietly."], "Solar Storm": ["Your astronomers have written six papers on that flare.", "Your treasury is still paying for the storm shields.", "Engineers still tell how you held the relay."], "The Thal Wager": ["The Thal still mention the wager you declined.", "Your champion at tallies is now a Thal celebrity.", "The Thal ambassador still wants that rematch."], "The Ring Gate": ["The star charts from the Ring Gate grow more useful every day.", "The sealed Ring Gate hums whenever the core stirs.", "Some nights you dream of the worlds beyond the Ring Gate."], "The Falling Elevator": ["The crater where your second city stood is now a memorial.", "The coast is still rebuilding after the tidal wave.", "The cable you cut lies coiled in the deep sea."]};
+const ETAG={"Thal Envoy": "thal", "Galactic Summit": "thal", "Border Skirmish": "thal", "Thal Spy Ring": "thal", "Refugee Fleet": "thal", "The Ledger Audit": "thal", "Deserters": "thal", "The Smuggler's Blueprints": "thal", "The Thal Wager": "thal", "Signal from the Abyss": "core", "The Silent Bio-Ship": "core", "The Ring Gate": "core", "The Drifting Behemoth": "core", "Derelict Megaship": "core", "Plague on Ossia IV": "home", "Succession Plot": "home", "Famine Riots": "home", "Assassin in the Palace": "home", "The Body Engineers": "home", "The Varn Referendum": "home", "Solar Storm": "home", "The Falling Elevator": "home", "The Star-Shroud Proposal": "home", "Pirate Warlord": "frontier", "Primitive World": "frontier", "Rogue AI": "frontier", "Gas Giant Mining Rush": "frontier", "Comet Harvest": "frontier"};
+const DISPATCH=["Deep-space listening posts report nothing unusual. Nothing at all, which is unusual.", "Core trade convoy three days overdue. Insurers stop answering.", "Star near the core goes dark. Astronomers: something is in front of it.", "Core refugees arrive babbling about \"the hungry dark.\"", "Two core outposts go silent. Last transmission: chewing.", "Scanners track a mass the size of a nebula leaving the core.", "The Thal quietly double their border patrols. Not facing you.", "A distant empire's distress call cuts off mid-sentence.", "Scientists still can't name it. They've stopped trying.", "Your coreward colonies report their stars going out, one by one.", "Evacuation drills on every world. Nobody asks where to.", "It reaches your border tomorrow. GNN staff told to go home."];
+let mem=[];
+function echoFor(e){const tg=ETAG[e.t];if(!tg)return '';const m=[...mem].reverse().find(x=>x.tag===tg&&!x.used&&x.from!==e.t);if(!m)return '';m.used=true;return m.text}
+// ---------- DLC: The Thal Reckoning (unlocked by a main-game victory) ----------
+const DLC_TURNS=10,NEED_DLC=34;
+const PROGN={science:'Leverage',influence:'Leverage',military:'Leverage'};
+let dlc=false,prog=0;
+// p = campaign progress, counted only for the route you won with
+const DLC_EVENTS=[
+ {t:'The Bill',x:'A week after the Swarm falls, the Thal send you an invoice for "emergency border protection." It is 400 pages long.',c:[
+  {l:'Pay it in full',txt:'They are delighted. The receipt is even longer.',fx:{energy:-2,stability:1,threat:-2,p:{influence:1}}},
+  {l:'Audit it with your best analysts',txt:'Your analysts find 212 errors and one joke. The Thal do not laugh.',fx:{science:1,threat:1,p:{science:2}}},
+  {l:'Deliver your refusal in person',txt:'You read it aloud on their capital steps. Half the crowd applauds.',fx:{influence:2,threat:-1,p:{influence:3}},r:['intrigue',20,8],f:'Their honor guard objects, with batons.',ff:{p:{influence:1}}}]},
+ {t:'The Border Buildup',x:'Thal warships gather along your border in neat, numbered rows.',c:[
+  {l:'Match their buildup',txt:'Your shipyards run day and night. So do theirs.',fx:{energy:-2,military:2,p:{military:3}}},
+  {l:'Offer a joint patrol',txt:'Your captains and theirs share a bridge, and eventually a joke.',fx:{influence:1,military:-1,p:{influence:2}}},
+  {l:'Fly a recon run yourself',txt:'You map every ship and every weakness, then fly home before breakfast.',fx:{military:1,science:1,p:{military:4}},r:['combat',25,10],f:'Their pickets clip your shuttle on the way out. You limp home.',ff:{p:{military:1}}}]},
+ {t:'The Defector',x:'A senior Thal physicist asks for asylum. She brought her notes. And theirs. Her family is still there.',c:[
+  {l:'Grant asylum',txt:'Your labs gain a genius. The Thal open a file on you.',fx:{science:2,threat:2,p:{science:2}}},
+  {l:'Send her home with an apology',txt:'The Thal send a curt, almost warm, letter of thanks.',fx:{influence:1,threat:-2}},
+  {l:'Smuggle her family out yourself',txt:'Her whole family arrives safely. She gets to work that night.',fx:{science:2,p:{science:3}},r:['intrigue',25,10],f:'Thal customs shoot first and ask nothing.',ff:{p:{science:1}}}]},
+ {t:'Fuel Embargo',x:'The Thal stop selling you starship fuel, "pending review."',c:[
+  {l:'Build synthetic fuel plants',txt:'Expensive, but you never need their fuel again.',fx:{energy:-1,science:1,p:{science:2}}},
+  {l:'Negotiate a quota',txt:'A fair deal. Both sides pretend they won.',fx:{influence:1,energy:1,p:{influence:2}}},
+  {l:'Blockade their trade lanes in return',txt:'Their freighters turn back. Their admirals start studying your fleet.',fx:{military:1,threat:2,p:{military:2}}}]},
+ {t:'The Embassy Fire',x:'The Thal embassy in your capital is burning. Their ambassador is still inside.',c:[
+  {l:'Send your fire crews',txt:'The building is lost, but everyone gets out. The Thal are moved.',fx:{stability:1,influence:1,p:{influence:2}}},
+  {l:'Investigate the cause',txt:'The ambassador gets himself out. Cause: a candle under a stack of forms.',fx:{science:1,threat:-1,p:{science:1}}},
+  {l:'Run in and carry him out yourself',txt:'You walk out of the smoke with the ambassador over your shoulder. Every newsfeed runs it.',fx:{influence:2,stability:1,p:{influence:3}},r:['hazard',30,10],f:'You get him out. The smoke gets you.',ff:{p:{influence:2}}}]},
+ {t:'Stolen Shield Codes',x:'Someone has copied your planetary shield codes. Thal fingerprints are everywhere. It\'s almost too tidy.',c:[
+  {l:'Rewrite every code',txt:'A week of sleepless engineers, and your shields are better than before.',fx:{energy:-2,science:1,p:{science:2}}},
+  {l:'Feed them fake codes and set a fleet trap',txt:'Their fleet rehearses an attack on a shield that does not exist.',fx:{science:1,military:1,p:{military:2,science:1}}},
+  {l:'Hunt the thief down in your warship',txt:'You catch the thief at the spaceport, codes still in hand.',fx:{military:2,threat:-1,p:{military:3}},r:['combat',25,12],f:'The thief was better armed than your spies said.',ff:{p:{military:1}}}]},
+ {t:'The Thal Election',x:'The Thal are choosing a new Hegemon. One candidate wants peace. The other wants your stars.',c:[
+  {l:'Quietly back the moderate',txt:'She wins by a handful of votes. Talks open the next day.',fx:{influence:2,energy:-1,p:{influence:2}}},
+  {l:'Stay out of it',txt:'Your people approve. The Thal barely notice.',fx:{stability:1}},
+  {l:'Fund the hardliner, to justify a war',txt:'She wins, and immediately gives you your reason.',fx:{military:2,threat:2,influence:-1,p:{military:3}}}]},
+ {t:'The Prototype',x:'Your scientists have built something that might end the rivalry, or the lab.',c:[
+  {l:'Test it slowly and safely',txt:'It works, eventually. The paperwork alone is a weapon.',fx:{science:1,p:{science:2}}},
+  {l:'Share it with the Thal as a gesture',txt:'They are stunned. Some of them are grateful.',fx:{science:-1,influence:2,threat:-1,p:{influence:1}}},
+  {l:'Pilot the prototype yourself',txt:'For one hour, you are the fastest thing in the galaxy.',fx:{science:3,p:{science:4}},r:['hazard',30,12],f:'It works, right up until it explodes.',ff:{p:{science:2}}}]},
+ {t:'The Ultimatum',x:'The Thal demand an answer: submit, sign, or fight. They have prepared all three forms.',c:[
+  {l:'Mobilize every fleet',txt:'Your answer arrives in formation.',fx:{energy:-2,military:2,p:{military:3}}},
+  {l:'Call a summit',txt:'Every empire comes. The Thal cannot refuse in front of all of them.',fx:{influence:1,energy:-1,p:{influence:3}}},
+  {l:'Unveil your new technology',txt:'The Thal delegation goes very quiet, then asks for a recess.',fx:{science:1,threat:1,p:{science:3}}}]},
+ {t:'The Last Ledger',x:'The Thal Hegemon invites you to her flagship to "close the account." Alone.',c:[
+  {l:'Sign the terms they wrote',txt:'Peace, on their terms. Your court exhales.',fx:{stability:1,threat:-3}},
+  {l:'Send your diplomats to rewrite the terms',txt:'Three days of edits. The final draft favors you, slightly.',fx:{influence:1,p:{influence:2}}},
+  {l:'Walk onto her flagship alone',txt:'You close the account face to face. The Thal will remember that you came.',fx:{p:{military:2,influence:2,science:2}},r:['intrigue',25,15],f:'They search you. Thoroughly. Then the guards get rough.',ff:{}}]}
+];
+function startDLC(){dlc=true;prog=0;turn=1;news=DLC_NEWS_START;deck=[...DLC_EVENTS];log=[];
+ const fx=apply({energy:4,stability:3});saveGame(1);
+ app.innerHTML=header()+`<div class="card"><div class="turn">The Thal Reckoning</div><h2>The Swarm is gone. The Thal are not.</h2><p>Your victory buys you goodwill at home. The Thal Hegemony, which spent the war filing complaints, now wants your stars. You have 10 turns to settle this, using your ${LABELS[route]}.</p><div class="delta">${fmt(fx)||''}</div><p class="note">Victory celebrations: +4 Energy, +3 Stability (up to the cap of 15).</p><button onclick="showEvent()">Begin</button></div>`}
+function showDLCFinal(){
+ const b=basePower(route);const t=b.stat+b.stab+b.en+b.ren+b.prog-b.pen;
+ const goal={science:'Prove technological supremacy',influence:'Bring the Thal into your federation',military:'Break the Thal navy'}[route];
+ app.innerHTML=header()+`<div class="card"><div class="turn">The Thal Reckoning: final move</div><h2>${goal}</h2><p>Ten turns of maneuvering come down to this.</p>
+ <button onclick="pickRoute('${route}')">Make your move<small class="eq"><span class="gauge"><i style="width:${Math.min(100,Math.round(100*t/NEED_DLC))}%"></i></span><span class="gv"><b>${t}</b> power, need ${NEED_DLC} <span class="need">(+0–3 luck)</span></span><span class="bd">${icon(route)}${b.stat} + ${icon('stability')}${b.stab} + ${icon('energy')}${b.en}${b.ren?` + ${icon('star')}${b.ren}`:''} + ${icon('flag')}${b.prog}${b.pen?` − ${icon('thal')}${b.pen}`:''}</span></small></button>
+ <p class="note">${PROGN[route]} is the campaign progress you earned for your route. Thal Threat still costs you power: −1 at 5+, −3 at 8+.</p></div>`;
+}
+// Autosave: survives page reloads (app switching, updates). One save per browser.
+const SAVE='ss2v2save';
+function saveGame(t){try{localStorage.setItem(SAVE,JSON.stringify({e:EMPIRES.indexOf(emp),t:TRAITS.indexOf(trait),S,turn:t,deck:deck.map(d=>d.t),log,threat,hp,injT,aug,cores,closeUsed,renown,dlc,prog,route,look,mem,news}))}catch(_){}}
+function clearSave(){try{localStorage.removeItem(SAVE)}catch(_){}}
+function loadSave(){try{const g=JSON.parse(localStorage.getItem(SAVE));return g&&EMPIRES[g.e]&&TRAITS[g.t]&&g.deck&&g.deck.every(t=>EVENTS.some(e=>e.t===t)||DLC_EVENTS.some(e=>e.t===t))?g:null}catch(_){return null}}
+function resume(){const g=loadSave();if(!g){clearSave();return start()}
+ emp=EMPIRES[g.e];trait=TRAITS[g.t];S=g.S;turn=g.turn;deck=g.deck.map(t=>EVENTS.find(e=>e.t===t)||DLC_EVENTS.find(e=>e.t===t));dlc=!!g.dlc;prog=g.prog||0;look=g.look||null;mem=g.mem||[];news=g.news||'';if(g.route)route=g.route;log=g.log||[];threat=g.threat;hp=g.hp;injT=g.injT;aug=g.aug;cores=g.cores;closeUsed=g.closeUsed;renown=g.renown||0;showEvent()}
+function start(){
+ app.innerHTML=`${splash()?`<img class="splash" src="${splash()}" alt="">`:''}<h1 class="logo"><span class="l1">STAR SOVEREIGN</span> <span class="l2">II</span></h1><p class="note" style="margin:0 0 10px">3rd Edition</p><p class="sub">Twelve turns. Then it arrives.</p><div class="introbox"><p class="intro">Build your empire, then defend it. Choose ⚔ to go in person: bigger rewards, real danger. Keep your people loyal and the Thal in check.</p></div><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="openHelp(RULES)">Rules</button><button class="rs" style="float:none;margin:-6px 0 14px" onclick="openHelp()">How to play</button>
+ ${loadSave()?`<div class="card"><h2>Game in progress</h2><button onclick="resume()">Resume your game</button></div>`:''}<div class="card"><h2>Choose your empire</h2><p class="note" style="margin:0 0 10px">Skilled max is about the best a good player typically wins over many games.</p>${EMPIRES.map((e,i)=>`<button onclick="pickEmp(${i})"><b>${e.name}</b> <span class="diff d-${e.diff}">${e.diff}</span><small>${e.desc}<br><span class="warn">${e.perk}</span><br>${recLine(e.diff)}</small></button>`).join('')}<button class="rs" style="float:none;display:block;margin:6px auto 0" onclick="resetRec(this)">Reset win rates</button></div>`;
+}
+function pickEmp(i){
+ emp=EMPIRES[i];
+ app.innerHTML=`<h1>${emp.name}</h1><p class="sub">You are the ${emp.name.startsWith('Vorrani')?'Warlord':emp.leader}.</p><div class="card"><h2>What kind of leader are you?</h2>${TRAITS.map((t,j)=>`<button onclick="pickTrait(${j})"><b>${t.name}</b><small>${t.desc}</small></button>`).join('')}</div>`;
+}
+function pickTrait(j){
+ trait=TRAITS[j];closeUsed=false;renown=0;mem=[];EVENTS.forEach(x=>{delete x._echoTurn;delete x._echo});S={...emp.s};turn=1;log=[];threat=3;hp='Healthy';injT=0;aug=false;
+ cores=emp.name.startsWith('Kethari')?1:0;
+ deck=[...EVENTS];for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}deck=deck.slice(0,TURNS); // fair shuffle
+ look=null;showCreator();
+}
+function risk(cat,inj,death){
+ let m=1,dm=1,im=1;
+ if(emp.name.startsWith('Vorrani'))im*=0.6;
+ if(emp.name.startsWith('Celest')&&cat==='intrigue')m*=.4;
+ if(emp.name.startsWith('Kethari')&&cat==='hazard')m*=.7;
+ if(trait.id==='veteran'&&cat==='combat')m*=.5;
+ if(trait.id==='survivor')dm*=.5;
+ if(trait.id==='daring')m*=1.25;
+ if(aug)m*=.8;
+ if(hp==='Injured')m*=1.5;
+ return{inj:Math.min(60,Math.round(inj*m*im)),death:Math.min(50,Math.round(death*m*dm))};
+}
+// hand-drawn 7x7 stat icons
+const ICONS={heart:['#e8665a',['.##.##.','#######','#######','.#####.','..###..','...#...','.......']],star:['#f2b134',['...#...','..###..','#######','.#####.','.##.##.','##...##','.......']],thal:['#9fc4b4',['.#####.','#######','##.#.##','#######','.#####.','.#.#.#.','.......']],flag:['#7fd0e0',['##.....','####...','######.','####...','##.....','#......','#......']],energy:['#f2b134',['...##..','..##...','.##....','#####..','...##..','..##...','.##....']],
+ military:['#7fd0e0',['#......','##.....','.###...','.#####.','.###...','##.....','#......']],
+ science:['#86d38f',['..###..','...#...','...#...','..#.#..','.#...#.','#.###.#','.#####.']],
+ influence:['#f2b134',['...#...','...#...','#######','.#####.','..###..','.##.##.','.#...#.']],
+ stability:['#c9d6ff',['#######','#.....#','#.###.#','#.###.#','.#.#.#.','..#.#..','...#...']]};
+function icon(k){const [col,rows]=ICONS[k];let r='';rows.forEach((row,y)=>[...row].forEach((ch,x)=>{if(ch==='#')r+=`<rect x="${x}" y="${y}" width="1" height="1"/>`}));return `<svg class="ico" viewBox="0 0 7 7" fill="${col}" shape-rendering="crispEdges" aria-hidden="true">${r}</svg>`}
+function statBar(){return `<div class="stats">${Object.keys(LABELS).map(k=>`<div class="stat" aria-label="${LABELS[k]} ${S[k]}">${icon(k)}<b>${S[k]}</b><span>${LABELS[k]}</span></div>`).join('')}</div>`}
+function header(){const _h='<button class="rs" onclick="openHelp()" aria-label="How to play">?</button><button class="rs" onclick="openHelp(RULES)">Rules</button>';
+ const hcls=hp==='Healthy'?'up':'down';
+ return `<div class="topbar">${_h}${RB}</div><div class="plate">${look?`<img class="hport" src="${portraitURL(look)}" alt="">`:''}<div><div class="pname">${emp.name}</div><div class="ptitle">${leaderTitle()}, ${trait.name}${aug?', Augmented':''}${cores?', 1 backup core':''}${trait.id==='daring'&&!closeUsed?', close call ready':''}</div></div></div>${statBar()}
+ <div class="hud"><span class="pill" title="Leader">${icon('heart')}<b class="${hcls}">${hp==='Healthy'?'Healthy':'Hurt '+injT}</b></span><span class="pill" title="Renown">${icon('star')}<b>${renown}</b></span>${dlc?`<span class="pill" title="${PROGN[route]}">${icon('flag')}<b>${prog}</b></span>`:''}<span class="pill" title="Thal Threat">${icon('thal')}Thal <b class="${threat>=8?'down':threat>=5?'warn':'up'}">${threat}/10</b></span></div>`;
+}
+function logBox(){return log.length?`<div class="card log">${log.slice().reverse().map(l=>`<div>${l}</div>`).join('')}</div>`:''}
+function saveNote(){return trait&&trait.id==='daring'&&!closeUsed?' (your close call turns it into a bad injury)':cores?' (your backup core brings you back)':''}
+function progTag(c){if(!dlc)return '';const a=(c.fx.p||{})[route]||0,f=c.r?((c.ff||{}).p||{})[route]||0:0;if(!a&&!f)return '';return `<small class="up">+${a} ${PROGN[route]}${c.r?(f?` if it succeeds (+${f} if it fails)`:' if it succeeds'):''}</small>`}
+function statTag(c){const k=dlc?route:BEST[EK()];if(!((c.fx||{})[k]>0))return '';return `<small class="gain">${icon(k)} Builds ${LABELS[k]}${c.r?' if it succeeds':''}</small>`}
+function choiceBtn(c,i){
+ if(!c.r)return `<button onclick="choose(${i})">${c.l}${progTag(c)}</button>`;
+ const k=risk(c.r[0],c.r[1],c.r[2]);const lethal=k.death>=10;
+ return `<button class="personal ${lethal?'lethal':''}" onclick="choose(${i})">⚔ ${c.l}${progTag(c)}<span class="risk">${lethal?'☠ Deadly. ':''}${CAT[c.r[0]]} risk: ${k.inj}% injury, ${k.death}% death${k.death?saveNote():''}</span></button>`;
+}
+function vignette(t){let sd=[...t].reduce((a,c)=>a*31+c.charCodeAt(0)>>>0,7)||7;const rn=()=>(sd=(sd*16807)%2147483647)/2147483647;
+ return spriteFn('vig:'+t,80,28,(()=>{const pal=[['#c9845a','#6e3a2c'],['#7fb069','#3d5a30'],['#9d84cc','#4c3a72'],['#6fb7c4','#2f5f6a'],['#d9c27a','#7a6a30']][rn()*5|0];
+  const pr=6+(rn()*10|0),px=10+(rn()*60|0),py=rn()<.5?pr+2:28+pr*.4,kind=rn();const stars=new Set();for(let k=0;k<26;k++)stars.add((rn()*80|0)+','+(rn()*28|0));
+  const sx=20+(rn()*40|0),sy=6+(rn()*16|0);const T=t.toLowerCase();const spr=/swarm|bio/.test(T)?'bug':/thal|ledger|wager|census|embassy|audit|bill|ultimatum|election|envoy|spy/.test(T)?'thal':/fleet|pirate|desert|border|skirmish|refugee|smuggl/.test(T)?'ship':null;
+  return (x,y)=>{const d=Math.hypot(x-px,y-py);if(d<=pr){const sh=(x-px+(y-py)*.5)/pr;return sh>.35?pal[1]:(sh>.15&&(x+y)%2?pal[1]:pal[0])}
+   if(spr){const R={ship:['aa.........','.aab.......','.abbbb.....','aabbbbbbcc.','.abbbb.....','.aab.......','aa.........'],bug:['.r.....r.','..rdddr..','.ddddddd.','rddoyoddr','.ddddddd.','..rdddr..','.r.....r.'],thal:['...gggggggg','..glllllllg','.glllldlllg','glllllllllg','.gllllllllg','..ggggggggg']}[spr],P={a:'#2f5a96',b:'#9fd8ff',c:'#fff',r:'#a01a2c',d:'#3c0814',o:'#ff3d33',y:'#ffcf9e',g:'#3d5750',l:'#bcd0c6'};for(const [ox,oy] of [[0,0],[13,6],[-12,8]]){const r=R[y-sy-oy];if(r&&x>=sx+ox&&x<sx+ox+r.length){const c=P[r[x-sx-ox]];if(c)return c}}}
+   if(!spr&&kind<.45&&Math.abs(x-sx)<=4&&Math.abs(y-sy)<=1)return x===sx+4?'#ffffff':'#9aa6c0';
+   if(kind>=.45&&kind<.75&&Math.abs(x-sx)+Math.abs(y-sy)*2<=5)return (x+y)%2?'#c9d6ff':'#7f8fc9';
+   if(stars.has(x+','+y))return (x*y)%3?'#5a6796':'#ffffff';return '#0a0f22'}})())}
+function splash(){return spriteFn('splash',120,52,(()=>{let sd=11;const rn=()=>(sd=(sd*16807)%2147483647)/2147483647;const st=new Set();for(let k=0;k<70;k++)st.add((rn()*120|0)+','+(rn()*52|0));
+ const ship=["aa.........",".aab.......",".abbbb.....","aabbbbbbcc.",".abbbb.....",".aab.......","aa........."],bug=[".r.....r.","..rdddr..",".ddddddd.","rddoyoddr",".ddddddd.","..rdddr..",".r.....r."];
+ const SP=[];[[18,30],[28,22],[30,36],[40,28]].forEach(([x,y])=>SP.push([x,y,ship,{a:'#2f5a96',b:'#9fd8ff',c:'#ffffff'}]));
+ const EY=new Set();for(let k=0;k<7;k++){const ex=80+(rn()*30|0),ey=6+(rn()*30|0);EY.add(ex+','+ey);EY.add((ex+3)+','+ey)}
+ return (x,y)=>{for(const [sx,sy,rows,pal] of SP){const r=rows[y-sy];if(r&&x>=sx&&x<sx+r.length){const c=pal[r[x-sx]];if(c)return c}}
+  const d=Math.hypot(x-104,y-58);if(d<26){const sh=(x-104+(y-58)*.3)/26;return sh>-.05?'#3c2025':(sh>-.25&&(x+y)%2)?'#6e3a2c':'#b8704a'}
+  if(EY.has(x+','+y))return '#ff3d33';
+  if(st.has(x+','+y))return (x+y)%4?'#5a6796':'#ffffff';
+  const v=Math.sin(x*.07)+Math.cos(y*.11);if(v>1.3&&(x+y)%2)return '#1c2350';return '#0c1228'}})())}
+const BEST={Vorrani:'military',Celest:'influence',Kethari:'science'};
+function showEvent(){
+ saveGame(turn);
+ if(turn>(dlc?DLC_TURNS:TURNS))return dlc?showDLCFinal():showFinal();
+ const e=deck[turn-1];
+ app.innerHTML=header()+`<div class="card"><div class="turn">${dlc?'The Thal Reckoning, turn':'Turn'} ${turn} of ${dlc?DLC_TURNS:TURNS}</div><span class="beststat">${(()=>{const k=dlc?route:BEST[EK()];return `Best stat: ${icon(k)} ${LABELS[k]}`})()}</span><h2>${e.t}</h2>${(()=>{if(dlc)return '';if(e._echoTurn!==turn){e._echo=echoFor(e);e._echoTurn=turn}return e._echo?`<p class="echo">${e._echo}</p>`:''})()}<p>${e.x}</p>${e.c.map(choiceBtn).join('')}${(dlc?news:DISPATCH[turn-1])?`<div class="dispatch"><span class="bn-tag"><i></i>GNN</span> ${dlc?news:DISPATCH[turn-1]}</div>`:''}</div>`+logBox();
+}
+function fmt(fx){const a=Object.entries(fx).filter(([k,v])=>v).map(([k,v])=>{const lbl=k==='threat'?'Thal Threat':LABELS[k];const good=k==='threat'?v<0:v>0;return `<span class="${good?'up':'down'}">${v>0?'+':''}${v} ${lbl}</span>`});return a.join(', ')}
+function apply(fx){const real={};for(const k in fx){if(k==='threat'){const o=threat;threat=Math.max(0,Math.min(10,threat+fx[k]));real[k]=threat-o}else{const o=S[k];S[k]=clamp(S[k]+fx[k]);real[k]=S[k]-o}}return real}
+// returns 'ok' | 'injured' | 'dead' | 'saved'
+function roll(r){
+ const k=risk(r[0],r[1],r[2]);const x=Math.random()*100;
+ if(x<k.death){if(trait.id==='daring'&&!closeUsed){closeUsed=true;hp='Injured';injT=3;S.stability=clamp(S.stability-1);return 'close'}if(cores){cores=0;hp='Injured';injT=3;S.stability=clamp(S.stability-2);return 'saved'}return 'dead'}
+ if(x<k.death+k.inj){hp='Injured';injT=3;return 'injured'}
+ return 'ok';
+}
+const DLC_NEWS={"The Bill": [["Thal treasury posts record quarter. Your accountants weep."], ["212 errors found in Thal invoice. Thal deny the joke was on purpose."], ["Sovereign says \"no\" on the Thal capital steps. Half the crowd cheers.", "Thal honor guard removes visiting Sovereign from capital steps. Firmly."]], "The Border Buildup": [["Shipyards on both sides of the border report record overtime."], ["First joint Thal patrol ends with nobody shot. Officials stunned."], ["Thal admirals deny a mystery shuttle mapped their fleet before breakfast.", "Thal pickets fire on a mystery shuttle. Pilot \"limping, but furious.\""]], "The Defector": [["Top Thal physicist defects. The Thal call it \"theft of a person.\""], ["Defector sent home. The Hegemony replies with unusual warmth."], ["Defector's family slips past Thal customs. Customs chief resigns.", "Shots fired at Thal customs. Extraction attempt goes badly."]], "Fuel Embargo": [["Synthetic fuel plants come online. Thal fuel prices quietly drop."], ["Fuel quota signed. Both sides declare victory."], ["Blockade turns back Thal freighters. Thal admirals cancel all leave."]], "The Embassy Fire": [["Embassy fire contained. Thal ambassador thanks your crews in person."], ["Embassy fire cause found: one candle, many forms."], ["Sovereign carries Thal ambassador out of burning embassy. Footage everywhere.", "Sovereign hospitalized after embassy rescue. Ambassador unharmed."]], "Stolen Shield Codes": [["Planetary shields rebuilt from scratch. Engineers finally sleep."], ["Thal fleet seen drilling against a shield that may not exist."], ["Code thief arrested at the spaceport, codes still in hand.", "Spaceport firefight: code thief escapes, Sovereign wounded."]], "The Thal Election": [["Moderate wins Thal election by a handful of votes. Talks to open."], ["The Thal choose a new Hegemon. Your court shrugs."], ["Hardliner wins Thal election. Her first speech names your empire."]], "The Prototype": [["Secret prototype passes final test. Its manual is 3,000 pages."], ["Sovereign shares prototype with the Thal. Thal scientists speechless."], ["Unknown craft breaks the galactic speed record. Sovereign suspected.", "Explosion at the test range. Sovereign \"mostly fine.\""]], "The Ultimatum": [["Every fleet mobilized. Thal ultimatum answered in formation."], ["Galactic summit called. Thal attendance \"not optional.\""], ["New technology unveiled. Thal delegation asks for a recess."]]};
+const DLC_NEWS_START='Swarm gone. Galactic markets rally. So do Thal lawyers.';
+let news='';
+function choose(i){
+ const e=deck[turn-1],c=e.c[i];let txt=c.txt,fx={...c.fx},tag='';
+ if(c.r){
+  const o=roll(c.r);
+  if(o==='dead')return end(false,'The Line Ends',`<b>${e.t}:</b> You chose to ${c.l.toLowerCase()}. It was your last choice. Without its ${leaderTitle()}, your empire splinters ${dlc?'and the Thal simply file it under "acquired"':'long before the end even arrives'}.`);
+  if(o==='ok'){if(trait.id==='daring')for(const k in fx)if(fx[k]>0&&k!=='threat')fx[k]++;renown++;tag=`<b class="up">Success!</b> <span class="note">(+1 Renown)</span> `;if(c.aug){aug=true;hp='Healthy';injT=0}}
+  else{txt=c.f;fx={...c.ff};
+   if(o==='close'){tag='<b class="warn">Close call!</b> That should have killed you. It didn\'t. You are badly hurt (−2 Stability). ';S.stability=clamp(S.stability-1);}
+   else if(o==='saved'){tag='<b class="warn">Core reboot!</b> You died, but your mind restores from a backup core. You are injured, and the empire is shaken (−2 Stability).';txt='';}
+   else{tag='<b class="down">Injured!</b> (−1 Stability) ';S.stability=clamp(S.stability-1)}}
+ }
+ if(c.heal){hp='Healthy';injT=0}
+ if(dlc){const failed=c.r&&!tag.includes('Success'),n=(DLC_NEWS[e.t]||[])[i];news=n?(failed&&n[1]?n[1]:n[0]):''}
+ if(!dlc&&MEMO[e.t]){const failed=c.r&&!tag.includes('Success');mem.push({tag:ETAG[e.t],from:e.t,text:failed?`You still carry a reminder of the ${e.t.replace(/^The /,'')}.`:MEMO[e.t][i]})}
+ let pg=0;if(fx.p){if(dlc)pg=fx.p[route]||0;delete fx.p}prog+=pg;
+ fx=apply(fx);
+ log.push(`T${turn} ${e.t}: ${c.l}${tag?' ('+tag.replace(/<[^>]+>/g,'').split('!')[0].split('.')[0]+')':''}`);
+ // upkeep
+ let up=[];
+ if(S.energy>0){S.energy--;up.push('−1 Energy (upkeep)')}else up.push('Energy reserves empty');
+ if(S.energy===0){S.stability=clamp(S.stability-1);up.push('<span class="down">Blackouts! −1 Stability</span>')}
+ if(threat<10){threat++;up.push('+1 Thal Threat')}
+ if(hp==='Injured'&&!tag.includes('Injured')&&!tag.includes('Core reboot')&&!tag.includes('Close call')){injT--;if(injT<=0){hp='Healthy';up.push('<span class="up">You have recovered.</span>')}}
+ if(S.stability<=0)return end(false,'Coup','Your own guards turn on you in the throne room. By evening, your portraits are being repainted.'+VOICE[EK()][2]);
+ saveGame(turn+1);
+ const mood=c.r&&look?(tag.includes('Success')?'good':'bad'):null; // reactions only for ⚔ outcomes
+ app.innerHTML=header()+`<div class="card result"><div class="turn">Turn ${turn}</div>${mood?`<div class="react ${mood}"><img src="${portraitURL(look)}" alt="">${mood==='good'?'<i></i><i></i><i></i>':''}</div>`:''}<p>${tag}${txt}</p><div class="delta">${[fmt(fx),pg?`<span class="up">+${pg} ${PROGN[route]}</span>`:''].filter(x=>x).join(', ')||'<span class="note">No change.</span>'}</div><div class="delta note">${up.join(', ')}</div><button onclick="next()">Continue</button></div>`;
+}
+function next(){turn++;showEvent()}
+function basePower(k){const pen=threat>=8?3:threat>=5?1:0;return{stat:S[k],stab:Math.floor(S.stability/2),en:Math.floor(S.energy/4),ren:Math.floor(renown/2),prog:dlc?prog:0,pen}}
+const VOICE={Vorrani:['Your warriors begin to sing.',' Your warriors sing over the wreckage until dawn.',' The hive picks a new voice by nightfall.'],Celest:['Your people grow very bright and very still.',' The Celest do not cheer. They glow, softly, for a week.',' It is done without a single raised voice.'],Kethari:['A trillion minds go quiet to listen.',' The Collective logs the result: survival. A trillion minds vote to celebrate.',' The Collective votes you out, a trillion to one.']};
+function showFinal(){
+ const R=[['Lead the combined fleet','military'],['Unite the galaxy under your banner','influence'],['Fire the experimental star-cannon','science']];
+ app.innerHTML=header()+`<div class="card"><div class="turn">Final battle</div><h2>The Core Swarm</h2><p>Bio-ships pour from the galactic core, eating planets like fruit. Three empires fell this week. You\'re next. ${VOICE[EK()][0]}</p>
+ ${R.map(([l,k])=>{const b=basePower(k);const t=b.stat+b.stab+b.en+b.ren-b.pen;return `<button onclick="pickRoute('${k}')">${l}<small class="eq"><span class="gauge"><i style="width:${Math.min(100,Math.round(100*t/NEED))}%"></i></span><span class="gv"><b>${t}</b> power, need ${NEED} <span class="need">(+0–3 luck)</span></span><span class="bd">${icon(k)}${b.stat} + ${icon('stability')}${b.stab} + ${icon('energy')}${b.en}${b.ren?` + ${icon('star')}${b.ren}`:''}${b.pen?` − ${icon('thal')}${b.pen}`:''}</span></small></button>`}).join('')}
+ <p class="note">The Thal stab you in the back if their Threat is 5+ (−1) or 8+ (−3).</p></div>`;
+}
+function pickRoute(k){
+ route=k;const r=risk('combat',25,20);
+ app.innerHTML=header()+`<div class="card"><div class="turn">Final battle</div><h2>Where will you fight?</h2>
+ <button onclick="finale(false)">Command from the rear<small>Safe. No bonus.</small></button>
+ <button class="personal ${r.death>=10?'lethal':''}" onclick="finale(true)">⚔ Lead from the front: +3 power<span class="risk">${r.death>=10?'☠ Deadly. ':''}Combat risk: ${r.inj}% injury (lose the bonus), ${r.death}% death${saveNote()}</span></button></div>`;
+}
+function finale(front){
+ const b=basePower(route);let p=b.stat+b.stab+b.en+b.ren+b.prog-b.pen+Math.floor(Math.random()*4),note='';
+ if(front){const o=roll(['combat',25,20]);
+  if(o==='dead')return end(false,'Fallen Sovereign',dlc?'You lead the final move in person and do not come back. The Thal send flowers, and an invoice.':'You charge the Swarm queen and do not come back. Leaderless, your fleet is eaten by dawn.');
+  if(o==='ok'){p+=3;note='You led from the front: +3. '}
+  else if(o==='saved'){const g=3-(b.stab-Math.floor(S.stability/2));p+=g;note=`You died at the front, rebooted from a backup core and kept fighting: +3, minus ${3-g} from the shaken court. `}
+  else if(o==='close'){const l=b.stab-Math.floor(S.stability/2);p-=l;note=`A blow that should have killed you knocks you out of the fight. Close call, no bonus${l?`, minus ${l} from the shaken court`:''}. `}
+  else note='You were wounded early and pulled from the line: no bonus. '}
+ const need=dlc?NEED_DLC:NEED,win=p>=need;
+ if(dlc){const T={science:['Technological Supremacy','Your shields shrug off their best weapons, and your ships outrun their fastest. The Thal ledger now lists you as "unbeatable (provisional)." There is no war, because there is no point.','Annihilated','Their engineers crack your shield in a weekend. Your flagship goes dark first, and the rest follow. The Thal annex what is left.'],influence:['The Thal Join the Federation','The Hegemony signs your federation charter, after proposing 1,400 amendments. They insist on keeping the minutes. You let them.','The Thal Prepare for War','The Thal reject your charter, shred it in triplicate, and recall every warship they own. Their fleets are massing on your border. Your border worlds can see their engines.'],military:['The Thal Navy Is No More','Their fleet breaks at the Vel Nebula. The Hegemony\'s navy now exists only on paper, which they still file.','Annihilated','The Thal navy turns out to be better than its paperwork. Your fleet is destroyed ship by ship, and your empire is annexed by Tuesday.']}[route];return end(win,win?T[0]:T[2],(win?T[1]:T[3])+`<br><br><small class="note">${note}Final power ${p}, needed ${need}.</small>`,true)}
+ const text={military:['The burning Swarm queen breaks apart, and your fleet forms up around your flagship.','Your fleet fires one heroic shot. It bounces off the queen and back into your flagship. The Swarm is briefly confused. Then it eats you.'],
+  influence:['A hundred species, one banner, one volley. The Swarm breaks against it.','You give a stirring speech. Your allies show up, say "yeah... no," and warp away. The Swarm waits politely for the speech to end. Then it eats you.'],
+  science:['The star-cannon fires. For one second there are two suns, and then no Swarm.','Your star-cannon charges for a dramatic eternity, says "pew", and drops one sad spark. The Swarm sniffs it. Then it eats you.']}[route];
+ end(win,win?'Victory':'Defeat',text[win?0:1]+(win&&S.stability>0?VOICE[EK()][1]:'')+(win&&S.stability===0?' The throne room is empty when you return. Victory is enough, for now.':'')+`<br><br><small class="note">${note}Final power ${p}, needed ${need}.</small>`,true);
+}
+// ---------- pixel sprites for battles (drawn once, cached as data URLs) ----------
+const SPR={};
+function sprite(name,rows,pal){if(SPR[name]!==undefined)return SPR[name];if(typeof document.createElement!=='function')return SPR[name]='';
+ const h=rows.length,w=rows[0].length,c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');if(!g)return SPR[name]='';
+ rows.forEach((r,y)=>[...r].forEach((ch,x)=>{if(pal[ch]){g.fillStyle=pal[ch];g.fillRect(x,y,1,1)}}));return SPR[name]=c.toDataURL()}
+function spriteFn(name,w,h,fn){if(SPR[name]!==undefined)return SPR[name];if(typeof document.createElement!=='function')return SPR[name]='';
+ const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');if(!g)return SPR[name]='';
+ for(let y=0;y<h;y++)for(let x=0;x<w;x++){const col=fn(x,y);if(col){g.fillStyle=col;g.fillRect(x,y,1,1)}}return SPR[name]=c.toDataURL()}
+function sprites(){
+ const ship=["aa.........",".aab.......",".abbbb.....","aabbbbbbcc.",".abbbb.....",".aab.......","aa........."];
+ const css=[];const put=(sel,url)=>{if(url)css.push(`${sel}{background-image:url(${url})}`)};
+ put('.ship',sprite('ship',ship,{a:'#2f5a96',b:'#9fd8ff',c:'#ffffff'}));
+ ['#6ee7a8','#ffc46b','#c58bff','#ff9ad5','#7cc4ff','#9be7ff'].forEach((col,i)=>put(`.ally.c${i}`,sprite('ally'+i,ship,{a:'#1b2547',b:col,c:'#ffffff'})));
+ put('.bug i',sprite('bug',[".r.....r.","..rdddr..",".ddddddd.","rddoyoddr",".ddddddd.","..rdddr..",".r.....r."],{r:'#a01a2c',d:'#3c0814',o:'#ff3d33',y:'#ffcf9e'}));
+ put('.thal',sprite('thal',["...gggggggg","..glllllllg",".glllldlllg","glllllllllg",".gllllllllg","..ggggggggg"],{g:'#3d5750',l:'#bcd0c6',d:'#2f4540'}));
+ put('.kboom',sprite('boom',["....y....","..y.o.y..","...ooo...","y.owwwo.y",".oowwwoo.","y.owwwo.y","...ooo...","..y.o.y..","....y...."],{y:'#ffd27a',o:'#ff7a3d',w:'#ffffff'}));
+ put('.flash,.spark',sprite('flash',["..w..",".wcw.","wcwcw",".wcw.","..w.."],{w:'#ffffff',c:'#9fd8ff'}));
+ put('.sun',spriteFn('sun',15,15,(x,y)=>{const d=Math.hypot(x-7,y-7);return d>7.4?null:d>6.2?'#ff9a3c':d>3.5?((x+y)%2?'#ffd36b':'#ffb347'):'#fff4c8'}));
+ put('.shield',spriteFn('shield',22,22,(x,y)=>{const d=Math.hypot(x-10.5,y-10.5);return d>10.8?null:d>9.6?'#9fd8ff':(d>8.4&&(x+y)%2)?'#4f8fbf':null}));
+ put('.emp',spriteFn('emp',22,22,(x,y)=>{const d=Math.hypot(x-10.5,y-10.5);return d>10.8||d<9.6?null:'#bfe9ff'}));
+ put('.maw',spriteFn('maw',24,20,(x,y)=>{const d=Math.hypot((x-12)/12,(y-10)/10);return d>1?null:d>.7?((x+y)%2?'#5a0a18':null):d>.4?((x+y)%2?'#7a0f22':'#4a0814'):'#8a1226'}));
+ put('.arena',spriteFn('astars',48,40,(x,y)=>{const h=(x*73+y*151)%97;return h===0?'#9aa6d0':h===7&&(x+y)%3===0?'#4a568a':null}));
+ const st=document.createElement('style');st.textContent=css.join('\n');document.head.appendChild(st)}
+if(typeof document.createElement==='function'&&document.head)sprites();
+function embers(R){let e='';const t0={military:1.2,influence:2.8,science:1.5}[R];
+ for(let i=0;i<16;i++){const l=55+Math.random()*40,t=10+Math.random()*90;e+=`<div class="ember" style="left:${l.toFixed(0)}%;top:${t.toFixed(0)}px;--d:${(t0+Math.random()*1.4).toFixed(2)}s;--vx:${(20+Math.random()*60).toFixed(0)}px;--vy:${(-30+Math.random()*50).toFixed(0)}px"></div>`}return e}
+function arena(win,route){
+ const R=route||'military';let fx='',delay;
+ if(R==='military'){
+  const sd=win?'':'animation-delay:3.9s;';
+  fx=[20,64].map(t=>`<div class="ship" style="${sd}top:${t}px;transform:scale(.7)"></div>`).join('')+`<div class="wob"><div class="ship" style="${sd}"></div></div>`;
+  if(!win)fx+=`<div class="boom"></div><div class="quip" style="left:20px;top:2px;color:#ffe9a8;animation-delay:0.2s">FIRE!</div><div class="quip" style="left:58px;top:30px;color:#ffe9a8;animation-delay:1.65s">...ow.</div>`;
+  if(win)for(let i=0;i<9;i++)fx+=`<div class="bullet" style="top:${[33,55,77][i%3]}px;animation-delay:${(0.2+i*0.12).toFixed(2)}s"></div>`;
+  delay=(i,l)=>0.55+i*0.07;
+ }else if(R==='influence'){
+  fx=`<div class="ship" style="${win?'':'animation-delay:3.5s'}"></div>`;
+  if(!win)fx+=`<div class="quip" style="left:12px;bottom:4px;color:#ffe9a8;animation-delay:0.1s">Who's with me?!</div><div class="quip" style="left:96px;top:4px;color:#c58bff;animation-delay:1.05s">yeah...no</div><div class="banner" style="--d:2.7s;background:#ef7a6e">The galaxy refuses to unite</div>`;
+  const cols=['#6ee7a8','#ffc46b','#c58bff','#ff9ad5','#7cc4ff','#9be7ff'];
+  for(let i=0;i<6;i++)fx+=`<div class="lane" style="top:${8+i*16}px;animation-delay:${(i*(win?0.32:0.18)).toFixed(2)}s"><div class="ally c${i}" style="--c:${cols[i]}"></div></div>`;
+  delay=(i,l)=>1.4+l/100*2.8;
+  if(win)fx+=`<div class="banner" style="--d:5.4s">The united galaxy has triumphed</div>`;
+ }else{
+  fx=`<div class="sun"></div>${win?'<div class="bigbeam"></div>':'<div class="puff"></div><div class="pellet"></div><div class="quip" style="left:52px;top:14px;color:#ffe9a8;animation-delay:1s">pew.</div>'}`;
+  delay=(i,l)=>1.15+i*0.03;
+ }
+ let bugs='',last=0;const N=24;const ld={military:2.4,influence:1.9,science:2.5}[R];
+ for(let i=0;i<N;i++){const big=i<4,l=(big?76+Math.random()*16:48+Math.random()*48),t=(big?10+Math.random()*90:-18+Math.random()*146);
+  const sz=big?(Math.random()<.5?27:36):18;
+  const d=win?delay(i%14,l):ld+Math.random()*0.5;last=Math.max(last,d);
+  bugs+=`<div class="bug" style="left:${l.toFixed(1)}%;top:${t.toFixed(0)}px;--s:${sz.toFixed(1)}px;--d:${d.toFixed(2)}s;--j:${(0.5+Math.random()*0.7).toFixed(2)}s;--o:-${(Math.random()).toFixed(2)}s;--ex:${(22+(Math.random()-.5)*46).toFixed(0)}px;--ey:${(48+(Math.random()-.5)*40).toFixed(0)}px"><i></i></div>`}
+ const maw=`<div class="maw" style="--md:${win?(last+0.1).toFixed(2):ld.toFixed(2)}s"></div>`;
+ fx=maw+fx;
+ return `<div class="arena ${win?'win':'lose'} r-${R}"><div class="stage">${fx}${bugs}${win?embers(R):''}</div>${win?'':'<div class="doom" style="--dd:'+(ld+2.2).toFixed(2)+'s"></div>'}</div>`;
+}
+
+// DLC ending animations: your forces vs. the Thal
+function arenaDLC(win,R){
+ const TP=[[76,6],[86,26],[76,48],[86,70],[78,88]]; // Thal ship positions (left %, top px)
+ const thal=(st='')=>TP.map(([l,t],i)=>`<div class="thal" style="left:${l}%;top:${t}px;${typeof st==='function'?st(i):st}"></div>`).join('');
+ const quip=(txt,pos,col,d)=>`<div class="quip" style="${pos};color:${col};animation-delay:${d}s">${txt}</div>`;
+ const boom=(l,t,d,z)=>`<div class="kboom" style="left:${l};top:${t}px;--d:${d}s;${z?`--z:${z}px`:''}"></div>`+Array.from({length:6},()=>`<div class="deb" style="left:${l};top:${t}px;--d:${d}s;--vx:${(-30+Math.random()*60).toFixed(0)}px;--vy:${(-30+Math.random()*60).toFixed(0)}px"></div>`).join('');
+ const shot=(cls,t,x0,x1,d,dur=.45)=>`<div class="${cls}" style="top:${t}px;--x0:${x0};--x1:${x1};animation:tfire ${dur}s linear ${d.toFixed(2)}s forwards,fizz .1s ${(d+dur).toFixed(2)}s forwards"></div>`;
+ let fx='',shake=null;
+ if(R==='science'){
+  if(win){
+   fx+='<div class="ship"></div><div class="shield"></div>';
+   fx+=thal(i=>`animation:powerdown 1.3s ${(2.5+i*0.08).toFixed(2)}s ease-in forwards`);
+   for(let i=0;i<8;i++){const [l,t]=TP[i%5];const d=0.5+i*0.16;fx+=shot('tshot',t+8,l+'%','68px',d,.5)+`<div class="flash" style="left:62px;top:${t+3}px;--d:${(d+0.5).toFixed(2)}s"></div>`}
+   fx+=`<div class="emp" style="--d:2.0s"></div><div class="emp" style="--d:2.25s"></div>`;
+   fx+=TP.map(([l,t],i)=>`<div class="spark" style="left:${l}%;top:${t}px;--d:${(2.35+i*0.05).toFixed(2)}s"></div>`).join('');
+   fx+=quip('EMP!','left:24px;top:-14px','#bfe9ff',2.0)+quip('...noted.','right:14px;bottom:-14px','#cfe7d8',3.2);
+  }else{
+   fx+='<div class="ship" style="animation:kill .5s 2.7s forwards"></div><div class="shield" style="animation:shieldOn .6s .2s forwards,crack 1.2s 1.2s forwards"></div>';
+   fx+=thal('animation:advanceT 1.6s 3.0s ease-in-out forwards');
+   for(let i=0;i<14;i++){const [l,t]=TP[i%5];const d=0.4+i*0.15;const x1=d<2.3?'68px':'26px';fx+=shot('tshot',t+8,l+'%',x1,d,.5)+`<div class="flash" style="left:${d<2.3?62:24}px;top:${t+3}px;--d:${(d+0.5).toFixed(2)}s"></div>`}
+   fx+=boom('35px',42,2.7,46);shake=2.7;
+   fx+=quip('Shield: reverse-engineered.','right:10px;bottom:-14px','#cfe7d8',3.3);
+   fx+='<div class="tdoom" style="--d:3.4s"></div>';
+  }
+ }else if(R==='influence'){
+  fx+='<div class="ship"></div>';
+  if(win){
+   const slots=[[54,10],[54,74],[92,24],[92,60],[130,42]];
+   fx+=TP.map(([l,t],i)=>`<div class="thal" style="left:${l}%;top:${t}px;--l0:${l}%;--t0:${t}px;--lx:${slots[i][0]}px;--ly:${slots[i][1]}px;animation:joinform 3.6s ${(0.2+i*0.06).toFixed(2)}s ease-in-out forwards"></div>`).join('');
+   fx+=`<div class="doc" style="--x0:62%;--y0:44px;--x1:58px;--y1:40px;animation:docmove .9s 1.4s ease-in-out forwards,fizz .3s 3.2s forwards"></div><div class="stampmark" style="left:58px;top:42px;--d:2.4s"></div>`;
+   fx+=`<div class="banner" style="--d:6.2s">The Thal join your Federation</div>`;
+  }else{
+   // your charter is torn up and the Thal mobilize for war
+   fx+=thal(i=>`animation:redalert .8s ${(2.0+i*0.08).toFixed(2)}s forwards,massing 1.6s ${(2.6+i*0.05).toFixed(2)}s ease-in-out forwards`);
+   fx+=`<div class="doc" style="--x0:58px;--y0:40px;--x1:calc(70% - 4px);--y1:44px;animation:docmove .9s .4s ease-in-out forwards,fizz .01s 1.5s forwards"></div>`;
+   fx+=`<div class="half" style="left:calc(70% - 4px);top:44px;--d:1.5s;--vx:-14px;--r:-40deg"></div><div class="half" style="left:calc(70% + 2px);top:44px;--d:1.5s;--vx:12px;--r:35deg"></div>`;
+   for(let k=0;k<6;k++){const t=[16,38,60,82,27,71][k];fx+=`<div class="thal" style="left:105%;top:${t}px;filter:sepia(1) hue-rotate(-40deg) saturate(3);animation:arrive 1.2s ${(2.8+k*0.15).toFixed(2)}s ease-out forwards;--to:${(64+(k%2)*8)}%"></div>`}
+   fx+=`<div class="banner" style="--d:3.2s;background:#ef7a6e">Mobilizing for war</div>`;
+   fx+=quip('Clause 1: war.','right:10px;bottom:-14px','#ef7a6e',3.6);
+   fx+='<div class="tdoom" style="--d:3.6s"></div>';
+  }
+ }else{
+  const ys=[20,42,64];
+  if(win){
+   fx+=ys.map((t,i)=>`<div class="ship" style="top:${t}px;${i===1?'':'transform:scale(.7);'}animation:advance 1.4s 3.1s ease-in-out forwards"></div>`).join('');
+   fx+=thal(i=>`animation:shatter .5s ${(1.0+i*0.32).toFixed(2)}s ease-in forwards`);
+   fx+=`<div class="thal" style="left:88%;top:44px;transform:scale(1.7);animation:shatter .6s 2.75s ease-in forwards"></div>`;
+   for(let i=0;i<6;i++){const t=ys[i%3]+10;fx+=shot('tshot',t,'76%','64px',0.25+i*0.22,.5)+`<div class="flash" style="left:58px;top:${t-5}px;--d:${(0.75+i*0.22).toFixed(2)}s"></div>`}
+   for(let i=0;i<16;i++){const t=ys[i%3]+10;fx+=shot('yshot',t,'52px','84%',0.2+i*0.14)}
+   TP.forEach(([l,t],i)=>{const d=(1.0+i*0.32);fx+=boom(l+'%',t+8,d.toFixed(2));for(let k=0;k<3;k++)fx+=`<div class="sheet" style="left:${l}%;top:${t}px;--d:${(d+0.3+k*0.1).toFixed(2)}s;--vx:${(-20+Math.random()*40).toFixed(0)}px;--vy:${(-30-Math.random()*30).toFixed(0)}px;--r:${(-90+Math.random()*180).toFixed(0)}deg"></div>`});
+   fx+=boom('90%',52,'2.75',64);shake=2.75;
+   for(let k=0;k<6;k++)fx+=`<div class="sheet" style="left:90%;top:48px;--d:${(2.9+k*0.06).toFixed(2)}s;--vx:${(-60+Math.random()*50).toFixed(0)}px;--vy:${(-40+Math.random()*80).toFixed(0)}px;--r:${(-180+Math.random()*360).toFixed(0)}deg"></div>`;
+   fx+=quip('(their navy now exists on paper only)','right:8px;bottom:-14px','#f4efe2',3.4);
+  }else{
+   fx+=ys.map((t,i)=>`<div class="ship" style="top:${t}px;${i===1?'':'transform:scale(.7);'}animation:hit .25s ${(0.8+i*0.35).toFixed(2)}s 2,kill .5s ${[1.6,2.1,2.7][i]}s forwards"></div>`).join('');
+   fx+=thal('animation:advanceT 1.6s 3.0s ease-in-out forwards');
+   for(let i=0;i<16;i++){const t=ys[i%3]+10,d=0.2+i*0.15;fx+=shot('tshot',t,'76%','40px',d,.5)+`<div class="flash" style="left:34px;top:${t-5}px;--d:${(d+0.5).toFixed(2)}s"></div>`}
+   for(let i=0;i<5;i++){const t=ys[i%3]+10;fx+=shot('yshot',t,'52px','76%',0.3+i*0.3)}
+   fx+=boom('28px',24,'1.6')+boom('28px',68,'2.1')+boom('35px',46,'2.7',52);shake=2.7;
+   fx+=quip('Account closed.','right:12px;bottom:-14px','#cfe7d8',3.3);
+   fx+='<div class="tdoom" style="--d:3.3s"></div>';
+  }
+ }
+ return `<div class="arena dlcA r-${R}"><div class="stage${shake?' shake':''}" ${shake?`style="--d:${shake}s"`:''}>${fx}</div></div>`;
+}
+let lastDlc=false;
+function replay(win){document.getElementById('arenaBox').innerHTML=lastDlc?arenaDLC(win,route):arena(win,route)}
+const REVEAL={military:4800,influence:4400,science:4200};
+let endToken=0;
+function end(win,title,msg,fight){
+ clearSave();
+ const before=header();
+ const wasDlc=dlc;if(!wasDlc)record(emp.diff,win);
+ const unlock=win&&!wasDlc&&title==='Victory';dlc=false;
+ const dlcThreat=wasDlc?(win?0:10):null; // the campaign settles the Thal for good: 0/10 on a win, 10/10 on a loss
+ const result=`<div class="stampban ${win?'sw':'sl'}">${title}</div><p>${msg}</p>${unlock?`<button class="personal" style="text-align:center" onclick="startDLC()">DLC: The Thal Reckoning<small>10 more turns to deal with the Thal for good, using your ${LABELS[route]}. Your empire carries over.</small></button>`:''}<button style="text-align:center" onclick="start()">Play again</button>`;
+ if(!fight){if(dlcThreat!==null)threat=dlcThreat;app.innerHTML=header()+(wasDlc?'':recBox(emp.diff))+`<div class="card" style="text-align:center">${result}</div>`+logBox();return}
+ const tok=++endToken;
+ app.innerHTML=`<div id="hdr">${before}</div><div class="card" style="text-align:center"><div id="arenaBox">${(lastDlc=wasDlc)?arenaDLC(win,route):arena(win,route)}</div><div id="resSlot"><p class="note suspense">The battle rages.</p></div></div><div id="recSlot"></div>`;
+ setTimeout(()=>{if(tok!==endToken||!document.getElementById('resSlot'))return;
+  if(dlcThreat!==null)threat=dlcThreat;
+  document.getElementById('hdr').innerHTML=header();
+  if(dlcThreat!==null){const pl=[...document.querySelectorAll('#hdr .pill')].find(x=>x.textContent.includes('Thal Threat'));if(pl)pl.classList.add('pillflash')}
+  document.getElementById('recSlot').innerHTML=wasDlc?'':recBox(emp.diff);
+  document.getElementById('resSlot').innerHTML=`<div class="reveal">${result}</div><button class="rs" style="float:none;margin:10px auto 0;display:block" onclick="replay(${win})">Replay battle</button>`;
+  document.getElementById('recSlot').insertAdjacentHTML('afterend',logBox());
+ },wasDlc?(win&&route==='influence'?7400:4800):(win&&route==='influence'?6800:(REVEAL[route]||2500)));
+}
+
+// hand-drawn sky + boiling outlines
+(function(){
+ let seed=42;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+ let st='';for(let i=0;i<90;i++){const x=rnd()*100,y=rnd()*100,r=(rnd()*1.3+.4).toFixed(2),o=(rnd()*.6+.25).toFixed(2);st+=`<circle cx="${x.toFixed(1)}%" cy="${y.toFixed(1)}%" r="${r}" fill="#f2e8cf" opacity="${o}"/>`}
+ let sp='';for(let i=0;i<7;i++){const x=rnd()*100,y=rnd()*100,k=(rnd()*4+3).toFixed(1);sp+=`<svg x="${x.toFixed(1)}%" y="${y.toFixed(1)}%" overflow="visible"><path d="M0 -${k} Q0 0 ${k} 0 Q0 0 0 ${k} Q0 0 -${k} 0 Q0 0 0 -${k}" fill="#f2b134" opacity=".8"/></svg>`}
+ let neb='';const blobs=[[18,22,46,'#3a2a6e',.35],[78,30,40,'#1f5a6e',.28],[60,78,55,'#5b2a5e',.22],[10,85,35,'#24406e',.3]];
+ for(const [x,y,r,c,o] of blobs)neb+=`<circle cx="${x}%" cy="${y}%" r="${r}%" fill="${c}" opacity="${o}" filter="url(#neb)"/>`;
+ let st2='';for(let i=0;i<160;i++){const x=rnd()*100,y=rnd()*100,r=(Math.pow(rnd(),3)*1.6+.3).toFixed(2),o=(rnd()*.7+.2).toFixed(2),c=rnd()<.15?'#ffe2b8':rnd()<.2?'#bfe0ff':'#ffffff';st2+=`<circle class="${rnd()<.12?'tw':''}" style="animation-delay:-${(rnd()*3.6).toFixed(1)}s" cx="${x.toFixed(2)}%" cy="${y.toFixed(2)}%" r="${r}" fill="${c}" opacity="${o}"/>`}
+ (function pixelSky(){const el=document.getElementById('sky');if(!el||typeof document.createElement!=='function')return;
+ const draw=()=>{const W=Math.ceil(innerWidth/4),H=Math.ceil(innerHeight/4);const c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');if(!g)return;
+  let sd=7;const rn=()=>(sd=(sd*16807)%2147483647)/2147483647;const p=(x,y,col)=>{g.fillStyle=col;g.fillRect(x,y,1,1)};
+  g.fillStyle='#10162b';g.fillRect(0,0,W,H);
+  // dithered nebula bands
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){const v=Math.sin(x*0.045+y*0.03)+Math.sin(y*0.06-x*0.02)*0.8;if(v>1.15&&(x+y)%2===0)p(x,y,'#1c2350');else if(v>1.45)p(x,y,'#232a5e');if(v<-1.35&&(x+y)%2===0)p(x,y,'#142a3a')}
+  for(let k=0;k<W*H/55;k++){const x=rn()*W|0,y=rn()*H|0,b=rn();p(x,y,b>.93?'#fff4c8':b>.8?'#bcd0ff':'#5a6796')}
+  for(let k=0;k<6;k++){const x=rn()*W|0,y=rn()*H|0;p(x,y,'#ffffff');p(x-1,y,'#7f8fc9');p(x+1,y,'#7f8fc9');p(x,y-1,'#7f8fc9');p(x,y+1,'#7f8fc9')}
+  // pixel planet, dithered terminator
+  const cx=W-22,cy=Math.round(H*0.8),r=16;
+  for(let y=-r;y<=r;y++)for(let x=-r;x<=r;x++){const d=x*x+y*y;if(d>r*r)continue;const sh=(x+y*0.4)/r;let col=sh<-0.3?'#e0a070':sh<0.25?'#b8704a':'#6e3a2c';if(sh>0.25&&sh<0.45&&(x+y)%2)col='#b8704a';if(sh>0.6)col='#3c2025';if(Math.abs(y-x*0.25-3)<1.2)col=sh>0.25?'#5a3026':'#c9845a';p(cx+x,cy+y,col)}
+  for(let x=-r-9;x<=r+9;x++){const y=Math.round(x*-0.28);const fx=cx+x,fy=cy+y+2;if(x*x+(y+2)*(y+2)<=r*r&&x>-3)continue;p(fx,fy,'#e8c27a');if(Math.abs(x)<r+5)p(fx,fy+1,'#a07a3a')}
+  // small moon
+  const mx=7,my=H-12;for(let y=-4;y<=4;y++)for(let x=-4;x<=4;x++)if(x*x+y*y<=17)p(mx+x,my+y,x+y>1?'#59627a':'#aab3c6');
+  el.innerHTML='';el.appendChild(c)};
+ draw();let t;addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(draw,200)})})();
+})();
+loadSave()?resume():start();
+</script>
+</body>
+</html>

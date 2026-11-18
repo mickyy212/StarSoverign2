@@ -1,0 +1,8 @@
+# Netlify settings: no build step, publish the files at the top of the repository.
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"
