@@ -423,7 +423,11 @@ button.quantum{border-color:#7d4bd6;background:#21173a}button.quantum small{colo
 .sysbtns{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}.sysbtns button{margin:0}
 .nbr{border:2px solid var(--edge);padding:6px 8px;margin:0 0 8px;font-size:20px}.nbr.ally{border-color:var(--good)}.nbr .rs{float:none;margin:4px 6px 0 0}.nplan{margin:4px 0}
 .trade{margin-top:6px;font-size:20px;line-height:2}.trade select{font:inherit;font-size:20px;background:#0a1020;color:#fff;border:2px solid var(--edge)}
-.credline{color:#ffd166;font-size:20px}.adminbtn{position:absolute;top:8px;right:8px;margin:0!important;float:none;font-size:14px;padding:2px 8px;z-index:5}
+.credline{color:#ffd166;font-size:20px}.mplay,.msys{text-align:center;font-size:22px;padding:12px 10px 10px}.mplay{background:#3a3112;border:3px solid #9a7a26}.msys{background:#170f2c;border:3px solid #7b4fe0}
+.mplay small,.msys small{display:block;font-size:15px;color:#c9c2a8;margin-top:4px}.msys small{color:#a9a3c8}.msys .alpha{vertical-align:middle}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 8px}.mgrid button{margin:0;text-align:center;font-size:19px;padding:9px 6px}.mgrid small{display:block;color:#8fd3ff;font-size:14px;margin-top:3px}
+.mhelp{text-align:center;font-size:17px}.mhelp span{cursor:pointer}
+.adminbtn{position:absolute;top:8px;right:8px;margin:0!important;float:none;font-size:14px;padding:2px 8px;z-index:5}
 .credbox{display:inline-block;margin-top:5px;padding:1px 6px;background:#0f2422;border:1px solid #2f6f66;color:#9fc9c2;font-size:13px;line-height:1.4}.credbox b{color:#6fe0cc;font-weight:normal}
 .credtab{width:100%;border-collapse:collapse;margin:6px 0;font-size:16px}.credtab th,.credtab td{border:2px solid #2c355c;padding:3px 5px;text-align:center}.credtab td:first-child{text-align:left}.credtab th small{color:#8f98b8}
 .sysgrid .wide{grid-column:1/-1}.sysgrid i{font-style:normal;color:#8f98b8}.hrow{display:flex;justify-content:space-between;align-items:center;gap:4px;margin:6px 0 2px;font-size:15px}.hrow>span{white-space:nowrap}.hrow{flex-wrap:wrap}.hrow .hbtns{margin-left:auto;display:flex;flex-shrink:0}.hrow .hbtns .rs{float:none;margin:0 0 0 3px;padding:2px 6px;font-size:14px}
@@ -476,6 +480,9 @@ button.timepick{outline:3px solid #ffd166;outline-offset:2px;animation:tpick .4s
 .srvrow{border:2px solid #2c355c;background:rgba(10,16,32,.55);padding:6px 8px;margin:8px 0;overflow:hidden}.srvrow.here{border-color:#ffd166}.srvrow small{display:block}.srvbtns{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;margin-top:4px}.srvbtns .rs{float:none;margin:0}.maintag{color:#ffd166}.srvline{font-size:15px;margin:2px 0 4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.srvline .rs{float:none;margin:0 0 0 auto;padding:2px 6px;font-size:14px}
 .tcat{margin:6px 0 10px}.tcat h4{margin:6px 0 4px;color:#ffd166;font-size:17px;font-weight:normal;border-bottom:2px solid #2c355c;padding-bottom:3px}.tcat h4 small{display:block;color:#8f98b8;font-size:13px}
 .trow{margin:4px 0}.trow button{margin:0}.trow.done{padding:6px 8px;border:2px dashed #2c355c;color:#9fb7c9}.trow.done small{display:block;color:#8f98b8}.trow .lvl{color:#8fd3ff;font-size:14px}.trow .freept{float:none;display:block;margin:4px 0 0 auto}
+.planrow{display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid #222b4c}.planrow b{display:block;font-weight:normal;color:#fff}.planrow small{display:block;color:#8f98b8;font-size:13px}.planrow>span{color:#6fe0cc;font-size:15px;white-space:nowrap}.planrow .rs{float:none;margin:0;padding:2px 7px;font-size:14px}
+.gupgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:6px 0}.gupcard{margin:0;padding:6px 5px;text-align:center;font-size:14px}.gupcard b{display:block;font-weight:normal;color:#ffd166;font-size:15px;line-height:1.15;min-height:34px}
+.gupcard .pips{margin:5px auto 2px}.gupcard .pips i{width:12px;height:12px}.gupcard .gl{display:block;font-size:13px;color:#fff}.gupcard small{display:block;font-size:12px;color:#aab3d6;margin:3px 0}.gupcard .gc{display:block;font-size:12px;color:#6fe0cc}
 .pips{display:inline-flex;gap:2px;vertical-align:middle;margin:0 4px}.pips i{display:inline-block;width:7px;height:7px;background:#0a1020;box-shadow:inset 0 0 0 1px #8f98b8}.pips i.on{background:#ffd166}
 .shipcard{border:2px solid #2c355c;background:rgba(10,16,32,.55);padding:6px 8px 8px;margin:8px 0}.shiphead{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px}.shiphead b{color:#e8e8f0}.shiphead .sstat{flex-basis:100%;font-size:13px;color:#8fd3ff}.shipcard .sysbtns{margin-top:4px}.shipcard>button{margin:6px 0 0}
 .upgtrack{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}.upgtrack span{font-size:13px;padding:1px 5px;border:2px solid #2c355c;color:#8f98b8}.upgtrack .done{border-color:#7bd17b;color:#7bd17b}.upgtrack .next{border-color:#ffd166;color:#ffd166}
@@ -631,7 +638,7 @@ function record(d,win){let r=REC[d];if(r.n>=10)r=REC[d]={w:0,n:0};r.n++;if(win)r
 // Reset win stats: clears your latest runs here and takes you off the scoreboard; new runs put you back on.
 function resetRec(b){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again: reset and leave the scoreboard';setTimeout(()=>{if(document.body.contains(b)){delete b.dataset.armed;b.textContent='Reset win stats'}},3000);return}
  REC={Easy:{w:0,n:0},Normal:{w:0,n:0},Hard:{w:0,n:0}};saveRec();if(ARCADE){ARCADE.runs=[];ARCADE.life=blankLife();ARCADE.hidden=false;saveArcade();
-  try{fetch('/api/scores',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:ARCADE.id})}).catch(()=>{})}catch(e){}}start()}
+  try{fetch('/api/scores',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:ARCADE.id})}).catch(()=>{})}catch(e){}}showEmpires()}
 // Win stats come from your latest 20 runs, the same runs the scoreboard counts.
 function recOf(d){return ARCADE?lifeOfRuns(ARCADE.runs).main[d]:{w:0,n:0}}
 function pct(d){const r=recOf(d);return r.n?Math.round(100*r.w/r.n):0}
@@ -1813,6 +1820,7 @@ function renderSystems(){const s=SYS,e=era(s),ne=nextEra(s),hrs=Math.max(1,Math.
  <div class="hrow"><span>Week <b>${SEASON.n}</b> · Day <b>${SEASON.day||1}</b>/7</span><span class="hbtns"><button class="rs" onclick="openHelp(SYS_RULES)">Rules</button><button class="rs" data-g="guidebtn" onclick="guideStart()">Guide</button></span></div>
  <div class="sysgrid">
  <span class="wide" data-g="credits">Credits: <b>${credits()}</b> <i>(${guide} needed today)</i> · Tax +${taxDay}/day</span>
+ <span class="wide">${planBox(s,guide)}</span>
  ${(b=>`<span class="wide" data-g="bank"><i>This week: +${b.earned} earned · ${b.spent} spent (back if you lose your system)</i></span>`)(weekBank())}
  <span data-g="people">People ${s.pop}/${housing(s)}</span><span>Unrest ${s.unrest}% ${bar(s.unrest)}</span>
  <span class="wide">Age: ${e.name}${ne?` <i>(${ne.name} in ${ne.at-s.age}h)</i>`:''} · ${escH(sunOf(s).n)}, ${escH(worldOf(s).n.toLowerCase())} · Leader: ${leaderOf(s).n}</span></div>
@@ -1952,16 +1960,36 @@ function sysGen(){if(!SYS.general){const L=randLook();L.e=((SYS.leader||{}).look
 // Your leader is also your fleet's general. Renown from battles and sieges earns 3 promotions; each adds a doctrine.
 const RANKS=['Captain','Commodore','Admiral','Grand Admiral'],PROMOTE=[40,120,300],DOCT={atk:{n:'Attack doctrine',d:'+5% fleet attack'},siege:{n:'Siege doctrine',d:'+10% siege strength, 5% less damage from planetary guns'}};
 // Collapsible sections on the home world; the ones you open stay open across redraws.
-const SV_OPEN=new Set();
+const SV_OPEN=new Set(['plan']);
 function sec(k,title,html){return `<details class="sec" data-g="${k}"${SV_OPEN.has(k)?' open':''} ontoggle="this.open?SV_OPEN.add('${k}'):SV_OPEN.delete('${k}')"><summary>${title}</summary>${html.replace(/^\s*<h3>[^<]*<\/h3>/,'')}</details>`}
 // General upgrades bought here show at once; the local copy wins until the server catches up (or the buy fails).
 let GUP_LOCAL=null;
 function gupNow(){const srv=meRec().gup||{};if(!GUP_LOCAL)return srv;const o={...srv};let behind=false;for(const k in GUP_LOCAL){if((srv[k]||0)<GUP_LOCAL[k]){o[k]=GUP_LOCAL[k];behind=true}}if(!behind&&!GUP_LOCAL.reset)GUP_LOCAL=null;return GUP_LOCAL&&GUP_LOCAL.reset?{}:o}
+// What to spend today's credits on, worked out from your own system right now: shortages first, then growth,
+// then protection when danger is near, then research, and warships with the rest.
+function todayPlan(s,guide){const out=[],add=(t,c,go,why)=>out.push({t,c,go,why});
+ const need=needOf(s),prod=prodOf(s),flow=routeFlow(s),works={food:'farm',water:'pure',ore:'mine'};
+ for(const r of Object.keys(need)){const net=prod[r]+flow[r]-need[r];if(net>=0)continue;const it=SHOP.find(x=>x.k===works[r]);
+  if(it)add(`${it.l}`,it.c,`buy('${it.k}')`,`${SRES_NAME[r]} is falling ${-net} an hour`);else add(`Get more ${SRES_NAME[r]}`,0,'',`trade for it, invest, or colonize a ${SRES_NAME[r]} world`)}
+ const rn=rareNeed(s);for(const r of foreignRares(s).slice(0,rn.k))if((s.res[r]||0)<rn.n*12){add(`Line up ${SRES_NAME[r]}`,0,'',`your people need it: invest with or trade with the player who makes it`);break}
+ const cap=(DEV[s.dev||0]||{}).cols||1,exp=s.planets.findIndex(p=>p.st==='explored'),unk=s.planets.findIndex(p=>p.st==='unknown');
+ if(colonyCount(s)<cap){if(exp>0)add(`Colonize ${s.planets[exp].n}`,COLONY_CREDITS,`colonize(${exp})`,'more goods and room for more people');
+  else if(unk>0&&s.ships>0)add('Send a scout to explore',0,`explore(${unk})`,'find a world to colonize');
+  else if(unk>0)add('Build a scout ship',SHOP[0].c,`buy('ship')`,'you need one to explore')}
+ const x=nextDev(s);if(x&&!s.proj&&s.age>=x.age)add(`Start ${x.n}`,0,'startProject()','paid in goods; raises taxes and colony room');
+ const danger=warnings().some(w=>w.lvl>=2)||WARS.some(w=>!w.ended&&w.sides.flat().includes(SYS_PID));const dl=s.planets[0].def||0;
+ if(danger&&dl<3)add(`${DEF_NAME[dl]} over your home world`,DEF_COST[dl],'fortify(0)','danger is near');
+ let sum=out.reduce((a,o)=>a+o.c,0);const tk=Object.keys(TECHS).find(k=>techLv(k)<TECHS[k].max);
+ if(!danger&&tk&&sum+TECH_COST[techLv(tk)]<=guide){add(`Research ${TECHS[tk].n}`,TECH_COST[techLv(tk)],`buyTech('${tk}')`,'kept every week');sum+=TECH_COST[techLv(tk)]}
+ const fc=shipCost('f'),nf=Math.max(danger?2:1,Math.floor(Math.max(0,guide-sum)/fc));add(`Warships: ${nf} frigate${nf>1?'s':''}`,nf*fc,`buildShip('f')`,danger?'you will need the fleet soon':'the rest goes to your fleet');
+ return out}
+function planBox(s,guide){const pl=todayPlan(s,guide),tot=pl.reduce((a,o)=>a+o.c,0);
+ return `<details class="sec plan" data-g="plan"${SV_OPEN.has('plan')?' open':''} ontoggle="this.open?SV_OPEN.add('plan'):SV_OPEN.delete('plan')"><summary>Spend today on · about ${tot} credits</summary>${pl.map(o=>`<div class="planrow"><div><b>${o.t}</b><small>${o.why}</small></div><span>${o.c?o.c+' cr':'free'}</span>${o.go?`<button class="rs" onclick="${o.go}">Do it</button>`:''}</div>`).join('')}<p class="note">Worked out from your system right now. It changes as things change.</p></details>`}
 function generalPanel(){const g=sysGen(),me=meRec(),rn=me.renown||0,docs=me.doctrines||[],tier=PROMOTE.filter(n=>rn>=n).length,next=PROMOTE[tier],gt=GENERALS[g.type]||GENERALS.veteran,gup=gupNow(),pts=renownPts();
  const pend=tier>docs.length,lo=PROMOTE[tier-1]||0,pct=next?Math.round(100*(rn-lo)/(next-lo)):100;
  return `<h3>Your general</h3><div style="overflow:hidden"><img class="sysport" src="${portraitURL(fixLook({...g.look}))}" alt="Your general"><p class="note"><b>${RANKS[docs.length]} ${escH(g.name)}</b> · ${gt.n}<br><small>${gt.d}</small><br>Battle renown <b>${rn}</b>${next?` <span class="ubar" style="width:80px"><i style="width:${pct}%;background:#ffd166"></i></span> next promotion at ${next}`:' (highest rank)'}</p></div>
  <p class="note">Renown to spend: <b>${pts}</b>. Every main-game run and every battle here earns it. Renown you spend this week comes back if you lose your system.</p>
- <div class="sysbtns">${Object.entries(GUPS).map(([k,u])=>{const lv=gup[k]||0;return lv>=3?`<button class="locked">${u.n} ${pips(3,3)}<small>${u.d} Fully trained.</small></button>`:`<button onclick="buyGup('${k}')">${u.n} ${pips(lv,3)}<small>${u.d} ${GUP_COST[lv]} renown.</small></button>`}).join('')}</div>
+ <div class="gupgrid">${Object.entries(GUPS).map(([k,u])=>{const lv=gup[k]||0,max=lv>=3;return `<button class="gupcard${max?' locked':''}" ${max?'':`onclick="buyGup('${k}')"`}><b>${u.n}</b>${pips(lv,3)}<span class="gl">Level ${lv} of 3</span><small>${u.d}</small><span class="gc">${max?'Fully trained':`Next level: ${GUP_COST[lv]} renown`}</span></button>`}).join('')}</div>
  ${Object.values(gup).some(v=>v>0)?`<button class="rs" style="float:none" onclick="resetGups(this)">Reset all upgrades</button>`:''}
  <p class="note">${docs.length?'Doctrines: '+docs.map(d=>DOCT[d].n+' ('+DOCT[d].d+')').join('; ')+'.':'Battles, sieges and conquests raise battle renown; each promotion adds a doctrine.'}</p>
  ${pend?`<p class="note"><b>Promotion ready!</b> Choose a doctrine:</p><div class="sysbtns">${Object.entries(DOCT).map(([k,d])=>`<button onclick="promote('${k}')">${d.n}<small>${d.d}.</small></button>`).join('')}</div>`:''}
@@ -2010,8 +2038,16 @@ async function showSystems(quick){
 function guideWhenClear(){if(guideSeen()||!document.getElementById('sysroot'))return;if(document.querySelector('.achban'))return setTimeout(guideWhenClear,600);guideStart()}
 function start(){TUT=null;
  if(!ARCADE)return showName();
- app.innerHTML=`${splash()?`<img class="splash" src="${splash()}" alt="">`:''}<h1 class="logo"><span class="l1">STAR SOVEREIGN</span> <span class="l2">II</span></h1><p class="note" style="margin:0 0 10px">3rd Edition</p><p class="sub">Twelve turns. Then it arrives.</p><div class="introbox"><p class="intro">Build your empire, then defend it. Choose ⚔ to go in person: bigger rewards, real danger. Keep your people loyal and the Thal in check.</p></div><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="openHelp(RULES)">Rules</button><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="openHelp()">How to play</button><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="showBoard()">Scoreboard</button><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="showAch()">Achievements</button><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="showShop()">Shop</button><button class="rs adminbtn" onclick="showAdmin()">Admin</button><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="showTutorial()">Tutorial</button><button class="rs" style="float:none;margin:-6px 0 14px" onclick="showSystems()">Systems multiplayer <span class="alpha">ALPHA</span></button>${qPending()?`<p class="note down" style="margin:0 0 10px">Quantum debt: your next run has a 1 in 3 chance of ending in sudden quantum death.</p>`:''}<p class="note" style="margin:0 0 10px">Playing as <b>${escH(ARCADE.name)}</b></p>
- ${loadSave()?`<div class="card"><h2>Game in progress</h2><button onclick="resume()">Resume your game</button></div>`:''}<div class="card"><h2>Choose your empire</h2><p class="note" style="margin:0 0 10px">Skilled max: win rate a strong player reaches. Random: win rate picking at random.</p>${EMPIRES.map((e,i)=>`<button onclick="pickEmp(${i})"><b>${e.name}</b> <span class="diff d-${e.diff}">${e.diff}</span><small>${e.desc}<br><span class="warn">${e.perk}</span><br>${recLine(e.diff)}</small>${credLine(e.diff)}</button>`).join('')}<div class="recbtns"><button class="rs" onclick="resetRec(this)">Reset win stats</button><button class="rs ${timedOn()?'on':''}" aria-pressed="${timedOn()}" title="60 seconds per choice; when time runs out, a choice is made at random" onclick="timedToggle()">Timed ${timedOn()?'on':'off'}</button></div></div>`;
+ app.innerHTML=`${splash()?`<img class="splash" src="${splash()}" alt="">`:''}<h1 class="logo"><span class="l1">STAR SOVEREIGN</span> <span class="l2">II</span></h1><p class="note" style="margin:0 0 10px">3rd Edition</p><p class="sub">Twelve turns. Then it arrives.</p><div class="introbox"><p class="intro">Build your empire, then defend it. Choose ⚔ to go in person: bigger rewards, real danger. Keep your people loyal and the Thal in check.</p></div>${loadSave()?`<button class="mplay" onclick="resume()">▶ Resume your game<small>Pick up where you left off</small></button>`:''}
+ <button class="mplay" onclick="showEmpires()">▶ Play<small>Choose your empire</small></button>
+ <button class="msys" onclick="showSystems()">Systems multiplayer <span class="alpha">ALPHA</span><small>The shared galaxy</small></button>
+ <div class="mgrid"><button onclick="showShop()">Shop<small>${credits()} credits</small></button><button onclick="showBoard()">Scoreboard<small>Latest 20 runs</small></button>
+ <button onclick="showAch()">Achievements<small>${ACHS.filter(a=>achGot()[a.id]).length} / ${ACHS.length}</small></button><button onclick="showTutorial()">Tutorial<small>Learn the basics</small></button></div>
+ <button class="mhelp" onclick="openHelp()">? Help: How to play · <span onclick="event.stopPropagation();openHelp(RULES)">Rules</span></button><button class="rs adminbtn" onclick="showAdmin()">Admin</button>${qPending()?`<p class="note down" style="margin:0 0 10px">Quantum debt: your next run has a 1 in 3 chance of ending in sudden quantum death.</p>`:''}<p class="note" style="margin:0 0 10px">Playing as <b>${escH(ARCADE.name)}</b></p>`;
+}
+// Play: choose your empire (win stats, Reset win stats and Timed live here).
+function showEmpires(){TUT=null;
+ app.innerHTML=`<div class="card"><h2>Choose your empire</h2><p class="note" style="margin:0 0 10px">Skilled max: win rate a strong player reaches. Random: win rate picking at random.</p>${EMPIRES.map((e,i)=>`<button onclick="pickEmp(${i})"><b>${e.name}</b> <span class="diff d-${e.diff}">${e.diff}</span><small>${e.desc}<br><span class="warn">${e.perk}</span><br>${recLine(e.diff)}</small>${credLine(e.diff)}</button>`).join('')}<div class="recbtns"><button class="rs" onclick="resetRec(this)">Reset win stats</button><button class="rs ${timedOn()?'on':''}" aria-pressed="${timedOn()}" title="60 seconds per choice; when time runs out, a choice is made at random" onclick="timedToggle()">Timed ${timedOn()?'on':'off'}</button></div></div><button style="text-align:center" onclick="start()">Back</button>`;window.scrollTo(0,0);
 }
 function pickEmp(i){
  emp=EMPIRES[i];
@@ -2117,7 +2153,7 @@ function itemPower(){const t=(RUNA.it||{}).reinf;if(t==null)return {p:0,n:''};co
 // ---- Timed mode (on by default): 30 seconds per choice, 20 for the last decision (rear or front, or the DLC's final move); never in the tutorial.
 // When time runs out a choice is made at random: the chosen button flashes, and the next screen says what was picked.
 function timedOn(){try{return localStorage.getItem('ss2timed')!=='0'}catch(e){return true}}
-function timedToggle(){try{localStorage.setItem('ss2timed',timedOn()?'0':'1')}catch(e){}start()}
+function timedToggle(){try{localStorage.setItem('ss2timed',timedOn()?'0':'1')}catch(e){}showEmpires()}
 let TIMER=null,TIME_LIMIT=30,TIME_FINAL=20,TIME_FIRST=0;
 function stopTimer(){if(TIMER){clearInterval(TIMER.iv);TIMER=null}}
 function startTimer(limit){limit=limit||TIME_LIMIT;stopTimer();if(TUT||!timedOn()||typeof document==='undefined'||typeof app.querySelector!=='function')return;const card=app.querySelector('.card');if(!card)return;
