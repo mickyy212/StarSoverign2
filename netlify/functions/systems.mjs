@@ -785,6 +785,7 @@ async function galaxy(body, srv, trusted) {
     const k = GUP[body.skill] ? body.skill : null; self.gup ||= {};
     if (!k) fail("Unknown upgrade."); else if ((self.gup[k] || 0) >= 3) fail("Already at the highest level.");
     else { self.gup[k] = (self.gup[k] || 0) + 1; general(self); out.msg = "Your general trains hard. The upgrade is in."; }
+  } else if (op === "gupreset") { self.gup = {}; general(self); out.msg = "Upgrades reset.";
   } else if (op === "upgrade") {
     const k = ["c", "f", "d"].includes(body.ship) ? body.ship : null; if (!k) fail("Unknown ship."); else if (self.fleet.up[k] >= 3) fail("Fully upgraded."); else { self.fleet.up[k]++; out.msg = "Upgrade installed across the fleet."; }
   } else if (op === "peace") {

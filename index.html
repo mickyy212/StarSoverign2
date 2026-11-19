@@ -654,14 +654,14 @@ const HELP=`<h2>How to play</h2><ol>
 <li><b>Win to unlock the DLC,</b> The Thal Reckoning: 10 more turns with your empire as it is, plus +4 Energy and +3 Stability. Buttons show which choices add progress for your route. Progress counts as power in the final move, which needs 34.</li>
 <li><b>The end:</b> you will need about 16 power. When the moment comes, lead in person (+3) only if you are short.</li>
 <li><b>Shop</b> (main menu): five consumables, each in tiers I to V, paid with credits. You can buy one of each item a day. Supply Drop (Energy and Stability), Field Medic (protects your next ⚔ choice; tier V means you can't die on it), Thal Bribe (lowers Threat), Lucky Star (final-battle luck) and Reinforcements (final-battle power; tier V adds 4 to 6). Use one item a turn from the Items button; not in the tutorial.</li>
-<li><b>Timed</b> (on by default, the button next to Reset win stats): you get 30 seconds for every choice (45 on the first turn of the story and of the DLC) and 45 for final-battle choices. When time runs out, a choice is made at random and the next screen tells you which. Tutorial runs are never timed.</li>
+<li><b>Timed</b> (on by default, the button next to Reset win stats): you get 30 seconds for every choice, and 20 for the very last decision (command from the rear or lead from the front; in the DLC, your final move). When time runs out, a choice is made at random and the next screen tells you which. Tutorial runs are never timed.</li>
 </ol><h2>Credits for Systems multiplayer</h2><p class="note">Every finished run pays credits. Harder empires pay more.</p>
 <table class="credtab"><tr><th></th><th>Kethari<br><small>Easy</small></th><th>Celest<br><small>Normal</small></th><th>Vorrani<br><small>Hard</small></th></tr>
 <tr><td>Main story won</td><td>8</td><td>25</td><td>50</td></tr><tr><td>Main story lost</td><td>2</td><td>5</td><td>8</td></tr>
 <tr><td>DLC won</td><td>12</td><td>35</td><td>70</td></tr><tr><td>DLC lost</td><td>3</td><td>7</td><td>12</td></tr>
 <tr><td>Back-to-back bonus</td><td>+4</td><td>+12</td><td>+24</td></tr></table>
 <p class="note">Back-to-back bonus: win the main story and go straight into the DLC, and the DLC adds 20% of both rewards (shown for winning both). Tutorial runs pay nothing.</p>
-<p class="note">Every run also earns renown for your Systems general: a win pays 3 / 6 / 10 (DLC 5 / 9 / 14), a loss 1 / 2 / 3.</p><button style="text-align:center" onclick="closeHelp()">Got it</button>`;
+<p class="note">Every run also earns renown for your Systems general: a win pays 3 / 6 / 10 (DLC 5 / 9 / 14). A lost run earns no renown.</p><button style="text-align:center" onclick="closeHelp()">Got it</button>`;
 // Systems multiplayer rules. Keep these in step with systems.mjs and the sim-core numbers: they must never mislead.
 const SYS_RULES=`<h2>Systems multiplayer: rules</h2><ul>
 <li><b>Servers.</b> Each server is its own galaxy, with up to 5 players and 3 AI empires. Servers made by the admin are marked (Main). Any player can run one server of their own; its creator or the admin can remove it, which wipes its galaxy. You play on one server at a time: moving to another abandons your system.</li>
@@ -1016,7 +1016,7 @@ const TUT_TIPS=[
 'Last turn. After this, the final test begins.'];
 function tutBox(t){return TUT?`<div class="tut"><b>Tutorial</b> ${t}<button class="rs" style="float:none;display:block;margin:8px 0 0" onclick="TUT=null;start()">Quit tutorial</button></div>`:''}
 function tutAdd(t){if(!TUT||!t)return;app.querySelectorAll('.tut').forEach(x=>x.remove());const c=app.querySelector('.card');if(c)c.insertAdjacentHTML('beforebegin',tutBox(t))}
-function showTutorial(){TUT=null;app.innerHTML=`<div class="card"><h2>Tutorial</h2><p>Play a guided run. Tips explain how the game works as you go. Tutorial runs are not saved, do not count on the scoreboard and are never timed. Normal runs give you 30 seconds per choice (45 for the first turn and the final battle) while Timed is on (the button next to Reset win stats); if time runs out, a choice is made for you at random.</p>${['Easy','Normal','Hard'].map(d=>{const i=EMPIRES.findIndex(e=>e.diff===d);return `<button onclick="TUT='${d}';pickEmp(${i})"><b>${EMPIRES[i].name}</b> <span class="diff d-${d}">${d}</span><small>${TUT_INTRO[d]}</small></button>`}).join('')}<button style="text-align:center" onclick="start()">Back</button></div>`}
+function showTutorial(){TUT=null;app.innerHTML=`<div class="card"><h2>Tutorial</h2><p>Play a guided run. Tips explain how the game works as you go. Tutorial runs are not saved, do not count on the scoreboard and are never timed. Normal runs give you 30 seconds per choice (20 for the very last decision) while Timed is on (the button next to Reset win stats); if time runs out, a choice is made for you at random.</p>${['Easy','Normal','Hard'].map(d=>{const i=EMPIRES.findIndex(e=>e.diff===d);return `<button onclick="TUT='${d}';pickEmp(${i})"><b>${EMPIRES[i].name}</b> <span class="diff d-${d}">${d}</span><small>${TUT_INTRO[d]}</small></button>`}).join('')}<button style="text-align:center" onclick="start()">Back</button></div>`}
 // ================= SYSTEMS: shared galaxy with players, AI empires, trade and war =================
 // One tick = one real hour (up to 72 catch up). Credits come from finished runs (see CREDITS).
 // <sim-core> (tools/systems-sim.mjs runs everything between the sim-core markers)
@@ -1145,7 +1145,7 @@ function addCredits(n,kind){const before=credits();try{localStorage.setItem(CRED
  if(kind==='earn')b.earned+=d;else if(kind==='spend')b.spent-=d;else if(kind==='undo')b.spent=Math.max(0,b.spent-d);saveBank(b)}
 // Renown: earned in main-game runs and in Systems battles, kept on this device, spent on general upgrades.
 // Like credits, renown spent this week comes back when the system is lost.
-const REN_KEY='ss2renown',RENOWN={main:{win:{Easy:3,Normal:6,Hard:10},loss:{Easy:1,Normal:2,Hard:3}},dlc:{win:{Easy:5,Normal:9,Hard:14},loss:{Easy:1,Normal:2,Hard:3}}};
+const REN_KEY='ss2renown',RENOWN={main:{win:{Easy:3,Normal:6,Hard:10},loss:{Easy:0,Normal:0,Hard:0}},dlc:{win:{Easy:5,Normal:9,Hard:14},loss:{Easy:0,Normal:0,Hard:0}}};
 function renownPts(){try{return parseInt(localStorage.getItem(REN_KEY)||'0',10)||0}catch(e){return 0}}
 function addRenown(n,kind){const before=renownPts();try{localStorage.setItem(REN_KEY,String(Math.max(0,before+n)))}catch(e){}
  const d=renownPts()-before,b=weekBank();kind=kind||(n>=0?'earn':'spend');b.rearned=b.rearned||0;b.rspent=b.rspent||0;
@@ -1950,16 +1950,26 @@ const RANKS=['Captain','Commodore','Admiral','Grand Admiral'],PROMOTE=[40,120,30
 // Collapsible sections on the home world; the ones you open stay open across redraws.
 const SV_OPEN=new Set();
 function sec(k,title,html){return `<details class="sec" data-g="${k}"${SV_OPEN.has(k)?' open':''} ontoggle="this.open?SV_OPEN.add('${k}'):SV_OPEN.delete('${k}')"><summary>${title}</summary>${html.replace(/^\s*<h3>[^<]*<\/h3>/,'')}</details>`}
-function generalPanel(){const g=sysGen(),me=meRec(),rn=me.renown||0,docs=me.doctrines||[],tier=PROMOTE.filter(n=>rn>=n).length,next=PROMOTE[tier],gt=GENERALS[g.type]||GENERALS.veteran,gup=me.gup||{},pts=renownPts();
+// General upgrades bought here show at once; the local copy wins until the server catches up (or the buy fails).
+let GUP_LOCAL=null;
+function gupNow(){const srv=meRec().gup||{};if(!GUP_LOCAL)return srv;const o={...srv};let behind=false;for(const k in GUP_LOCAL){if((srv[k]||0)<GUP_LOCAL[k]){o[k]=GUP_LOCAL[k];behind=true}}if(!behind&&!GUP_LOCAL.reset)GUP_LOCAL=null;return GUP_LOCAL&&GUP_LOCAL.reset?{}:o}
+function generalPanel(){const g=sysGen(),me=meRec(),rn=me.renown||0,docs=me.doctrines||[],tier=PROMOTE.filter(n=>rn>=n).length,next=PROMOTE[tier],gt=GENERALS[g.type]||GENERALS.veteran,gup=gupNow(),pts=renownPts();
  const pend=tier>docs.length,lo=PROMOTE[tier-1]||0,pct=next?Math.round(100*(rn-lo)/(next-lo)):100;
  return `<h3>Your general</h3><div style="overflow:hidden"><img class="sysport" src="${portraitURL(fixLook({...g.look}))}" alt="Your general"><p class="note"><b>${RANKS[docs.length]} ${escH(g.name)}</b> · ${gt.n}<br><small>${gt.d}</small><br>Battle renown <b>${rn}</b>${next?` <span class="ubar" style="width:80px"><i style="width:${pct}%;background:#ffd166"></i></span> next promotion at ${next}`:' (highest rank)'}</p></div>
  <p class="note">Renown to spend: <b>${pts}</b>. Every main-game run and every battle here earns it. Renown you spend this week comes back if you lose your system.</p>
  <div class="sysbtns">${Object.entries(GUPS).map(([k,u])=>{const lv=gup[k]||0;return lv>=3?`<button class="locked">${u.n} ${pips(3,3)}<small>${u.d} Fully trained.</small></button>`:`<button onclick="buyGup('${k}')">${u.n} ${pips(lv,3)}<small>${u.d} ${GUP_COST[lv]} renown.</small></button>`}).join('')}</div>
+ ${Object.values(gup).some(v=>v>0)?`<button class="rs" style="float:none" onclick="resetGups(this)">Reset all upgrades</button>`:''}
  <p class="note">${docs.length?'Doctrines: '+docs.map(d=>DOCT[d].n+' ('+DOCT[d].d+')').join('; ')+'.':'Battles, sieges and conquests raise battle renown; each promotion adds a doctrine.'}</p>
  ${pend?`<p class="note"><b>Promotion ready!</b> Choose a doctrine:</p><div class="sysbtns">${Object.entries(DOCT).map(([k,d])=>`<button onclick="promote('${k}')">${d.n}<small>${d.d}.</small></button>`).join('')}</div>`:''}
  <div class="srvbtns"><button class="rs" onclick="genScreen(false)">Edit general</button><button class="rs" onclick="leaderScreen(false)">Edit leader</button></div>`}
-async function buyGup(k){const lv=(meRec().gup||{})[k]||0;if(lv>=3)return;const c=GUP_COST[lv];if(renownPts()<c){SYS_MSG=`You need ${c} renown. You have ${renownPts()}. Win main-game runs and battles to earn more.`;return renderSystems()}
- addRenown(-c,'spend');const j=await sysCall('gup',{skill:k});if(!j||j.ok===false){addRenown(c,'undo');SYS_MSG=j?j.msg:'No connection to the galaxy.'}else SYS_MSG=`${GUPS[k].n}, level ${lv+1}. ${j.msg}`;await sysSync();renderSystems()}
+async function buyGup(k){const lv=gupNow()[k]||0;if(lv>=3)return;const c=GUP_COST[lv];if(renownPts()<c){SYS_MSG=`You need ${c} renown. You have ${renownPts()}. Win main-game runs and battles to earn more.`;return renderSystems()}
+ addRenown(-c,'spend');GUP_LOCAL={...(GUP_LOCAL&&!GUP_LOCAL.reset?GUP_LOCAL:{}),[k]:lv+1};SYS_MSG=`${GUPS[k].n}, level ${lv+1}.`;renderSystems();
+ const j=await sysCall('gup',{skill:k});if(!j||j.ok===false){addRenown(c,'undo');GUP_LOCAL=null;SYS_MSG=j?j.msg:'No connection to the galaxy.'}else SYS_MSG=`${GUPS[k].n}, level ${lv+1}. ${j.msg}`;await sysSync();renderSystems()}
+// Reset all general upgrades: every renown point spent on them comes back.
+async function resetGups(b){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again: reset and refund the renown';return}
+ const gup=gupNow(),back=Object.entries(gup).reduce((a,[k,lv])=>a+GUP_COST.slice(0,lv||0).reduce((x,y)=>x+y,0),0);
+ const j=await sysCall('gupreset');if(!j||j.ok===false){SYS_MSG=j?j.msg:'No connection to the galaxy.';return renderSystems()}
+ addRenown(back,'undo');GUP_LOCAL={reset:true};SYS_MSG=`Your general's upgrades are reset. ${back} renown is back to spend.`;await sysSync();GUP_LOCAL=null;renderSystems()}
 // The general creator: smaller than the leader designer. Species, four looks, a name and a type.
 let GEN_FIRST=false;
 function genScreen(first){if(first!==undefined)GEN_FIRST=!!first;const g=sysGen(),L=fixLook(g.look),E=L.e;
@@ -2100,11 +2110,11 @@ function itemLuck(){const t=(RUNA.it||{}).luck,r=()=>Math.floor(Math.random()*4)
  const l=[Math.max(r(),r()),Math.max(1,r(),r()),Math.max(2,r()),3,3+pick([1,2])][t];return {l,n:`Lucky Star: luck ${l}. `}}
 function itemPower(){const t=(RUNA.it||{}).reinf;if(t==null)return {p:0,n:''};const p=[pick([0,1]),1,pick([1,2]),pick([2,3,4]),pick([4,5,6])][t];return {p,n:`Reinforcements: +${p}. `}}
 
-// ---- Timed mode (on by default): 30 seconds per choice (45 on turn 1 of the story and of the DLC), 45 for final-battle choices; never in the tutorial.
+// ---- Timed mode (on by default): 30 seconds per choice, 20 for the last decision (rear or front, or the DLC's final move); never in the tutorial.
 // When time runs out a choice is made at random: the chosen button flashes, and the next screen says what was picked.
 function timedOn(){try{return localStorage.getItem('ss2timed')!=='0'}catch(e){return true}}
 function timedToggle(){try{localStorage.setItem('ss2timed',timedOn()?'0':'1')}catch(e){}start()}
-let TIMER=null,TIME_LIMIT=30,TIME_FINAL=45,TIME_FIRST=15;
+let TIMER=null,TIME_LIMIT=30,TIME_FINAL=20,TIME_FIRST=0;
 function stopTimer(){if(TIMER){clearInterval(TIMER.iv);TIMER=null}}
 function startTimer(limit){limit=limit||TIME_LIMIT;stopTimer();if(TUT||!timedOn()||typeof document==='undefined'||typeof app.querySelector!=='function')return;const card=app.querySelector('.card');if(!card)return;
  const btns=[...card.querySelectorAll('button')].filter(b=>/^(choose|pickRoute|finale)\(/.test(b.getAttribute('onclick')||''));if(!btns.length)return;
@@ -2218,7 +2228,7 @@ function showFinal(){LAST_SCREEN=showFinal;
  ${R.map(([l,k])=>{const b=basePower(k);const t=b.stat+b.stab+b.en+b.ren-b.pen;return `<button onclick="pickRoute('${k}')">${l}<small class="eq"><span class="gauge"><i style="width:${Math.min(100,Math.round(100*t/NEED))}%"></i></span><span class="gv"><b>${t}</b> power, need ${NEED} <span class="need">(+0–3 luck)</span></span><span class="bd">${icon(k)}${b.stat} + ${icon('stability')}${b.stab} + ${icon('energy')}${b.en}${b.ren?` + ${icon('star')}${b.ren}`:''}${b.pen?` − ${icon('thal')}${b.pen}`:''}</span></small></button>`}).join('')}
  <p class="note">The Thal stab you in the back if their Threat is 5+ (−1) or 8+ (−3).</p></div>`;
  tutAdd('Pick which stat to fight with. Each option shows your power against what you need. Luck adds 0 to 3 on top.');
- startTimer(TIME_FINAL);
+ startTimer(TIME_LIMIT);
 }
 function pickRoute(k){LAST_SCREEN=()=>pickRoute(k);
  route=k;const r=risk('combat',25,20);
