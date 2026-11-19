@@ -22,9 +22,23 @@ Scores are reported by the player's browser, so a determined player could fake t
 - **Experimental button** (bottom of the start screen, off by default): turns on Quantum suicide and reveals the Narrative mode button (branching events).
 - **Quantum suicide:** a final-battle option. It gives a 10% chance of +10 power. Afterwards, the next run (or the DLC, if you go straight into it) has a 1 in 3 chance of sudden quantum death.
 
+## Systems (shared, slow survival layer)
+- A **Systems** button on the start screen opens your own star system. Up to 5 players share one galaxy (`netlify/functions/systems.mjs`, Netlify Blobs store "systems").
+- **Specialties:** each of the 5 slots makes a different specialty: Food, Water, Ore, Fuel or Crystal.
+- **Time and needs:** one tick is one real hour, and up to 72 hours catch up when you return. Needs grow by age: Landfall needs food and water, Settlement adds ore (at 24h), Colony adds fuel (at 72h), and Civilization adds crystal (at 144h).
+- **Unrest:** shortages raise unrest, and at 60%+ riots halve production. Fix it with festivals (Food) or peacekeepers (credits).
+- **Expanding:** build scout ships to explore your 3 other planets, then colonize them for production and more room.
+- **Other players:** you can see every other system, offer alliances and propose trade routes. Allies trade in full and calm each other's unrest. "Reset planet" starts over, and credits are kept.
+- **Credits** come from finished runs, with harder difficulties paying more:
+  - Main story, win / loss: Easy 8 / 2, Normal 25 / 5, Hard 50 / 8.
+  - DLC, win / loss: Easy 12 / 3, Normal 35 / 7, Hard 70 / 12.
+  - Winning the main story and going straight into the DLC adds a 20% bonus on both runs.
+  - Tutorial runs earn nothing.
+
 ## Files
 - `index.html`: the whole game in one file.
 - `manifest.json` and the icons: let phones add the game to the home screen.
 - `netlify/functions/scores.mjs`: the scoreboard API.
+- `netlify/functions/systems.mjs`: the shared Systems galaxy API.
 - `package.json`: lists the one dependency, `@netlify/blobs`.
 - `netlify.toml`: Netlify settings.
