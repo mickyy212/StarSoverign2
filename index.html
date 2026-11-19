@@ -394,6 +394,7 @@ small.gain{display:flex;align-items:center;gap:6px;width:max-content;max-width:1
 .brow .bc{display:flex;flex-wrap:wrap;gap:4px 12px;color:var(--dim)}.brow i{font-style:normal;color:#7d87a8}
 .tut{margin:0 0 10px;padding:8px 10px;background:#13283a;border:4px solid #3f86b8;color:#d6ecff;font-size:20px;line-height:1.5}.tut>b{color:#7cc4ff;margin-right:6px}
 button.quantum{border-color:#7d4bd6;background:#21173a}button.quantum small{color:#cdb6ff}
+.exp{display:flex;align-items:center;justify-content:center;gap:8px;margin:14px 0 4px;font-size:20px;color:var(--dim)}.exp span{opacity:.8}.exp .rs{float:none;margin:0}.exp .rs.on{border-color:#7d4bd6;color:#cdb6ff}
 </style>
 </head>
 <body>
@@ -775,6 +776,8 @@ const QKEY='ss2qcurse';let qd=0; // qd = turn of this run on which quantum death
 const QFLAV={military:'Your fleet jumps down a thousand possible flanking routes at once, then collapses reality onto the one where the enemy flank is wide open.',
  influence:'Your envoys broadcast the call to arms across a thousand branches of reality, then collapse onto the one where every ally says yes.',
  science:'Your scientists entangle the weapon with its own future firing data, so the shot lands as if it had already been perfectly aimed.'};
+function qOn(){try{return localStorage.getItem('ss2qon')==='1'}catch(e){return false}}
+function qToggle(){try{localStorage.setItem('ss2qon',qOn()?'0':'1')}catch(e){}start();window.scrollTo(0,document.body.scrollHeight)}
 function qPending(){try{return localStorage.getItem(QKEY)==='1'}catch(e){return false}}
 function qSet(v){try{v?localStorage.setItem(QKEY,'1'):localStorage.removeItem(QKEY)}catch(e){}}
 function qStartRun(turns){qd=0;if(TUT||!qPending())return;qSet(false);if(Math.random()<1/3)qd=1+Math.floor(Math.random()*turns)}
@@ -800,7 +803,7 @@ function showTutorial(){TUT=null;app.innerHTML=`<div class="card"><h2>Tutorial</
 function start(){TUT=null;
  if(!ARCADE)return showName();
  app.innerHTML=`${splash()?`<img class="splash" src="${splash()}" alt="">`:''}<h1 class="logo"><span class="l1">STAR SOVEREIGN</span> <span class="l2">II</span></h1><p class="note" style="margin:0 0 10px">3rd Edition</p><p class="sub">Twelve turns. Then it arrives.</p><div class="introbox"><p class="intro">Build your empire, then defend it. Choose ⚔ to go in person: bigger rewards, real danger. Keep your people loyal and the Thal in check.</p></div><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="openHelp(RULES)">Rules</button><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="openHelp()">How to play</button><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="showBoard()">Scoreboard</button><button class="rs" style="float:none;margin:-6px 0 14px" onclick="showTutorial()">Tutorial</button>${qPending()?`<p class="note down" style="margin:0 0 10px">Quantum debt: your next run has a 1 in 3 chance of ending in sudden quantum death.</p>`:''}<p class="note" style="margin:0 0 10px">Playing as <b>${escH(ARCADE.name)}</b></p>
- ${loadSave()?`<div class="card"><h2>Game in progress</h2><button onclick="resume()">Resume your game</button></div>`:''}<div class="card"><h2>Choose your empire</h2><p class="note" style="margin:0 0 10px">Skilled max is about the best a good player typically wins over many games.</p>${EMPIRES.map((e,i)=>`<button onclick="pickEmp(${i})"><b>${e.name}</b> <span class="diff d-${e.diff}">${e.diff}</span><small>${e.desc}<br><span class="warn">${e.perk}</span><br>${recLine(e.diff)}</small></button>`).join('')}<button class="rs" style="float:none;display:block;margin:6px auto 0" onclick="resetRec(this)">Reset win rates</button></div>`;
+ ${loadSave()?`<div class="card"><h2>Game in progress</h2><button onclick="resume()">Resume your game</button></div>`:''}<div class="card"><h2>Choose your empire</h2><p class="note" style="margin:0 0 10px">Skilled max is about the best a good player typically wins over many games.</p>${EMPIRES.map((e,i)=>`<button onclick="pickEmp(${i})"><b>${e.name}</b> <span class="diff d-${e.diff}">${e.diff}</span><small>${e.desc}<br><span class="warn">${e.perk}</span><br>${recLine(e.diff)}</small></button>`).join('')}<button class="rs" style="float:none;display:block;margin:6px auto 0" onclick="resetRec(this)">Reset win rates</button></div><div class="exp"><button class="rs ${qOn()?'on':''}" aria-pressed="${qOn()}" title="Quantum suicide" onclick="qToggle()">Experimental</button></div>`;
 }
 function pickEmp(i){
  emp=EMPIRES[i];
@@ -930,8 +933,8 @@ function pickRoute(k){
  app.innerHTML=header()+`<div class="card"><div class="turn">Final battle</div><h2>Where will you fight?</h2>
  <button onclick="finale(false)">Command from the rear<small>Safe. No bonus.</small></button>
  <button class="personal ${r.death>=10?'lethal':''}" onclick="finale(true)">⚔ Lead from the front: +3 power<span class="risk">${r.death>=10?'☠ Deadly. ':''}Combat risk: ${r.inj}% injury (lose the bonus), ${r.death}% death${saveNote()}</span></button>
- <button class="quantum" onclick="finale('q')">Quantum suicide<small>${QFLAV[route]} It works 10% of the time: +10 power. The discarded branches don't go quietly. Win or lose, your next run then has a 1 in 3 chance of sudden quantum death${dlc?'':' (the DLC counts, if you go straight into it)'}.${TUT?' In the tutorial, nothing carries over.':''}</small></button></div>`;
- tutAdd('Commanding from the rear is safe. Leading in person adds power but risks your life. Quantum suicide is a long shot with a cost that follows you into your next run.');
+ ${qOn()?`<button class="quantum" onclick="finale('q')">Quantum suicide<small>${QFLAV[route]} It works 10% of the time: +10 power. The discarded branches don't go quietly. Win or lose, your next run then has a 1 in 3 chance of sudden quantum death${dlc?'':' (the DLC counts, if you go straight into it)'}.${TUT?' In the tutorial, nothing carries over.':''}</small></button>`:''}</div>`;
+ tutAdd('Commanding from the rear is safe. Leading in person adds power but risks your life.'+(qOn()?' Quantum suicide is a long shot with a cost that follows you into your next run.':''));
 }
 function finale(front){
  const b=basePower(route);let p=b.stat+b.stab+b.en+b.ren+b.prog-b.pen+Math.floor(Math.random()*4),note='';
