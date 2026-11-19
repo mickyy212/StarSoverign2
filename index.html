@@ -426,20 +426,29 @@ button.quantum{border-color:#7d4bd6;background:#21173a}button.quantum small{colo
 .credline{color:#ffd166;font-size:20px}.adminbtn{position:absolute;top:8px;right:8px;margin:0!important;float:none;font-size:14px;padding:2px 8px;z-index:5}
 .credbox{display:inline-block;margin-top:5px;padding:1px 6px;background:#0f2422;border:1px solid #2f6f66;color:#9fc9c2;font-size:13px;line-height:1.4}.credbox b{color:#6fe0cc;font-weight:normal}
 .credtab{width:100%;border-collapse:collapse;margin:6px 0;font-size:16px}.credtab th,.credtab td{border:2px solid #2c355c;padding:3px 5px;text-align:center}.credtab td:first-child{text-align:left}.credtab th small{color:#8f98b8}
-.sysgrid .wide{grid-column:1/-1}.sysgrid i{font-style:normal;color:#8f98b8}.hrow{display:flex;justify-content:space-between;align-items:center;gap:4px;margin:6px 0 2px;font-size:15px}.hrow>span{white-space:nowrap}.hrow .hbtns .rs{float:none;margin:0 0 0 3px;padding:2px 6px;font-size:14px}
-.civscale{margin:2px 0 10px;font-size:15px}.civscale i{font-style:normal;color:#8f98b8}.cssteps{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;margin-top:4px}
+.sysgrid .wide{grid-column:1/-1}.sysgrid i{font-style:normal;color:#8f98b8}.hrow{display:flex;justify-content:space-between;align-items:center;gap:4px;margin:6px 0 2px;font-size:15px}.hrow>span{white-space:nowrap}.hrow{flex-wrap:wrap}.hrow .hbtns{margin-left:auto;display:flex;flex-shrink:0}.hrow .hbtns .rs{float:none;margin:0 0 0 3px;padding:2px 6px;font-size:14px}
+.civscale{margin:2px 0 10px;font-size:15px}.civscale i{font-style:normal;color:#8f98b8}.cssteps{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;margin-top:4px}@media(max-width:360px){.cssteps{grid-template-columns:repeat(3,1fr)}}
 .cssteps span{font-size:12px;text-align:center;padding:3px 0;background:#141c36;color:#5b6380;border:2px solid #222b4c}.cssteps .done{color:#8fd3ff;border-color:#2f4f7a}.cssteps .on{color:#0a1020;background:#ffd166;border-color:#ffd166}
 .pickrow{display:grid;grid-template-columns:1fr 1fr;gap:6px}.pickrow .pick{margin:0;padding:6px 8px;font-size:16px}.pickrow .pick.on{border-color:#ffd166;background:#2a2a14}.pickrow .pick small{font-size:13px}
 .foundsvg{display:block;width:100%;max-width:320px;margin:4px auto 6px;background:#060914;border:2px solid #2c355c}
 #gspot{position:fixed;z-index:70;pointer-events:none;border:3px solid #ffd166;box-shadow:0 0 0 9999px rgba(3,5,12,.6);transition:left .25s,top .25s,width .25s,height .25s}
 #gcard{position:fixed;z-index:71;left:50%;bottom:10px;transform:translateX(-50%);width:min(360px,94vw);background:#101830;border:3px solid #ffd166;box-shadow:4px 4px 0 #05070f,0 0 0 9999px rgba(3,5,12,0);padding:8px 12px 10px}
 #gcard.mid{bottom:auto;top:28%;box-shadow:4px 4px 0 #05070f,0 0 0 9999px rgba(3,5,12,.6)}#gcard small{color:#8f98b8}#gcard h3{margin:2px 0 4px;color:#ffd166}#gcard p{margin:0 0 8px;font-size:16px;line-height:1.35}
-#gcard .gbtns{display:flex;justify-content:flex-end;gap:6px}#gcard .gbtns .rs{float:none;margin:0}#gcard .gbtns .on{border-color:#ffd166}
+#gcard .gbtns{display:flex;justify-content:flex-end;gap:6px;flex-wrap:wrap}#gcard .gbtns .rs{float:none;margin:0}#gcard .gbtns .on{border-color:#ffd166}
 #achbox{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:60;display:flex;flex-direction:column;gap:6px;width:min(340px,92vw);pointer-events:none}
 .achban{background:#101830;border:3px solid #ffd166;box-shadow:4px 4px 0 #05070f;padding:6px 10px 7px;animation:achIn .45s cubic-bezier(.2,1.4,.4,1) both;transition:opacity .6s,transform .6s}
 .achban b{display:block;color:#ffd166;font-size:14px;letter-spacing:1px}.achban span{display:block;color:#fff;font-size:20px}.achban small{display:block;color:#aab3d6;font-size:14px}
 .achban.rare{border-color:#c77dff;background:#1a0b2a;box-shadow:4px 4px 0 #05070f,0 0 14px #c77dff88}.achban.rare b{color:#d6b8ff}.achban.rare span{color:#7df9ff}
 .achban.out{opacity:0;transform:translateY(-14px)}
+.achban{display:flex;gap:10px;align-items:center;position:relative;overflow:hidden}.achtxt{flex:1;min-width:0}
+.achicon{position:relative;width:40px;height:40px;flex:0 0 40px;display:flex;align-items:center;justify-content:center;background:#0a1020;border:2px solid #ffd166}.achban.rare .achicon{border-color:#c77dff}
+.achico{width:22px;height:22px;vertical-align:middle}.achico.big{width:30px;height:30px;animation:achPop .7s cubic-bezier(.2,1.6,.4,1) .15s both}
+.achicon i{position:absolute;left:50%;top:50%;width:3px;height:3px;background:#ffd166;opacity:0;animation:achSpark .8s ease-out .35s both}.achban.rare .achicon i{background:#7df9ff}
+.achban .shine{position:absolute;top:0;left:-40%;width:30%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.22),transparent);animation:achShine 1.1s ease-in-out .5s both;pointer-events:none}
+@keyframes achPop{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.25) rotate(8deg)}100%{transform:none}}
+@keyframes achSpark{0%{opacity:1;transform:translate(-50%,-50%) rotate(var(--a)) translateY(0)}100%{opacity:0;transform:translate(-50%,-50%) rotate(var(--a)) translateY(-26px)}}
+@keyframes achShine{from{left:-40%}to{left:130%}}
+@media(prefers-reduced-motion:reduce){.achico.big,.achicon i,.achban .shine{animation:none!important}.achicon i,.achban .shine{display:none}}
 @keyframes achIn{from{opacity:0;transform:translateY(-30px) scale(.9)}to{opacity:1;transform:none}}
 .achrow{display:flex;gap:10px;align-items:flex-start;padding:6px 4px;border-bottom:2px solid #1c2442;opacity:.55}.achrow.got{opacity:1}
 .achrow i{font-style:normal;width:22px;text-align:center;color:#8f98b8;font-size:20px}.achrow.got i{color:#7bd17b}.achrow.got.rare i{color:#d6b8ff}
@@ -450,7 +459,15 @@ button.quantum{border-color:#7d4bd6;background:#21173a}button.quantum small{colo
 .svp{cursor:pointer}.svp:hover rect{filter:brightness(1.2)}.svl{font:20px SovereignPixel,monospace;fill:#d6dcf2;text-anchor:middle;letter-spacing:1px}.svl.me{fill:#ffd166}.svl.dim{fill:#4b5578}.svq{font:20px SovereignPixel,monospace;fill:#fff;text-anchor:middle}
 .ppanel{border:4px solid var(--edge);background:rgba(10,14,32,.85);padding:8px 10px;margin:8px 0}.ppanel h3{margin:0 0 6px!important}
 button.locked{opacity:.55}.nbr.war{border-color:#ef7a6e}.warbox{border:2px dashed #ef7a6e;padding:6px 8px;margin:8px 0}.warbtn{border-color:#ef7a6e!important;color:#ef7a6e}
-.shiprow{border-bottom:2px solid var(--edge);padding-bottom:6px;margin-bottom:6px}.shiprow .rs{float:none;margin:2px 0 0}.fleet{pointer-events:none}
+.shiprow{border-bottom:2px solid var(--edge);padding-bottom:6px;margin-bottom:6px}
+.alpha{display:inline-block;font-size:11px;padding:0 4px;margin-left:4px;color:#0a1020;background:#ff9f43;vertical-align:middle;letter-spacing:1px}
+.srvrow{border:2px solid #2c355c;background:rgba(10,16,32,.55);padding:6px 8px;margin:8px 0;overflow:hidden}.srvrow.here{border-color:#ffd166}.srvrow small{display:block}.srvbtns{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;margin-top:4px}.srvbtns .rs{float:none;margin:0}.maintag{color:#ffd166}.srvline{font-size:15px;margin:2px 0 4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.srvline .rs{float:none;margin:0 0 0 auto;padding:2px 6px;font-size:14px}
+.tcat{margin:6px 0 10px}.tcat h4{margin:6px 0 4px;color:#ffd166;font-size:17px;font-weight:normal;border-bottom:2px solid #2c355c;padding-bottom:3px}.tcat h4 small{display:block;color:#8f98b8;font-size:13px}
+.trow{margin:4px 0}.trow button{margin:0}.trow.done{padding:6px 8px;border:2px dashed #2c355c;color:#9fb7c9}.trow.done small{display:block;color:#8f98b8}.trow .lvl{color:#8fd3ff;font-size:14px}.trow .freept{float:none;display:block;margin:4px 0 0 auto}
+.pips{display:inline-flex;gap:2px;vertical-align:middle;margin:0 4px}.pips i{display:inline-block;width:7px;height:7px;background:#0a1020;box-shadow:inset 0 0 0 1px #8f98b8}.pips i.on{background:#ffd166}
+.shipcard{border:2px solid #2c355c;background:rgba(10,16,32,.55);padding:6px 8px 8px;margin:8px 0}.shiphead{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px}.shiphead b{color:#e8e8f0}.shiphead .sstat{flex-basis:100%;font-size:13px;color:#8fd3ff}.shipcard .sysbtns{margin-top:4px}.shipcard>button{margin:6px 0 0}
+.upgtrack{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}.upgtrack span{font-size:13px;padding:1px 5px;border:2px solid #2c355c;color:#8f98b8}.upgtrack .done{border-color:#7bd17b;color:#7bd17b}.upgtrack .next{border-color:#ffd166;color:#ffd166}
+.fcomp{display:flex;flex-wrap:wrap;gap:4px 14px;margin:4px 0}.fcomp span{white-space:nowrap}.shipico{width:30px;height:18px;vertical-align:middle;margin-right:4px}.shiprow .rs{float:none;margin:2px 0 0}.fleet{pointer-events:none}
 </style>
 </head>
 <body>
@@ -620,13 +637,21 @@ const HELP=`<h2>How to play</h2><ol>
 <li><b>Thal Threat rises every turn.</b> At the end it costs 1 power at 5+ and 3 at 8+. Lower it when it's cheap.</li>
 <li><b>Win to unlock the DLC,</b> The Thal Reckoning: 10 more turns with your empire as it is, plus +4 Energy and +3 Stability. Buttons show which choices add progress for your route. Progress counts as power in the final move, which needs 34.</li>
 <li><b>The end:</b> you will need about 16 power. When the moment comes, lead in person (+3) only if you are short.</li>
-</ol><button style="text-align:center" onclick="closeHelp()">Got it</button>`;
+</ol><h2>Credits for Systems multiplayer</h2><p class="note">Every finished run pays credits. Harder empires pay more.</p>
+<table class="credtab"><tr><th></th><th>Kethari<br><small>Easy</small></th><th>Celest<br><small>Normal</small></th><th>Vorrani<br><small>Hard</small></th></tr>
+<tr><td>Main story won</td><td>8</td><td>25</td><td>50</td></tr><tr><td>Main story lost</td><td>2</td><td>5</td><td>8</td></tr>
+<tr><td>DLC won</td><td>12</td><td>35</td><td>70</td></tr><tr><td>DLC lost</td><td>3</td><td>7</td><td>12</td></tr>
+<tr><td>Back-to-back bonus</td><td>+4</td><td>+12</td><td>+24</td></tr></table>
+<p class="note">Back-to-back bonus: win the main story and go straight into the DLC, and the DLC adds 20% of both rewards (shown for winning both). Tutorial runs pay nothing.</p>
+<p class="note">Every run also earns renown for your Systems general: a win pays 3 / 6 / 10 (DLC 5 / 9 / 14), a loss 1 / 2 / 3.</p><button style="text-align:center" onclick="closeHelp()">Got it</button>`;
 // Systems multiplayer rules. Keep these in step with systems.mjs and the sim-core numbers: they must never mislead.
 const SYS_RULES=`<h2>Systems multiplayer: rules</h2><ul>
-<li><b>One week per game.</b> Every day is harder than the last. Your people need up to 25% more goods by day 7, bad events come more often and hit harder, and the AI empires build faster. On day 7 the Reflection comes. Then everything resets and you name a new system. Your technologies, ship upgrades and general carry over. Each new week starts a little harder.</li>
-<li><b>Founding.</b> You pick your star and your home world. Stars: Yellow (no change), Red dwarf (bad events hit 15% softer, −1 Fuel an hour), Blue giant (+2 Fuel an hour, your people need 10% more Water), White dwarf (+2 Ore, −1 Food an hour). Home worlds: Temperate (+1 Food), Ocean (+2 Water, −1 Ore), Desert (+2 Ore, −1 Water), Volcanic (+2 Fuel, −1 Food), Jungle (+2 Food, −1 Fuel), all per hour. <b>New planet</b> abandons your system for good (worlds, goods, fleet, technologies, ship upgrades and general) so you can claim a new star. Your credits are safe.</li>
+<li><b>Servers.</b> Each server is its own galaxy, with up to 5 players and 3 AI empires. Servers made by the admin are marked (Main). Any player can run one server of their own; its creator or the admin can remove it, which wipes its galaxy. You play on one server at a time: moving to another abandons your system.</li>
+<li><b>One week per game.</b> Every day is harder than the last. Your people need up to 25% more goods by day 7, bad events come more often and hit harder, and the AI empires build faster. On day 7 the Reflection comes. Then everything resets and you name a new system. Your technologies, ship upgrades and general carry over. Each new week starts harder: the AI empires and the Reflection grow 15% a week, plus 5% more for each player beyond the first.</li>
+<li><b>Founding.</b> You pick your star and your home world. Stars: Yellow (no change), Red dwarf (bad events hit 15% softer, −1 Fuel an hour), Blue giant (+2 Fuel an hour, your people need 10% more Water), White dwarf (+2 Ore, −1 Food an hour). Home worlds: Temperate (+1 Food), Ocean (+2 Water, −1 Ore), Desert (+2 Ore, −1 Water), Volcanic (+2 Fuel, −1 Food), Jungle (+2 Food, −1 Fuel), all per hour. <b>New planet</b> abandons your system for good (worlds, goods, fleet, technologies, ship upgrades and general) so you can claim a new star. You keep your credits, and what you spent this week comes back.</li>
 <li><b>AI empires never ally with players.</b> They still trade with you while their opinion of you is 0 or more. Players can ally with each other.</li>
-<li><b>Credits needed today</b> is a guide: about what a steady player spends that day to keep their people fed and keep growing. It rises 5 a day, and 5 more each week. Taxes pay part of it (2 credits an hour, +1 for each development stage, +0.5 for each colony, +2 as Type II; halved during riots; none while your home world is occupied). Main-game runs pay the rest.</li>
+<li><b>Credits needed today</b> is a guide: about what a steady player spends that day to keep their people fed and keep growing. It starts at 150 on day 1, then 300 on day 2 and 25 more each day, and 55 more a day each week. Prices were set to match, so main-game runs pay for most of it. Taxes pay part of it (2 credits an hour, 50% more each week, +1 for each development stage, +0.5 for each colony, +2 as Type II; halved during riots; none while your home world is occupied). Main-game runs pay the rest.</li>
+<li><b>Your week's bank.</b> The header shows the credits you earned and spent in Systems this week. If you lose your system (New planet, moving to another server, your server being removed, an admin kicking you, or the server losing it), every credit you spent this week comes back. Credits you paid other players by investing don't. The bank starts fresh each week.</li>
 <li><b>Your people</b> eat Food and Water, and later Ore, Fuel and foreign rare goods. They only settle when there is enough to spare. Each good you run short of adds 5 unrest an hour (3 for a rare good). At 60% unrest, riots halve your output.</li>
 <li><b>The AI empires</b> invade at the start of day 3 (one empire) and day 5 (the others usually join), with a 12-hour warning. A player alone in the galaxy only faces the day-5 invasion, from one empire. A hostile empire also threatens you once your fleet reaches 80% of theirs, and strikes 2 hours later. It won't strike the same player again for 36 hours.</li>
 <li><b>War runs in real time, even while everyone is away.</b> Fleets launch and meet halfway. The winner takes the outer worlds first, moving inward, and besieges the home world last. While anyone on the defending side is online, a siege rolls every 30 seconds and a landing takes a minute. While the whole defending side is away, the garrison digs in: a roll every 90 minutes, and a landing takes an hour. Planetary defenses make both slower.</li>
@@ -634,18 +659,17 @@ const SYS_RULES=`<h2>Systems multiplayer: rules</h2><ul>
 <li><b>Vassals.</b> If an AI empire takes your home world, you become its vassal and play on, paying 1 Food, 1 Water and 1 of your rare good each hour. Another player frees you by winning the "Free their vassals" treaty, or by annexing or vassalizing your overlord.</li>
 <li><b>The Reflection.</b> On day 7 every war stops and a rift opens for each player. Out of each comes a mirror of that player's fleet: the same ships and upgrades, at a strength set by the week, not by you. All players fight it together in one war. A mirror regrows every hour while its rift is open. Destroy a mirror's fleet to close its rift. Against the Reflection, your world's guns grow with your civilization: normal strength for a Landfall outpost, twice as strong at Type I, four times at Type II. Close every rift and every player who still holds their home world earns 2 free technology points. Close only your own and you earn 1. Lose your home world to it and you earn none.</li>
 <li><b>Investing.</b> From another player's panel (when you are not at war), offer to invest: they get a full day of every foreign rare good they need, and they pay you the credits you are still short of today's "credits needed" figure. It costs you no goods. Nothing happens unless they accept, and you can make one offer per player per day.</li>
-<li><b>Technologies</b> cost credits and goods, and you keep them forever: Closed-loop habitats, Deep-core mining, Hazard wardens, Drone shipyards, Bastion grid and Rift lances.</li></ul>`;
+<li><b>Technologies</b> cost credits and goods, and you keep them forever: Closed-loop habitats, Deep-core mining, Hazard wardens, Drone shipyards, Bastion grid and Rift lances.</li>
+<li><b>Your leader</b> rules at home. Leader types: Sovereign (no change), Steward (taxes +25%, each shortage +1 unrest), Industrialist (+1 Ore and +1 Fuel an hour, people need 10% more Food), Diplomat (trade routes with non-allies deliver in full, −1 Ore an hour), Zealot (unrest falls 2 faster when calm, taxes −20%).</li>
+<li><b>Your general</b> leads your fleet. General types: Veteran (no change), Raider (+10% attack, −10% siege), Siegemaster (+20% siege, −5% attack), Warden (+15% attack over your own worlds, −5% attack elsewhere).</li>
+<li><b>Renown.</b> Every main-game run earns renown (win 3 / 6 / 10 by difficulty, DLC win 5 / 9 / 14, a loss 1 to 3), and so does every battle, siege and conquest here. Spend it on general upgrades: Gunnery drills (+4% attack a level), Siege engineers (+8% siege), Evasive maneuvers (5% less damage from planetary guns); 10, 20 and 35 renown. Battle renown also earns promotions. Renown spent this week comes back with your credits if you lose your system.</li>
+<li><b>Admin reset.</b> The admin can reset a server: it goes back to day 1 of the same week with no extra difficulty, and every system there is wiped, technologies, upgrades and generals included. Its players get back the credits and renown they spent there this week.</li></ul>`;
 const RULES=`<h2>Rules</h2><ul>
 <li>You get 12 turns. Each turn, pick one of three choices.</li>
 <li>⚔ means you go yourself. Better rewards, but you can get hurt or die.</li>
 <li>If you die or Stability hits 0, you lose.</li>
 <li>Survive the 12 turns and pass the final test to win.</li>
-</ul><h2>Credits for Systems multiplayer</h2><p class="note">Every finished run pays credits. Harder empires pay more.</p>
-<table class="credtab"><tr><th></th><th>Kethari<br><small>Easy</small></th><th>Celest<br><small>Normal</small></th><th>Vorrani<br><small>Hard</small></th></tr>
-<tr><td>Main story won</td><td>8</td><td>25</td><td>50</td></tr><tr><td>Main story lost</td><td>2</td><td>5</td><td>8</td></tr>
-<tr><td>DLC won</td><td>12</td><td>35</td><td>70</td></tr><tr><td>DLC lost</td><td>3</td><td>7</td><td>12</td></tr>
-<tr><td>Back-to-back bonus</td><td>+4</td><td>+12</td><td>+24</td></tr></table>
-<p class="note">Back-to-back bonus: win the main story and go straight into the DLC, and the DLC adds 20% of both rewards (shown for winning both). Tutorial runs pay nothing.</p><h2>Tips</h2><ul>
+</ul><h2>Tips</h2><ul>
 <li>Pick Fleet, Science or Influence (your empire's best) and grow it every turn.</li>
 <li>Keep Stability high and Energy above 0.</li>
 </ul><button style="text-align:center" onclick="closeHelp()">Got it</button>`;
@@ -850,55 +874,87 @@ const ACHS=[
  {id:'type2',r:1,n:'Star Harnessed',d:'Build a Type II civilization in Systems multiplayer.'}];
 function achGot(){try{return JSON.parse(localStorage.getItem(ACH_KEY))||{}}catch(e){return {}}}
 function ach(id){if(TUT&&id!=='tut')return;const g=achGot();if(g[id])return;const a=ACHS.find(x=>x.id===id);if(!a)return;g[id]=Date.now();try{localStorage.setItem(ACH_KEY,JSON.stringify(g))}catch(e){}achBanner(a)}
+// Achievement icons: tiny 8x8 pixel glyphs drawn as inline SVG (a few bytes each, crisp at any size).
+const ACH_GLYPH={sun:['#..#..#.','.#.#.#..','..###...','#######.','..###...','.#.#.#..','#..#..#.','........'],check:['.......#','......##','.....##.','#...##..','##.##...','.###....','..#.....','........'],
+ ring:['..####..','.#....#.','#..##..#','#.#..#.#','#.#..#.#','#..##..#','.#....#.','..####..'],shield:['########','#......#','#.####.#','#.####.#','.#.##.#.','.#....#.','..#..#..','...##...'],
+ book:['.######.','#.....##','#.###.##','#.....##','#.###.##','#.....##','.######.','........'],chain:['.###....','#...#...','#..###..','#..#.#..','.###..#.','...#..#.','....##..','........'],
+ bolt:['....##..','...##...','..##....','.#####..','...##...','..##....','.##.....','#.......'],sword:['.......#','......#.','.....#..','#...#...','.#.#....','..#.....','.#.#....','#.......'],
+ flame:['...#....','..###...','..###...','.#####..','.##.##..','##...##.','##...##.','.#####..'],planet:['...##...','..####..','########','#.####.#','..####..','...##...','........','........'],
+ inf:['........','.##..##.','#..##..#','#..##..#','.##..##.','........','........','........'],gem:['...##...','..####..','.######.','########','.######.','..####..','...##...','........'],
+ crown:['#..#..#.','#.###.#.','#######.','#######.','#######.','........','#######.','........'],cycle:['..####..','.#....#.','#......#','#....###','#.....#.','#......#','.#....#.','..####..'],
+ three:['...##...','...##...','........','........','##....##','##....##','........','........'],razor:['#.......','.#......','..#.....','...#....','....#...','.....#..','......#.','.......#'],
+ gear:['.#.##.#.','########','.##..##.','##....##','##....##','.##..##.','########','.#.##.#.'],rift:['...#....','....#...','...#....','..#.....','...#....','....#...','...#....','..#.....']};
+const ACH_ICON={first:'sun',easy:'check',normal:'ring',hard:'shield',dlc:'book',chain:'chain',tut:'bolt',front:'sword',bold:'flame',claim:'planet',quantum:'inf',flawless:'gem',throne:'crown',reboot:'cycle',all3:'three',razor:'razor',hardchain:'shield',aug:'gear',rift:'rift',type2:'sun'};
+function achIcon(a,cls){const g=ACH_GLYPH[ACH_ICON[a.id]]||ACH_GLYPH.gem,col=a.r?'#7df9ff':'#ffd166';let r='';g.forEach((row,y)=>{for(let x=0;x<8;x++)if(row[x]==='#')r+=`<rect x="${x}" y="${y}" width="1" height="1"/>`});
+ return `<svg class="${cls||'achico'}" viewBox="-1 -1 10 10" shape-rendering="crispEdges" aria-hidden="true"><g fill="${col}">${r}</g></svg>`}
 function achBanner(a){if(typeof document==='undefined'||!document.createElement||!document.body)return;let box=document.getElementById('achbox');if(!box){box=document.createElement('div');box.id='achbox';document.body.appendChild(box)}
  const el=document.createElement('div');el.className='achban'+(a.r?' rare':'');el.setAttribute('role','status');
- el.innerHTML=`<b>${a.r?'★ Rare achievement':'Achievement'}</b><span>${a.n}</span><small>${a.d}</small>`;box.appendChild(el);
+ el.innerHTML=`<div class="achicon">${achIcon(a,'achico big')}${Array.from({length:a.r?10:6},(_,i)=>`<i style="--a:${Math.round(i*360/(a.r?10:6))}deg"></i>`).join('')}</div><div class="achtxt"><b>${a.r?'★ Rare achievement':'Achievement'}</b><span>${a.n}</span><small>${a.d}</small></div><em class="shine"></em>`;box.appendChild(el);
  setTimeout(()=>el.classList.add('out'),4200);setTimeout(()=>el.remove(),4900)}
-function showAch(){const g=achGot(),n=ACHS.filter(a=>g[a.id]).length,row=a=>`<div class="achrow${g[a.id]?' got':''}${a.r?' rare':''}"><i>${g[a.id]?(a.r?'★':'✓'):'·'}</i><div><b>${a.n}</b><small>${a.d}${g[a.id]?` <span class="note">(${new Date(g[a.id]).toLocaleDateString()})</span>`:''}</small></div></div>`;
+function showAch(){const g=achGot(),n=ACHS.filter(a=>g[a.id]).length,row=a=>`<div class="achrow${g[a.id]?' got':''}${a.r?' rare':''}"><i>${g[a.id]?achIcon(a):'·'}</i><div><b>${a.n}</b><small>${a.d}${g[a.id]?` <span class="note">(${new Date(g[a.id]).toLocaleDateString()})</span>`:''}</small></div></div>`;
  app.innerHTML=`<div class="card"><h2>Achievements</h2><p class="note">${n} of ${ACHS.length} unlocked on this device.</p><h3>Common</h3>${ACHS.filter(a=>!a.r).map(row).join('')}<h3 style="color:#d6b8ff">★ Rare</h3>${ACHS.filter(a=>a.r).map(row).join('')}<button style="text-align:center;margin-top:12px" onclick="start()">Back</button></div>`;window.scrollTo(0,0)}
-// ---- Admin: sign in (password default 1234, changeable), see the players, kick a system out of Systems multiplayer.
+// ---- Admin: sign in (password default 1234, changeable), see every server and its players, kick a system, create Main servers, remove any server.
 let ADMIN_PASS='';
 async function adminCall(act,extra){try{const r=await fetch('/api/systems',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify({id:ARCADE.id,op:'admin',pass:ADMIN_PASS,act,...(extra||{})})});return await r.json()}catch(e){return {ok:false,msg:'No connection to the galaxy server.'}}}
 async function showAdmin(msg){if(!ADMIN_PASS){app.innerHTML=`<div class="card"><h2>Admin</h2><p class="note">Sign in to manage Systems multiplayer.</p><input id="admpass" class="arcin" type="password" maxlength="40" autocomplete="off"><p class="down" style="min-height:24px">${escH(msg||'')}</p><button class="personal" style="text-align:center" onclick="adminSignIn()">Sign in</button><button style="text-align:center" onclick="start()">Back</button></div>`;return}
  const j=await adminCall('list');if(j.ok===false){ADMIN_PASS='';return showAdmin(j.msg)}
- app.innerHTML=`<div class="card"><h2>Admin</h2>${msg?`<p class="sysmsg">${escH(msg)}</p>`:''}<h3>Players</h3>${(j.players||[]).length?j.players.map(p=>`<div class="nbr"><b>${escH(p.sysName||p.name)}</b> <small class="note">${escH(p.name)} · ${SRES_NAME[p.spec]} · last seen ${p.seen?dur(Date.now()-p.seen)+' ago':'never'}</small><button class="rs" onclick="adminKick('${p.pid}',this)">Kick</button></div>`).join(''):'<p class="note">No players in the galaxy.</p>'}
- <p class="note">Kicking removes the system and its rare good from the galaxy, so nobody needs it any more. The player can found a new system.</p>
+ const plist=v=>(v.list||[]).length?v.list.map(p=>`<div class="nbr"><b>${escH(p.sysName||p.name)}</b> <small class="note">${escH(p.name)} · ${SRES_NAME[p.spec]} · last seen ${p.seen?dur(Date.now()-p.seen)+' ago':'never'}</small><button class="rs" onclick="adminKick('${v.id}','${p.pid}',this)">Kick</button></div>`).join(''):'<p class="note">No players here.</p>';
+ app.innerHTML=`<div class="card"><h2>Admin</h2>${msg?`<p class="sysmsg">${escH(msg)}</p>`:''}<h3>Servers</h3>
+ ${(j.servers||[]).length?j.servers.map(v=>`<div class="srvrow"><div class="srvname"><b>${escH(v.name)}</b>${v.main?' <span class="maintag">(Main)</span>':` <small class="note">by ${escH(v.by||'a player')}</small>`}</div><small class="note">${v.players}/${v.max} players · Week ${v.week}, day ${v.day}</small>${plist(v)}<div class="srvbtns"><button class="rs" onclick="adminRmServer('${v.id}',this)">Remove server</button></div></div>`).join(''):'<p class="note">No servers.</p>'}
+ <p class="note">Kicking removes a system and its rare good from that galaxy, so nobody there needs it any more; the player can found a new system. Removing a server wipes its whole galaxy, and its players get this week's spending back.</p>
+ <h3>Create a Main server</h3><input id="admsrv" class="arcin" maxlength="24" placeholder="Server name" autocomplete="off"><button onclick="adminMkServer()">Create server<small>Admin servers are marked (Main) at the top of the list.</small></button>
+ <h3>Scoreboard</h3><button onclick="adminClearBoard(this)">Clear the scoreboard<small>Removes every player's runs from the shared scoreboard. It can't be undone.</small></button>
  <h3>Change password</h3><input id="admnew" class="arcin" type="password" maxlength="40" autocomplete="off"><button onclick="adminSetPass()">Save new password</button>
  <button class="rs" style="float:none;margin-top:10px" onclick="ADMIN_PASS='';start()">Sign out</button> <button class="rs" style="float:none;margin-top:10px" onclick="start()">Back</button></div>`}
 async function adminSignIn(){ADMIN_PASS=document.getElementById('admpass').value;showAdmin()}
-async function adminKick(pid,b){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again to kick';return}const j=await adminCall('kick',{target:pid});showAdmin(j.msg)}
+async function adminKick(srv,pid,b){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again to kick';return}const j=await adminCall('kick',{srv,target:pid});showAdmin(j.msg)}
+async function adminRmServer(srv,b){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again: wipe this galaxy';return}const j=await adminCall('rmserver',{srv});showAdmin(j.msg)}
+async function adminMkServer(){const n=document.getElementById('admsrv').value;const j=await adminCall('mkserver',{name:n});showAdmin(j.msg)}
+async function adminClearBoard(b){if(!b.dataset.armed){b.dataset.armed=1;b.firstChild.textContent='Tap again: clear it for everyone';return}
+ let j=null;try{const r=await fetch('/api/scores',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify({op:'clear',pass:ADMIN_PASS})});j=await r.json()}catch(e){}
+ showAdmin(j?j.msg:'No connection to the scoreboard.')}
 async function adminSetPass(){const np=document.getElementById('admnew').value;const j=await adminCall('setpass',{newpass:np});if(j.ok!==false)ADMIN_PASS=np;showAdmin(j.msg)}
 // per-run notes for achievements (saved with the run)
 let RUNA={pc:0,pf:0,reboot:false},LASTFIN=null;
-// ---- Arcade name + lifetime scoreboard (per device; shared online when /api/scores exists) ----
+// ---- Arcade name + scoreboard of your latest 20 runs. The server banks them (they outlive every new build) until the admin clears the board. ----
 const ARC='ss2arcade',DIFFS=['Easy','Normal','Hard'];
 function blankLife(){const z=()=>({Easy:{w:0,n:0},Normal:{w:0,n:0},Hard:{w:0,n:0}});return {main:z(),dlc:z()}}
-let ARCADE=(()=>{try{const a=JSON.parse(localStorage.getItem(ARC));if(a&&a.id&&a.name){a.life=a.life||blankLife();return a}}catch(e){}return null})();
+let ARCADE=(()=>{try{const a=JSON.parse(localStorage.getItem(ARC));if(a&&a.id&&a.name){a.life=a.life||blankLife();a.runs=Array.isArray(a.runs)?a.runs:[];return a}}catch(e){}return null})();
+const BOARD_KEEP=20;
+function lifeOfRuns(runs){const o=blankLife();for(const r of runs||[])if(o[r.m]&&o[r.m][r.d]){o[r.m][r.d].n++;o[r.m][r.d].w+=r.w?1:0}return o}
 function saveArcade(){try{localStorage.setItem(ARC,JSON.stringify(ARCADE))}catch(e){}}
 function escH(t){return String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function pushScore(){if(!ARCADE)return;try{fetch('/api/scores',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(ARCADE)}).catch(()=>{})}catch(e){}}
-function lifeRecord(isDlc,d,win){if(!ARCADE||!d)return;const r=ARCADE.life[isDlc?'dlc':'main'][d];r.n++;if(win)r.w++;saveArcade();pushScore()}
+// sends your latest runs; the server adds any it doesn't have yet (so a run finished offline still counts later)
+function pushScore(){if(!ARCADE)return;try{fetch('/api/scores',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:ARCADE.id,name:ARCADE.name,runs:ARCADE.runs||[]})}).catch(()=>{})}catch(e){}}
+function lifeRecord(isDlc,d,win){if(!ARCADE||!d)return;const r=ARCADE.life[isDlc?'dlc':'main'][d];r.n++;if(win)r.w++;
+ ARCADE.runs=[...(ARCADE.runs||[]),{m:isDlc?'dlc':'main',d,w:win?1:0,t:Date.now()}].slice(-BOARD_KEEP);saveArcade();pushScore()}
 function showName(again){
- app.innerHTML=`<h1 class="logo"><span class="l1">STAR SOVEREIGN</span> <span class="l2">II</span></h1><div class="card"><h2>${again?'Change your arcade name':'Enter your arcade name'}</h2><p class="note" style="margin:0 0 10px">It goes on the scoreboard with your lifetime win rates from this device.</p><input id="arcname" class="arcin" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${again?escH(ARCADE.name):''}" placeholder="ACE-7"><p id="namerr" class="down" style="min-height:30px;margin:6px 0"></p><button class="personal" style="text-align:center" onclick="setName()">${again?'Save name':'Start'}</button>${again?'<button style="text-align:center" onclick="showBoard()">Back</button>':''}</div>`;
+ app.innerHTML=`<h1 class="logo"><span class="l1">STAR SOVEREIGN</span> <span class="l2">II</span></h1><div class="card"><h2>${again?'Change your arcade name':'Enter your arcade name'}</h2><p class="note" style="margin:0 0 10px">It goes on the scoreboard with your win rates over your latest 20 runs.</p><input id="arcname" class="arcin" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${again?escH(ARCADE.name):''}" placeholder="ACE-7"><p id="namerr" class="down" style="min-height:30px;margin:6px 0"></p><button class="personal" style="text-align:center" onclick="setName()">${again?'Save name':'Start'}</button>${again?'<button style="text-align:center" onclick="showBoard()">Back</button>':''}</div>`;
  const i=document.getElementById('arcname');i.onkeydown=e=>{if(e.key==='Enter')setName()};try{i.focus()}catch(e){}}
 function setName(){const v=document.getElementById('arcname').value.replace(/[^A-Za-z0-9 _.-]/g,'').trim().slice(0,12).toUpperCase();
  if(v.length<2){document.getElementById('namerr').textContent='Use 2 to 12 letters or numbers.';return}
  if(!ARCADE)ARCADE={id:(window.crypto&&crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2)),name:v,life:blankLife()};else ARCADE.name=v;
  saveArcade();pushScore();start()}
-function removeMe(b){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again: deletes your name and lifetime stats';setTimeout(()=>{if(document.body.contains(b)){delete b.dataset.armed;b.textContent='Remove me from the scoreboard'}},4000);return}
+function removeMe(b){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again: deletes your name and your runs';setTimeout(()=>{if(document.body.contains(b)){delete b.dataset.armed;b.textContent='Remove me from the scoreboard'}},4000);return}
  const id=ARCADE&&ARCADE.id;try{fetch('/api/scores',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})}).catch(()=>{})}catch(e){}
  try{localStorage.removeItem(ARC)}catch(e){}ARCADE=null;showName()}
 let boardTab='main';
 function cell(r,d){const x=r&&r[d];return x&&x.n?`${Math.round(100*x.w/x.n)}% <i>(${x.w}/${x.n})</i>`:'—'}
 async function showBoard(tab){if(tab)boardTab=tab;const T=boardTab;
  app.innerHTML=`<div class="card"><h2>Scoreboard</h2><div class="tabs"><button class="${T==='main'?'on':''}" onclick="showBoard('main')">Main story</button><button class="${T==='dlc'?'on':''}" onclick="showBoard('dlc')">DLC</button></div><div id="board"><p class="note">Loading…</p></div><button style="text-align:center" onclick="showName(true)">Change name</button><button style="text-align:center" onclick="start()">Back</button><button class="rs" style="float:none;display:block;margin:10px auto 0" onclick="removeMe(this)">Remove me from the scoreboard</button></div>`;
- let rows=null;try{const r=await fetch('/api/scores?me='+encodeURIComponent(ARCADE.id),{cache:'no-store'});if(r.ok)rows=await r.json()}catch(e){}
+ let rows=null,res=null;try{const r=await fetch('/api/scores?me='+encodeURIComponent(ARCADE.id),{cache:'no-store'});if(r.ok)res=await r.json()}catch(e){}
  if(boardTab!==T||!document.getElementById('board'))return;
- const online=Array.isArray(rows);if(!online)rows=[];
- rows=rows.filter(x=>!x.me);rows.push({name:ARCADE.name,life:ARCADE.life,me:true});
+ if(res&&Array.isArray(res.rows)){rows=res.rows;
+  // the admin cleared the board: runs from before that don't count any more
+  if((res.clearedAt||0)>(ARCADE.clearSeen||0)){ARCADE.runs=(ARCADE.runs||[]).filter(r=>r.t>res.clearedAt);ARCADE.clearSeen=res.clearedAt;saveArcade()}}
+ else if(Array.isArray(res))rows=res;
+ const online=!!rows;if(!online)rows=[];
+ const mine=rows.find(x=>x.me);rows=rows.filter(x=>!x.me);
+ rows.push({name:ARCADE.name,life:mine&&mine.runs==null&&!(ARCADE.runs||[]).length?mine.life:lifeOfRuns(ARCADE.runs),me:true});
+ if(online&&(ARCADE.runs||[]).length&&!(mine&&mine.runs>=ARCADE.runs.length))pushScore();
  const games=x=>DIFFS.reduce((a,d)=>a+((x.life&&x.life[T]&&x.life[T][d]&&x.life[T][d].n)||0),0),wins=x=>DIFFS.reduce((a,d)=>a+((x.life&&x.life[T]&&x.life[T][d]&&x.life[T][d].w)||0),0);
  rows.sort((a,b)=>wins(b)-wins(a)||games(b)-games(a));
- document.getElementById('board').innerHTML=(online?'':`<p class="note">The shared scoreboard works on the website. Here it shows this device only.</p>`)+rows.map((x,k)=>`<div class="brow${x.me?' me':''}"><b>${k+1}. ${escH(x.name)}${x.me?' (you)':''}</b><span class="bc"><span>Easy ${cell(x.life&&x.life[T],'Easy')}</span><span>Normal ${cell(x.life&&x.life[T],'Normal')}</span><span>Hard ${cell(x.life&&x.life[T],'Hard')}</span></span></div>`).join('');
+ document.getElementById('board').innerHTML=(online?'':`<p class="note">The shared scoreboard works on the website. Here it shows this device only.</p>`)+`<p class="note">Win rates over each player's latest ${BOARD_KEEP} runs.</p>`+rows.map((x,k)=>`<div class="brow${x.me?' me':''}"><b>${k+1}. ${escH(x.name)}${x.me?' (you)':''}</b><span class="bc"><span>Easy ${cell(x.life&&x.life[T],'Easy')}</span><span>Normal ${cell(x.life&&x.life[T],'Normal')}</span><span>Hard ${cell(x.life&&x.life[T],'Hard')}</span></span></div>`).join('');
 }
 
 // ---- Quantum suicide: a final-battle gamble whose cost lands on the next run ----
@@ -962,39 +1018,51 @@ const WORLDS={temperate:{n:'Temperate world',d:'Mild and easy: +1 Food an hour.'
 function sunOf(s){return SUNS[(s&&s.sun)||'yellow']||SUNS.yellow}
 function worldOf(s){return WORLDS[(s&&s.world)||'temperate']||WORLDS.temperate}
 function starCol(g){return g&&g.sun&&SUNS[g.sun]?SUNS[g.sun].col:STARCOL[((g&&g.slot)||0)%5]}
-const TAX={base:2,dev:1,col:0.5,typeII:2},HOME_OUT={food:3,water:3,ore:2,fuel:2},SHORT_UNREST=5,RARE_UNREST=3,COLONY_CREDITS=15,START_SCOUTS=2;
+// Leader types (economy): small bonuses with a tradeoff, like the star and world picks.
+const LEADERS={sovereign:{n:'Sovereign',d:'Balanced. No change.'},
+ steward:{n:'Steward',d:'Taxes +25%, but each shortage adds 1 more unrest.',tax:0.25,short:1},
+ industrialist:{n:'Industrialist',d:'+1 Ore and +1 Fuel an hour, but your people need 10% more Food.',out:{ore:1,fuel:1},hunger:0.1},
+ diplomat:{n:'Diplomat',d:'Trade routes with non-allies deliver in full, but −1 Ore an hour.',fulltrade:true,out:{ore:-1}},
+ zealot:{n:'Zealot',d:'Unrest falls 2 faster every calm hour, but taxes −20%.',calm:2,tax:-0.2}};
+function leaderOf(s){return LEADERS[((s||SYS||{}).leader||{}).type]||LEADERS.sovereign}
+const TAX={base:2,dev:1,col:0.5,typeII:2,week:0.5},HOME_OUT={food:3,water:3,ore:2,fuel:2},SHORT_UNREST=5,RARE_UNREST=3,COLONY_CREDITS=75,START_SCOUTS=2;
 // Technologies: kept from season to season. The server holds your levels.
-const TECHS={agri:{n:'Closed-loop habitats',d:'Your people need 20% less of every common good per level.',max:2},
- mine:{n:'Deep-core mining',d:'+1 Ore and +1 Fuel every hour per level.',max:3},
- ward:{n:'Hazard wardens',d:'Bad events take 25% less per level.',max:2},
- yard:{n:'Drone shipyards',d:'Warships cost 15% fewer credits per level.',max:2},
- bast:{n:'Bastion grid',d:'Your planetary guns hit 25% harder per level, in sieges and in battles over your worlds.',max:2},
- lance:{n:'Rift lances',d:'Your fleet hits the Reflection 20% harder per level.',max:2}};
-const TECH_COST=[40,80,120];
+const TECHS={agri:{n:'Closed-loop habitats',d:'Your people need 20% less of every common good per level.',max:2,cat:'eco'},
+ mine:{n:'Deep-core mining',d:'+1 Ore and +1 Fuel every hour per level.',max:3,cat:'eco'},
+ ward:{n:'Hazard wardens',d:'Bad events take 25% less per level.',max:2,cat:'def'},
+ yard:{n:'Drone shipyards',d:'Warships cost 15% fewer credits per level.',max:2,cat:'war'},
+ bast:{n:'Bastion grid',d:'Your planetary guns hit 25% harder per level, in sieges and in battles over your worlds.',max:2,cat:'def'},
+ lance:{n:'Rift lances',d:'Your fleet hits the Reflection 20% harder per level.',max:2,cat:'war'}};
+const TECH_CATS=[['eco','Economy','Feed your people and dig deeper.'],['def','Defense','Weather bad events and hold your worlds.'],['war','Fleet','Cheaper warships and a sharper edge against the Reflection.']];
+const TECH_COST=[200,400,600];
 // Credits needed today: about what a steady player spends each day on survival and progress (from tools/systems-sim.mjs).
 // Day 1 is light; then it rises 5 a day, and 5 more for each week after the first.
-function creditGuide(day,week){day=day||1;week=week||1;return day<=1?30+5*(week-1):50+5*day+5*(week-1)}
+// x5 (2026-11-19): every credit price and the guide were raised five-fold so main-game runs matter more; taxes were not.
+const CREDIT_SCALE=5;
+// Each week asks about 55 credits a day more, and taxes grow 50% a week to cover most of it,
+// so the main-game runs a day go up by only about one Hard win per week (day 1: 4, then 5, then 5).
+function creditGuide(day,week){day=day||1;week=week||1;return CREDIT_SCALE*((day<=1?30:50+5*day)+11*(week-1))}
 function techLv(k){return ((meRec().techs)||{})[k]||0}
 function techRes(k,lv){return bag('ore',15*(lv+1),'fuel',10*(lv+1),frare(lv+Object.keys(TECHS).indexOf(k)),6*(lv+1))}
 function shipCost(k){return Math.round(SHIPS[k].c*(1-0.15*techLv('yard')))}
 // Taxes: your system pays a few credits every hour, more as it develops. Riots halve them; losing the home world stops them.
-function taxOf(s){const occ=occOf(SYS_PID).some(x=>x.home);if(occ)return 0;const t=TAX.base+TAX.dev*(s.dev||0)+TAX.col*colonyCount(s)+(typeII(s)?TAX.typeII:0);return s.unrest>=60?t/2:t}
+function taxOf(s){const occ=occOf(SYS_PID).some(x=>x.home);if(occ)return 0;const t=(TAX.base+TAX.dev*(s.dev||0)+TAX.col*colonyCount(s)+(typeII(s)?TAX.typeII:0))*(1+(leaderOf(s).tax||0))*(1+TAX.week*((SEASON.n||1)-1));return s.unrest>=60?t/2:t}
 const COMMON=['food','water','ore','fuel'],RARE=['crystal','plasma','spice','alloy','relic'],SRES=[...COMMON,...RARE];
 const SRES_NAME={food:'Food',water:'Water',ore:'Ore',fuel:'Fuel',crystal:'Crystal',plasma:'Plasma',spice:'Spice',alloy:'Alloy',relic:'Relics'};
 const SRES_COL={food:'#7bd17b',water:'#5fb8ff',ore:'#c9a27a',fuel:'#ff9f43',crystal:'#d58cff',plasma:'#ff6bd6',spice:'#e8d36a',alloy:'#9fb7c9',relic:'#f0e6c0'};
 const SPEC=RARE; // each of the 5 player slots makes one rare good nobody else can
 const ERAS=[{at:0,name:'Landfall',need:['food','water'],rare:0},{at:24,name:'Settlement',need:['food','water','ore'],rare:1},{at:72,name:'Colony',need:['food','water','ore','fuel'],rare:2},{at:144,name:'Civilization',need:['food','water','ore','fuel'],rare:3}];
 const PNAMES=['Ashfall','Tidewell','Korr','Vesh','Lumen','Brakka','Sorrow','Elda','Quill','Morrow','Halcy','Drift'];
-const SHIPS={c:{name:'Corvette',atk:1,hull:2,siege:0,c:6,res:{ore:2},d:'Fast and cheap. Soaks up fire.'},f:{name:'Frigate',atk:3,hull:5,siege:1,c:15,res:{ore:3,fuel:3},d:'The backbone of a siege.'},d:{name:'Dreadnought',atk:8,hull:14,siege:2,c:40,res:{ore:8,fuel:8},d:'Hits hardest, lasts longest.'}};
+const SHIPS={c:{name:'Corvette',atk:1,hull:2,siege:0,c:30,res:{ore:2},d:'Fast and cheap. Soaks up fire.'},f:{name:'Frigate',atk:3,hull:5,siege:1,c:75,res:{ore:3,fuel:3},d:'The backbone of a siege.'},d:{name:'Dreadnought',atk:8,hull:14,siege:2,c:200,res:{ore:8,fuel:8},d:'Hits hardest, lasts longest.'}};
 const UPGS={c:[{n:'Afterburner guns',fx:{atk:1}},{n:'Braced frames',fx:{hull:1,atk:1}},{n:'Swarm doctrine',fx:{atk:1,hull:1,siege:1}}],
  f:[{n:'Rail batteries',fx:{atk:2}},{n:'Ablative plating',fx:{hull:3}},{n:'Assault marines',fx:{atk:1,hull:2,siege:2}}],
- d:[{n:'Spinal lance',fx:{atk:4}},{n:'Fortress armor',fx:{hull:8}},{n:'Siege mortars',fx:{atk:2,hull:4,siege:3}}]},UPG_COST=[15,30,50];
+ d:[{n:'Spinal lance',fx:{atk:4}},{n:'Fortress armor',fx:{hull:8}},{n:'Siege mortars',fx:{atk:2,hull:4,siege:3}}]},UPG_COST=[75,150,250];
 // War exhaustion: mirrors the server. The enemy's treaties get up to 60% cheaper as a side tires.
 const EX_DISCOUNT=0.6;function termCost(w,c,foeSide){return Math.round(c*(1-EX_DISCOUNT*((w.ex||[0,0])[foeSide]||0)/100))}
 function exBar(n,col){return `<span class="ubar" style="width:90px"><i style="width:${Math.round(n)}%;background:${n>=75?'#ff4d4d':n>=50?'#ff9f43':col}"></i></span> <b>${Math.round(n)}%</b>`}
 function exPanel(w,s){const ex=w.ex||[0,0];return `<p class="note">War exhaustion: your side ${exBar(ex[s],'#8fd3ff')}, theirs ${exBar(ex[1-s],'#ff7a6e')}<br><small>Rises with time, lost ships and fleets (failed counterattacks cost extra), siege damage (worse on populous worlds) and lost worlds. A tired side's enemies pay less for treaties (up to 60% off), and at 50% it accepts white peace.</small></p>`}
 const TREATIES={white:{c:0,l:'White peace',d:'Everyone goes home. Always yours once you have beaten their fleet.'},claim:{c:45,l:'Take an occupied colony',d:'One colony your fleet occupies.'},reparations:{c:45,l:'War reparations',d:'30% of their stock (max 30) of the four things you need most.'},claimrep:{c:90,l:'Colony and reparations',d:'Both at once.'},claims:{c:80,l:'Take every occupied colony',d:'Needs their home world occupied.'},vassal:{c:80,l:'Vassalage',d:'Needs their home world occupied. They pay tribute every hour.'},annex:{c:100,l:'Annex the empire',d:'AI only. Needs their home world occupied. Every world becomes yours.'},liberate:{c:40,l:'Free their vassals',d:'Every player they hold as a vassal goes free.'}};
-const DEF_COST=[15,25,40],DEF_NAME=['Orbital guns','Shield grid','Fortress moon'];
+const DEF_COST=[75,125,200],DEF_NAME=['Orbital guns','Shield grid','Fortress moon'];
 // Foreign rare goods: only other players make them. Colonies, upgrades and defenses each need one.
 // Only rare goods someone in the galaxy really has: other players' specialties, or rare goods an AI holds (from conquest).
 // Alone in the galaxy, every cost falls back to your own rare good, so you are never locked out.
@@ -1042,13 +1110,35 @@ function occOf(owner){const o=[];for(const w of WARS)if(!w.ended)for(const x of 
 const CREDITS={main:{win:{Easy:8,Normal:25,Hard:50},loss:{Easy:2,Normal:5,Hard:8}},dlc:{win:{Easy:12,Normal:35,Hard:70},loss:{Easy:3,Normal:7,Hard:12}}};
 let CHAIN=0;
 function credits(){try{return parseInt(localStorage.getItem(CRED_KEY)||'0',10)||0}catch(e){return 0}}
-function addCredits(n){try{localStorage.setItem(CRED_KEY,String(Math.max(0,credits()+n)))}catch(e){}}
+// The week's bank: what you earned and spent in Systems this week. If your system is lost (New planet, an admin kick,
+// or the server losing it), everything you spent this week comes back. Credits paid to other players (investing) don't.
+// kind: 'earn' (runs, taxes, investments paid to you), 'spend', 'undo' (a failed purchase handed back), 'pay'/'unpay' (investing), 'refund'
+const WEEK_KEY='ss2credweek';
+function weekBank(){let b=null;try{b=JSON.parse(localStorage.getItem(WEEK_KEY))}catch(e){}
+ if(!b||typeof b!=='object')b={n:SEASON.n,earned:0,spent:0};if(!b.srv&&sv0())b.srv=sv0();
+ const sv=(SYS&&SYS.srv)||'';if(SEASON.start&&sv&&(b.n!==SEASON.n||(b.srv&&b.srv!==sv)))b={n:SEASON.n,srv:sv,earned:0,spent:0};return b}
+function sv0(){return (SYS&&SYS.srv)||''}
+function saveBank(b){try{localStorage.setItem(WEEK_KEY,JSON.stringify(b))}catch(e){}}
+function addCredits(n,kind){const before=credits();try{localStorage.setItem(CRED_KEY,String(Math.max(0,before+n)))}catch(e){}
+ const d=credits()-before,b=weekBank();kind=kind||(n>=0?'earn':'spend');
+ if(kind==='earn')b.earned+=d;else if(kind==='spend')b.spent-=d;else if(kind==='undo')b.spent=Math.max(0,b.spent-d);saveBank(b)}
+// Renown: earned in main-game runs and in Systems battles, kept on this device, spent on general upgrades.
+// Like credits, renown spent this week comes back when the system is lost.
+const REN_KEY='ss2renown',RENOWN={main:{win:{Easy:3,Normal:6,Hard:10},loss:{Easy:1,Normal:2,Hard:3}},dlc:{win:{Easy:5,Normal:9,Hard:14},loss:{Easy:1,Normal:2,Hard:3}}};
+function renownPts(){try{return parseInt(localStorage.getItem(REN_KEY)||'0',10)||0}catch(e){return 0}}
+function addRenown(n,kind){const before=renownPts();try{localStorage.setItem(REN_KEY,String(Math.max(0,before+n)))}catch(e){}
+ const d=renownPts()-before,b=weekBank();kind=kind||(n>=0?'earn':'spend');b.rearned=b.rearned||0;b.rspent=b.rspent||0;
+ if(kind==='earn')b.rearned+=d;else if(kind==='spend')b.rspent-=d;else if(kind==='undo')b.rspent=Math.max(0,b.rspent-d);saveBank(b)}
+// Refund the week: every credit and every point of renown spent this week (goods are not refunded). Returns the words to show.
+function refundWeek(){const b=weekBank(),n=Math.max(0,Math.round(b.spent||0)),r=Math.max(0,Math.round(b.rspent||0));if(n>0)addCredits(n,'refund');if(r>0)addRenown(r,'refund');
+ b.spent=0;b.rspent=0;b.refunded=(b.refunded||0)+n;saveBank(b);
+ return n||r?` ${[n?`${n} credit${n===1?'':'s'}`:'',r?`${r} renown`:''].filter(Boolean).join(' and ')} you spent this week ${n+r===1?'is':'are'} back.`:''}
 // The credit rewards, in words, for the empire buttons
 function credLine(d){const m=CREDITS.main,x=CREDITS.dlc,b=Math.round((m.win[d]+x.win[d])*0.2);return `<span class="credbox">Credits: win <b>${m.win[d]}</b> · lose <b>${m.loss[d]}</b> · DLC win <b>${x.win[d]}</b> · both <b>+${b}</b></span>`}
 function dlcCredLine(d){const m=CREDITS.main,x=CREDITS.dlc,b=Math.round((m.win[d]+x.win[d])*0.2);return `<span class="credbox">Credits: win <b>${x.win[d]}</b> · lose <b>${x.loss[d]}</b>${CHAIN?` · back-to-back bonus <b>+${b}</b> if you win`:''}</span>`}
-function awardCredits(isDlc,diff,win){if(!diff)return {n:0,bonus:0};const n=CREDITS[isDlc?'dlc':'main'][win?'win':'loss'][diff]||0;let bonus=0;
+function awardCredits(isDlc,diff,win){if(!diff)return {n:0,bonus:0,r:0};const rn=RENOWN[isDlc?'dlc':'main'][win?'win':'loss'][diff]||0;if(rn)addRenown(rn,'earn');const n=CREDITS[isDlc?'dlc':'main'][win?'win':'loss'][diff]||0;let bonus=0;
  if(isDlc&&CHAIN){bonus=Math.round((CHAIN+n)*0.2);CHAIN=0}else if(!isDlc){CHAIN=win?n:0}
- addCredits(n+bonus);return {n,bonus}}
+ addCredits(n+bonus,'earn');return {n,bonus,r:rn}}
 // ---- state ----
 function sysRand(seed){let h=2166136261;for(const c of seed)h=Math.imul(h^c.charCodeAt(0),16777619)>>>0;return ()=>{h=Math.imul(h^(h>>>15),2246822507)>>>0;h=Math.imul(h^(h>>>13),3266489909)>>>0;return ((h^=h>>>16)>>>0)/4294967296}}
 function blankRes(){const o={};for(const r of SRES)o[r]=0;return o}
@@ -1056,12 +1146,12 @@ function newSystem(slot){const R=sysRand((ARCADE&&ARCADE.id||'solo')+':'+Date.no
  const names=[...PNAMES].sort(()=>R()-.5);const planets=[{n:names[0],r:spec,st:'home'}];
  for(let i=1;i<4;i++)planets.push({n:names[i],r:COMMON[Math.floor(R()*4)],st:'unknown'});
  const res=blankRes();Object.assign(res,{food:12,water:12,ore:6,fuel:4});res[spec]=6;
- return {v:2,slot,spec,name:ARCADE?ARCADE.name:'SOLO',born:Date.now(),last:Date.now(),age:0,pop:8,unrest:10,res,planets,ships:START_SCOUTS,fleet:{c:0,f:0,d:0},boost:{food:0,water:0,spec:0},allies:[],routes:[],accepted:[],dev:0,swarm:0,proj:null,season:SEASON.n,sun:'yellow',world:'temperate'}}
+ return {v:2,slot,spec,name:ARCADE?ARCADE.name:'SOLO',born:snow(),last:Date.now(),age:0,pop:8,unrest:10,res,planets,ships:START_SCOUTS,fleet:{c:0,f:0,d:0},boost:{food:0,water:0,spec:0},allies:[],routes:[],accepted:[],dev:0,swarm:0,proj:null,season:SEASON.n,sun:'yellow',world:'temperate'}}
 // A new week: everything resets and you name a new system and home world. Your leader, technologies, ship upgrades and general carry over.
 function seasonReset(){const k={leader:SYS.leader,slot:SYS.slot};
  SYS=newSystem(k.slot);Object.assign(SYS,{sysName:'',leader:k.leader,season:SEASON.n});
  const ch=(SEASON.chronicle||[]).slice(-1)[0];SYS_MSG=`Week ${SEASON.n} begins. ${ch?ch.text+' ':''}Everything starts over: name your new system. Your technologies, ship upgrades and general carry over.`;saveSys()}
-let SYS=null,GAL=[],AIS=[],WARS=[],SYS_PID=null,SYS_ONLINE=false,SYS_MSG='',SV={tab:'system',who:null,sel:0,anim:null};
+let SERVER=null;let SYS=null,GAL=[],AIS=[],WARS=[],SYS_PID=null,SYS_ONLINE=false,SYS_MSG='',SV={tab:'system',who:null,sel:0,anim:null};
 // Saves are never discarded on an update: unknown or newer fields are kept, missing ones are filled in,
 // and every save also writes a backup copy. The server keeps a full copy too (see restoreSys).
 function fixSys(s){if(!s||typeof s!=='object'||!Array.isArray(s.planets)||!s.planets.length)return null;
@@ -1081,7 +1171,7 @@ function era(s){let e=ERAS[0];for(const x of ERAS)if(s.age>=x.at)e=x;return e}
 function nextEra(s){return ERAS.find(x=>x.at>s.age)}
 function housing(s){return 12+8*s.planets.filter(p=>p.st==='colony').length}
 function needMult(t){return (1+HEAT.need*heatAt(t==null?snow():t)+HEAT.season*(SEASON.n-1))*(1-0.2*techLv('agri'))}
-function needOf(s,t){const e=era(s),d={food:4,water:4,ore:6,fuel:6},o={},m=needMult(t);for(const r of e.need)o[r]=Math.ceil(s.pop/d[r]*m*(r==='water'?1+(sunOf(s).thirst||0):1));return o}
+function needOf(s,t){const e=era(s),d={food:4,water:4,ore:6,fuel:6},o={},m=needMult(t);for(const r of e.need)o[r]=Math.ceil(s.pop/d[r]*m*(r==='water'?1+(sunOf(s).thirst||0):1)*(r==='food'?1+(leaderOf(s).hunger||0):1));return o}
 function rareNeed(s){return {k:Math.min(era(s).rare,availRares().length),n:Math.max(1,Math.ceil(s.pop/12))}}
 function foreignRares(s){return availRares().sort((a,b)=>s.res[b]-s.res[a])}
 function meRec(){return GAL.find(g=>g.pid===SYS_PID)||{}}
@@ -1091,7 +1181,7 @@ function prodOf(s){const o=blankRes(),occ=occOf(SYS_PID),occd=i=>occ.some(x=>x.i
  if(!occd(0)){o.food+=HOME_OUT.food+s.boost.food;o.water+=HOME_OUT.water+s.boost.water;o.ore+=HOME_OUT.ore+(s.boost.ore||0);o.fuel+=HOME_OUT.fuel;o[s.spec]+=3+s.boost.spec}
  s.planets.forEach((p,i)=>{if(p.st==='colony'&&!occd(i))o[p.r]+=colOut(p)});
  if(s.swarm){for(const r of COMMON)o[r]+=s.swarm;o[s.spec]+=typeII(s)?3:0}
- if(!occd(0)){o.ore+=techLv('mine');o.fuel+=techLv('mine');for(const [r,n] of [...Object.entries(sunOf(s).out||{}),...Object.entries(worldOf(s).out||{})])o[r]+=n}
+ if(!occd(0)){o.ore+=techLv('mine');o.fuel+=techLv('mine');for(const [r,n] of [...Object.entries(sunOf(s).out||{}),...Object.entries(worldOf(s).out||{}),...Object.entries(leaderOf(s).out||{})])o[r]+=n}
  if(s.unrest>=60)for(const r of SRES)o[r]=Math.floor(o[r]/2);return o}
 function mutualAlly(s,id){if(/^ai/.test(id)){const a=AIx(id);return !!(a&&a.myAlly&&s.allies.includes(id))}const g=GAL.find(x=>x.pid===id);return !!(g&&s.allies.includes(id)&&(g.allies||[]).includes(SYS_PID))}
 function atWar(id){return WARS.find(w=>!w.ended&&((w.sides[0].includes(SYS_PID)&&w.sides[1].includes(id))||(w.sides[1].includes(SYS_PID)&&w.sides[0].includes(id))))}
@@ -1101,19 +1191,19 @@ function activeRoutes(s){const out=[];if(!SYS_PID)return out;
  for(const g of GAL){if(g.pid===SYS_PID)continue;for(const t of g.routes||[])if(t.to===SYS_PID&&s.accepted.includes(t.rid)&&!atWar(g.pid))out.push({t,give:t.b,get:t.a,partner:g})}
  return out}
 function routeFlow(s){const f=blankRes();for(const a of activeRoutes(s)){const ok=((a.partner.res||{})[a.get.r]||0)>=a.get.n;
- f[a.give.r]-=a.give.n;if(ok)f[a.get.r]+=mutualAlly(s,a.partner.pid)?a.get.n:Math.max(0,a.get.n-1)}
+ f[a.give.r]-=a.give.n;if(ok)f[a.get.r]+=mutualAlly(s,a.partner.pid)||leaderOf(s).fulltrade?a.get.n:Math.max(0,a.get.n-1)}
  // tribute: vassals pay their overlord every hour
  const mine=meRec();if(mine.vassalOf){f.food-=1;f.water-=1;f[s.spec]-=1}
  for(const g of GAL)if(g.vassalOf===SYS_PID&&g.pid!==SYS_PID){f.food+=1;f.water+=1;f[SPEC[g.slot]]+=1}
  for(const a of AIS)if(a.overlord===SYS_PID)for(const p of a.planets)if(!p.owner)f[p.r]+=2;
  return f}
 function tickSys(s,t){const p=prodOf(s),n=needOf(s,t),f=routeFlow(s),rn=rareNeed(s);let short=0;
- s.tax=(s.tax||0)+taxOf(s);if(s.tax>=1){addCredits(Math.floor(s.tax));s.tax-=Math.floor(s.tax)}
+ s.tax=(s.tax||0)+taxOf(s);if(s.tax>=1){addCredits(Math.floor(s.tax),'earn');s.tax-=Math.floor(s.tax)}
  for(const r of SRES)s.res[r]=Math.max(0,s.res[r]+p[r]+f[r]);
  for(const r in n){if(s.res[r]>=n[r])s.res[r]-=n[r];else{s.res[r]=0;short++}}
  let rshort=0;for(const r of foreignRares(s).slice(0,rn.k)){if(s.res[r]>=rn.n)s.res[r]-=rn.n;else rshort++}
  const allies=s.allies.filter(id=>mutualAlly(s,id)).length;
- s.unrest=Math.max(0,Math.min(100,s.unrest+(short+rshort?SHORT_UNREST*short+RARE_UNREST*rshort:-3)-Math.min(2,allies)));short+=rshort;
+ const L=leaderOf(s);s.unrest=Math.max(0,Math.min(100,s.unrest+(short+rshort?(SHORT_UNREST+(L.short||0))*short+(RARE_UNREST+(L.short||0))*rshort:-3-(L.calm||0))-Math.min(2,allies)));short+=rshort;
  // people only settle when there is food and water to spare for them
  if(!short&&s.unrest<50&&s.pop<housing(s)&&canGrow(s,p,f,t))s.pop++;
  if(s.unrest>=100||short>=2)s.pop=Math.max(2,s.pop-1);
@@ -1124,18 +1214,26 @@ function canGrow(s,p,f,t){const n=needOf({...s,pop:s.pop+1},t);for(const r in n)
 function catchUp(s){const n=Math.min(SYS_CATCHUP,Math.floor((Date.now()-s.last)/SYS_TICK_MS));for(let i=0;i<n;i++)tickSys(s,s.last+(i+1)*SYS_TICK_MS);s.last+=n*SYS_TICK_MS;if(Date.now()-s.last>SYS_TICK_MS*SYS_CATCHUP)s.last=Date.now();return n}
 // ---- server ----
 async function sysCall(op,extra){if(!ARCADE)return null;try{const r=await fetch('/api/systems',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',
-  body:JSON.stringify({id:ARCADE.id,op,...(op==='sync'?{sys:{...SYS,name:ARCADE.name,credits:credits()}}:{}),...(extra||{})})});
+  body:JSON.stringify({id:ARCADE.id,op,...(SYS&&SYS.srv?{srv:SYS.srv}:{}),...(op==='sync'?{sys:{...SYS,name:ARCADE.name,credits:credits()}}:{}),...(extra||{})})});
  if(!(r.ok||r.status===409))return null;const j=await r.json();SYS_ONLINE=true;if(j.now)SRV_OFF=j.now-Date.now();
- if(j.kicked&&SYS){const keep=SYS.leader;SYS=newSystem(0);SYS.leader=keep;SYS_MSG='An admin removed your system from the galaxy. You can found a new one.';saveSys();if(typeof nameScreen==='function'&&document.getElementById('sysroot')){stopPoll();nameScreen()}return j}
- if(j.season){SEASON=j.season;if(SEASON.crisis&&SEASON.crisis.won&&typeof ach==='function')ach('rift');if(SYS&&SYS.sysName&&(SYS.season||1)!==SEASON.n){seasonReset();if(typeof showSystems==='function'&&document.getElementById('sysroot'))showSystems(true);return j}}
- if(j.systems)GAL=j.systems;if(j.ai)AIS=j.ai;if(j.scourge)SCOURGE=j.scourge;if(j.wars)WARS=j.wars;
+ if(j.gone&&SYS){if(typeof lostServer==='function')lostServer(j.msg);return j}
+ if(j.server)SERVER=j.server;
+ if(j.reset&&SYS){const keep={leader:SYS.leader,general:SYS.general,srv:SYS.srv},rf=refundWeek();SYS=newSystem(0);Object.assign(SYS,keep);saveSys();SYS_PID=null;
+  SYS_MSG=`The admin reset ${SERVER?SERVER.name:'this server'}: it starts again from day 1, and your old system is gone.${rf} Found a new one.`;if(typeof nameScreen==='function'&&document.getElementById('sysroot')){stopPoll();nameScreen()}return j}if(j.srv&&SYS&&!SYS.srv){SYS.srv=j.srv;saveSys()}
+ if(j.kicked&&SYS){const keep=SYS.leader,rf=refundWeek();SYS=newSystem(0);SYS.leader=keep;SYS_MSG=`An admin removed your system from ${SERVER?SERVER.name:'the galaxy'}. You can found a new one.${rf}`;saveSys();if(typeof serverScreen==='function'&&document.getElementById('sysroot')){stopPoll();serverScreen()}return j}
+ if(j.season){SEASON=j.season;if(SEASON.crisis&&SEASON.crisis.won&&typeof ach==='function')ach('rift');if(SYS&&SYS.sysName&&(SYS.season||1)!==SEASON.n&&!SYS.joined){SYS.season=SEASON.n;saveSys()}
+ if(SYS&&SYS.sysName&&(SYS.season||1)!==SEASON.n){seasonReset();if(typeof showSystems==='function'&&document.getElementById('sysroot'))showSystems(true);return j}}
+ if(j.systems){GAL=j.systems;const me=j.pid&&GAL.find(g=>g.pid===j.pid);
+  // renown your general earns in battles and sieges joins your renown to spend
+  if(me&&SYS){const rn=me.renown||0;if(SYS.renSeen==null||rn<SYS.renSeen)SYS.renSeen=rn;else if(rn>SYS.renSeen){addRenown(rn-SYS.renSeen,'earn');SYS.renSeen=rn}}}if(j.ai)AIS=j.ai;if(j.scourge)SCOURGE=j.scourge;if(j.wars)WARS=j.wars;
  if(j.full){SYS_MSG='The galaxy is full (5 systems). You can still play solo.';return j}
+ if(j.joined&&SYS&&SYS.sysName){if(SYS.joined&&SYS.joined!==j.joined){const rf=refundWeek();if(rf)SYS_MSG=`The galaxy server lost your old system.${rf}`}if(SYS.joined!==j.joined){SYS.joined=j.joined;saveSys()}}
  if(j.pid){SYS_PID=j.pid;if(j.slot!=null&&j.slot!==SYS.slot){SYS.slot=j.slot;SYS.spec=SPEC[j.slot];SYS.planets[0].r=SYS.spec;saveSys()}}
  if(j.inbox&&j.inbox.length){applyInbox(j.inbox);saveSys();await sysCall('sync')}
  return j}catch(e){SYS_ONLINE=false;return null}}
 async function sysSync(){await sysCall('sync')}
 function applyInbox(evs){const msgs=[];for(const e of evs){msgs.push(e.msg);
- if(e.t==='investpaid'&&e.credits>0)addCredits(e.credits);
+ if(e.t==='investpaid'&&e.credits>0)addCredits(e.credits,'earn');
  for(const r in e.res||{})if(e.t!=='got')SYS.res[r]=Math.max(0,(SYS.res[r]||0)-e.res[r]);
  for(const k in e.fleet||{})SYS.fleet[k]=Math.max(0,(SYS.fleet[k]||0)-e.fleet[k]);
  if(e.planet){const i=SYS.planets.findIndex(p=>p.n===e.planet&&p.st==='colony');if(i>0){SV.anim={kind:'incoming',planet:i,win:false,lose:e.planet};SYS.planets.splice(i,1)}}
@@ -1143,24 +1241,24 @@ function applyInbox(evs){const msgs=[];for(const e of evs){msgs.push(e.msg);
  SYS_MSG=msgs.join(' ')}
 // ---- actions ----
 async function sysAct(fn){const r=fn();saveSys();renderSystems();if(r!==false){await sysSync();if(document.getElementById('sysroot'))renderSystems()}}
-function spend(c,res){if(credits()<c){SYS_MSG=`You need ${c} credits. Win runs to earn more.`;return false}for(const r in res||{})if(SYS.res[r]<res[r]){SYS_MSG=`You need ${res[r]} ${SRES_NAME[r]}.`;return false}addCredits(-c);for(const r in res||{})SYS.res[r]-=res[r];return true}
+function spend(c,res){if(credits()<c){SYS_MSG=`You need ${c} credits. Win runs to earn more.`;return false}for(const r in res||{})if(SYS.res[r]<res[r]){SYS_MSG=`You need ${res[r]} ${SRES_NAME[r]}.`;return false}addCredits(-c,'spend');for(const r in res||{})SYS.res[r]-=res[r];return true}
 const SHOP=[
- {k:'ship',l:'Build a scout ship',d:'Explores one planet in your system.',c:20,go:()=>{SYS.ships++;SYS_MSG='A scout ship is ready on the pad.'}},
- {k:'farm',l:'Build hydroponic farms',d:'+1 Food every hour.',c:15,go:()=>{SYS.boost.food++;SYS_MSG='New farms are planted.'}},
- {k:'pure',l:'Build a water purifier',d:'+1 Water every hour.',c:15,go:()=>{SYS.boost.water++;SYS_MSG='Clean water flows.'}},
- {k:'mine',l:'Sink a deep mine',d:'+1 Ore every hour.',c:15,go:()=>{SYS.boost.ore=(SYS.boost.ore||0)+1;SYS_MSG='The drills bite into the crust.'}},
- {k:'ext',l:'Upgrade your rare-goods works',d:()=>`+2 ${SRES_NAME[SYS.spec]} every hour. Other players need it.`,c:25,go:()=>{SYS.boost.spec+=2;SYS_MSG='The works roar to life.'}}];
+ {k:'ship',cat:'yard',l:'Build a scout ship',d:'Explores one planet in your system.',c:100,go:()=>{SYS.ships++;SYS_MSG='A scout ship is ready on the pad.'}},
+ {k:'farm',cat:'works',l:'Build hydroponic farms',d:'+1 Food every hour.',c:75,go:()=>{SYS.boost.food++;SYS_MSG='New farms are planted.'}},
+ {k:'pure',cat:'works',l:'Build a water purifier',d:'+1 Water every hour.',c:75,go:()=>{SYS.boost.water++;SYS_MSG='Clean water flows.'}},
+ {k:'mine',cat:'works',l:'Sink a deep mine',d:'+1 Ore every hour.',c:75,go:()=>{SYS.boost.ore=(SYS.boost.ore||0)+1;SYS_MSG='The drills bite into the crust.'}},
+ {k:'ext',cat:'works',l:'Upgrade your rare-goods works',d:()=>`+2 ${SRES_NAME[SYS.spec]} every hour. Other players need it.`,c:125,go:()=>{SYS.boost.spec+=2;SYS_MSG='The works roar to life.'}}];
 function buy(k){const it=SHOP.find(x=>x.k===k);sysAct(()=>{if(spend(it.c,it.res))it.go()})}
 async function buildShip(k){const s=SHIPS[k],cost=shipCost(k);if(!spend(cost,s.res))return renderSystems();saveSys();const j=await sysCall('build',{ship:k});
- if(!j||j.ok===false){addCredits(cost);for(const r in s.res)SYS.res[r]+=s.res[r];SYS_MSG=j?j.msg:'No connection to the galaxy.'}else SYS_MSG=`A new ${s.name} joins ${myFleet().admiral}.`;saveSys();renderSystems()}
+ if(!j||j.ok===false){addCredits(cost,'undo');for(const r in s.res)SYS.res[r]+=s.res[r];SYS_MSG=j?j.msg:'No connection to the galaxy.'}else SYS_MSG=`A new ${s.name} joins ${myFleet().admiral}.`;saveSys();renderSystems()}
 async function upgradeShip(k){const lv=myFleet().up[k]||0;if(lv>=3)return;const ur=upgRes(k,lv);if(!spend(UPG_COST[lv],ur))return renderSystems();saveSys();const j=await sysCall('upgrade',{ship:k});
- if(!j||j.ok===false){addCredits(UPG_COST[lv]);for(const r in ur)SYS.res[r]+=ur[r];saveSys();SYS_MSG=j?j.msg:'No connection to the galaxy.'}else SYS_MSG=`${UPGS[k][lv].n} installed on every ${SHIPS[k].name}.`;renderSystems()}
+ if(!j||j.ok===false){addCredits(UPG_COST[lv],'undo');for(const r in ur)SYS.res[r]+=ur[r];saveSys();SYS_MSG=j?j.msg:'No connection to the galaxy.'}else SYS_MSG=`${UPGS[k][lv].n} installed on every ${SHIPS[k].name}.`;renderSystems()}
 function explore(i){sysAct(()=>{if(SYS.ships<1){SYS_MSG='Build a scout ship first.';return false}SYS.ships--;SYS.planets[i].st='explored';SYS_MSG=`Your scouts find ${SRES_NAME[SYS.planets[i].r]} on ${SYS.planets[i].n}.`})}
 function colonize(i){sysAct(()=>{if(SYS.planets[i].st!=='explored'){SYS_MSG='Explore it first.';return false}if(colonyCount(SYS)>=DEV[SYS.dev||0].cols){SYS_MSG=`${DEV[SYS.dev||0].n} can only run ${DEV[SYS.dev||0].cols} colon${DEV[SYS.dev||0].cols===1?'y':'ies'}. Develop your home world first.`;return false}if(spend(COLONY_CREDITS,colCost(i))){SYS.planets[i].st='colony';SYS.planets[i].age=0;SYS_MSG=`Settlers land on ${SYS.planets[i].n}. It starts small and grows for 2 days.`}})}
 function fortify(i){sysAct(()=>{const p=SYS.planets[i],lv=p.def||0;if(lv>=3)return false;if(spend(DEF_COST[lv],defRes(i,lv))){p.def=lv+1;SYS_MSG=`${DEF_NAME[lv]} built over ${p.n}. Sieges there just got much harder.`}else return false})}
-function smuggle(){const r=availRares().sort((a,b)=>SYS.res[a]-SYS.res[b])[0];sysAct(()=>{if(!r){SYS_MSG='Nobody else makes rare goods yet. Your own will do.';return false}if(spend(25)){SYS.res[r]+=3;SYS_MSG=`Smugglers drop off 3 ${SRES_NAME[r]}, no questions asked. A player would have charged far less.`}else return false})}
+function smuggle(){const r=availRares().sort((a,b)=>SYS.res[a]-SYS.res[b])[0];sysAct(()=>{if(!r){SYS_MSG='Nobody else makes rare goods yet. Your own will do.';return false}if(spend(125)){SYS.res[r]+=3;SYS_MSG=`Smugglers drop off 3 ${SRES_NAME[r]}, no questions asked. A player would have charged far less.`}else return false})}
 function festival(){sysAct(()=>{if(SYS.res.food<15){SYS_MSG='A festival needs 15 Food.';return false}SYS.res.food-=15;SYS.unrest=Math.max(0,SYS.unrest-15);SYS_MSG='Music in the streets. Unrest falls.'})}
-function peacekeepers(){sysAct(()=>{if(spend(10)){SYS.unrest=Math.max(0,SYS.unrest-30);SYS_MSG='Peacekeepers calm the riots.'}})}
+function peacekeepers(){sysAct(()=>{if(spend(50)){SYS.unrest=Math.max(0,SYS.unrest-30);SYS_MSG='Peacekeepers calm the riots.'}})}
 function allyWith(id){sysAct(()=>{if(!SYS.allies.includes(id))SYS.allies.push(id);SYS_MSG='Alliance offered. It starts when they offer one back.'})}
 function unally(id){sysAct(()=>{SYS.allies=SYS.allies.filter(x=>x!==id)})}
 function tradeVals(id){const v=k=>document.getElementById(k+id).value;return {a:{r:v('tg'),n:+v('tgn')},b:{r:v('tr'),n:+v('trn')}}}
@@ -1182,15 +1280,15 @@ function autoTrade(id){const p=partnerOf(id);if(!p)return;const mine=deficits(SY
 function cancelRoute(rid){sysAct(()=>{SYS.routes=SYS.routes.filter(t=>t.rid!==rid);SYS.accepted=SYS.accepted.filter(x=>x!==rid)})}
 function acceptRoute(rid){sysAct(()=>{if(!SYS.accepted.includes(rid))SYS.accepted.push(rid);SYS_MSG='Trade route open.'})}
 // New planet: abandon this system for good (worlds, goods, fleet, technologies, ship upgrades and general) and claim a new star.
-// Credits stay: they belong to the main game too.
+// Credits stay (they belong to the main game too), and everything you spent this week comes back.
 async function newPlanet(b){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again: lose everything here and claim a new star';setTimeout(()=>{if(document.body.contains(b)){delete b.dataset.armed;b.textContent='New planet'}},4000);return}
- stopPoll();const keep=SYS.leader;await sysCall('leave');SYS_PID=null;SYS=newSystem(0);SYS.leader=keep;saveSys();
- SYS_MSG='Your old system is gone, with its worlds, fleet, technologies, upgrades and general. Your credits are safe.';nameScreen()}
+ stopPoll();const keep=SYS.leader;await sysCall('leave');const rf=refundWeek();SYS_PID=null;SYS=newSystem(0);SYS.leader=keep;saveSys();
+ SYS_MSG=`Your old system is gone, with its worlds, fleet, technologies, upgrades and general. ${rf?rf.trim():'Your credits are safe.'} Pick a server for your new star.`;serverScreen()}
 // diplomacy with AI and war
 async function aiAct(id,act,extra){const a=AIx(id);
- if(act==='envoy'&&!spend(5)){renderSystems();return}
+ if(act==='envoy'&&!spend(25)){renderSystems();return}
  if(act==='gift'){const r=document.getElementById('gift'+id).value;if(SYS.res[r]<10){SYS_MSG=`You need 10 ${SRES_NAME[r]} to send as a gift.`;renderSystems();return}SYS.res[r]-=10;saveSys()}
- const j=await sysCall('ai',{ai:id,act,...(extra||{})});if(j&&j.ok===false){if(act==='envoy')addCredits(5);SYS_MSG=j.msg}else if(j){SYS_MSG=j.msg||'';if(act==='ally'&&!SYS.allies.includes(id))SYS.allies.push(id);if(act==='unally')SYS.allies=SYS.allies.filter(x=>x!==id)}
+ const j=await sysCall('ai',{ai:id,act,...(extra||{})});if(j&&j.ok===false){if(act==='envoy')addCredits(25,'undo');SYS_MSG=j.msg}else if(j){SYS_MSG=j.msg||'';if(act==='ally'&&!SYS.allies.includes(id))SYS.allies.push(id);if(act==='unally')SYS.allies=SYS.allies.filter(x=>x!==id)}
  saveSys();await sysSync();renderSystems()}
 function declareWar(id,b){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again to declare war';setTimeout(()=>{if(document.body.contains(b)){delete b.dataset.armed;b.textContent='Declare war'}},4000);return}
  sysCall('war',{target:id}).then(j=>{SYS_MSG=j?(j.ok===false?j.msg:`War! ${myFleet().admiral} sets course. Fleets move and fight on their own.`):'No connection to the galaxy.';SV={tab:'galaxy',who:null,pick:id,sel:0};renderSystems();scheduleMeet()})}
@@ -1203,7 +1301,7 @@ async function treaty(war,term){const t=(document.getElementById('pt'+war)||{}).
 async function warOp(op,war){const j=await sysCall(op,{war});SYS_MSG=j?(j.msg||(j.ok===false?'':'Done.')):'No connection.';await sysSync();renderSystems()}
 async function buyTech(k,free){const lv=techLv(k);if(lv>=TECHS[k].max)return;const r=techRes(k,lv);
  if(!free&&!spend(TECH_COST[lv],r))return renderSystems();saveSys();const j=await sysCall(free?'techpt':'tech',{tech:k});
- if(!j||j.ok===false){if(!free){addCredits(TECH_COST[lv]);for(const x in r)SYS.res[x]+=r[x]}SYS_MSG=j?j.msg:'No connection to the galaxy.'}else SYS_MSG=`${TECHS[k].n}, level ${lv+1}. ${j.msg}`;
+ if(!j||j.ok===false){if(!free){addCredits(TECH_COST[lv],'undo');for(const x in r)SYS.res[x]+=r[x]}SYS_MSG=j?j.msg:'No connection to the galaxy.'}else SYS_MSG=`${TECHS[k].n}, level ${lv+1}. ${j.msg}`;
  saveSys();await sysSync();renderSystems()}
 // Investing: offer another player a day of the foreign rare goods they need, for the credits you still need today.
 // It costs the investor no goods, and nothing happens until the other player accepts.
@@ -1214,8 +1312,8 @@ async function invest(id){const n=investAsk();if(n<1){SYS_MSG='You already have 
 async function answerInvest(id,yes){const o=(meRec().offers||[]).find(x=>x.id===id);if(!o)return;
  if(!yes){const j=await sysCall('investno',{offer:id});SYS_MSG=j?(j.msg||''):'No connection.';await sysSync();return renderSystems()}
  if(credits()<o.credits){SYS_MSG=`You need ${o.credits} credits to accept. You have ${credits()}.`;return renderSystems()}
- const g=investGoods();addCredits(-o.credits);const j=await sysCall('investok',{offer:id,paid:o.credits});
- if(!j||j.ok===false){addCredits(o.credits);SYS_MSG=j?j.msg:'No connection to the galaxy.'}
+ const g=investGoods();addCredits(-o.credits,'pay');const j=await sysCall('investok',{offer:id,paid:o.credits});
+ if(!j||j.ok===false){addCredits(o.credits,'unpay');SYS_MSG=j?j.msg:'No connection to the galaxy.'}
  else{for(const r in g)SYS.res[r]=(SYS.res[r]||0)+g[r];SYS_MSG=`Investment accepted. You paid ${o.credits} credits${Object.keys(g).length?' and received '+Object.entries(g).map(([r,n])=>n+' '+SRES_NAME[r]).join(', '):''}.`}
  saveSys();await sysSync();renderSystems()}
 async function setStance(war,mode){const j=await sysCall('stance',{war,mode});SYS_MSG=j?(j.msg||''):'No connection.';await sysSync();renderSystems()}
@@ -1230,6 +1328,15 @@ function pxPlanet(cx,cy,R,col,unknown,ring){let o='';const px=3;const base=unkno
   o+=`<rect x="${cx+x*px}" y="${cy+y*px}" width="${px}" height="${px}" fill="${shade(base,lit*band)}"/>`}
  if(unknown)o+=`<text x="${cx}" y="${cy+7}" class="svq">?</text>`;
  if(ring)o+=`<rect x="${cx-(R+3)*px}" y="${cy-1}" width="${(2*R+7)*px}" height="3" fill="${ring===true?'#ffd166':ring}" opacity=".85"/>`;return o}
+// Star types look different, not just tinted: a red dwarf is small and deep red, a blue giant big and blue-white
+// with a wide glow, a white dwarf tiny and blazing with light spikes. Yellow is the plain star.
+const STAR_LOOK={yellow:{dr:0,core:'#fff6d6',body:'#ffcf6b',glow:'#ffcf6b',gr:2},red:{dr:-1,core:'#ffb38a',body:'#e8462e',glow:'#ff5a3a',gr:2},
+ blue:{dr:2,core:'#f0faff',body:'#5fb8ff',glow:'#8fd3ff',gr:4},white:{dr:-2,core:'#ffffff',body:'#dfe8ff',glow:'#eef3ff',gr:2,spikes:1}};
+function starOf(g,R,cx,cy){const L=STAR_LOOK[(g&&g.sun)||'yellow']||STAR_LOOK.yellow,r=Math.max(2,R+L.dr),px=3;let o='';
+ for(let y=-r-L.gr;y<=r+L.gr;y++)for(let x=-r-L.gr;x<=r+L.gr;x++){const d=Math.sqrt(x*x+y*y);if(d>r+L.gr)continue;
+  o+=`<rect x="${cx+x*px}" y="${cy+y*px}" width="${px}" height="${px}" fill="${d>r?L.glow:d>r-2?L.body:L.core}" opacity="${d>r?(0.45-0.3*(d-r)/L.gr).toFixed(2):1}"/>`}
+ if(L.spikes)for(const[a,b] of [[1,0],[-1,0],[0,1],[0,-1]])for(let i=1;i<=3;i++)o+=`<rect x="${cx+a*(r+L.gr+i)*px}" y="${cy+b*(r+L.gr+i)*px}" width="${px}" height="${px}" fill="#ffffff" opacity="${(0.9-i*0.22).toFixed(2)}"/>`;
+ return o}
 function pxStar(cx,cy,R,col){let o='';const px=3;for(let y=-R-2;y<=R+2;y++)for(let x=-R-2;x<=R+2;x++){const d=Math.sqrt(x*x+y*y);if(d>R+2)continue;
  o+=`<rect x="${cx+x*px}" y="${cy+y*px}" width="${px}" height="${px}" fill="${d>R?col:d>R-2?shade(col,1.15):'#fff6d6'}" opacity="${d>R?.35:1}"/>`}return o}
 function bgStars(w,h,seed){const R=sysRand(seed);let o='';for(let i=0;i<70;i++)o+=`<rect x="${Math.floor(R()*w)}" y="${Math.floor(R()*h)}" width="${R()<.15?3:2}" height="${R()<.15?3:2}" fill="#${R()<.2?'ffe9a8':'9aa6d6'}" opacity="${.3+R()*.6}"/>`;return o}
@@ -1255,19 +1362,23 @@ function lasers(x1,y1,x2,y2,n,col){let o='';for(let i=0;i<n;i++){const b=(i*0.23
 const SYS_ANG=[205,330,95,20,260,150,300,60,180,0,120,240];
 function planetXY(i,W,H){const orb=[58,86,114,142],a=SYS_ANG[i%12]*Math.PI/180,r=orb[i<4?i:i%4];return [Math.round(W/2+Math.cos(a)*r),Math.round(H/2+Math.sin(a)*r*.62)]}
 // Dyson swarm: rings of tiny gold collectors orbiting the star, one ring per segment; a slow pulse of light once complete.
-function swarmSVG(cx,cy,n,fresh){if(!n)return '';let o='';const rings=[[30,18,-1],[38,23,1],[46,28,-1],[54,33,1]];
- for(let r=0;r<Math.min(n,4);r++){const[rx,ry,dir]=rings[r],k=10+r*3,dur=14+r*5;
-  for(let i=0;i<k;i++){const b=-(dur*i/k).toFixed(2);const path=dir>0?`M${cx+rx},${cy} A${rx},${ry} 0 1,1 ${cx-rx},${cy} A${rx},${ry} 0 1,1 ${cx+rx},${cy}`:`M${cx+rx},${cy} A${rx},${ry} 0 1,0 ${cx-rx},${cy} A${rx},${ry} 0 1,0 ${cx+rx},${cy}`;
-   o+=`<rect x="-2" y="-1" width="4" height="2" fill="${i%3?'#ffd166':'#fff1b8'}"><animateMotion dur="${dur}s" begin="${b}s" repeatCount="indefinite" path="${path}"/>${i%4===0?`<animate attributeName="opacity" values="1;.35;1" dur="${2+r}s" begin="${b}s" repeatCount="indefinite"/>`:''}</rect>`}}
- if(n>=SWARM_SEG)o+=`<circle cx="${cx}" cy="${cy}" r="20" fill="#ffd166" opacity=".12"><animate attributeName="r" values="18;26;18" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values=".18;.05;.18" dur="3s" repeatCount="indefinite"/></circle>`;
+// Dyson swarm: one ring per finished segment, each its own colour and size, so the level reads at a glance on any star.
+// Collectors have a dark outline, so they stay visible over a yellow or white star. Type II adds a slow pulse.
+const SWARM_COL=['#ffd166','#ff9f43','#7df9ff','#d58cff'];
+function swarmRing(cx,cy,rx,ry,col,k,dur,dir,dash){const sw=dir>0?1:0,path=`M${cx+rx},${cy} A${rx},${ry} 0 1,${sw} ${cx-rx},${cy} A${rx},${ry} 0 1,${sw} ${cx+rx},${cy}`;
+ let o=`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="none" stroke="#05070f" stroke-width="4" opacity=".55"/><ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="none" stroke="${col}" stroke-width="1.5" stroke-dasharray="${dash}" opacity=".9"/>`;
+ for(let i=0;i<k;i++)o+=`<rect x="-2.5" y="-1.5" width="5" height="3" fill="${i%3?col:'#ffffff'}" stroke="#05070f" stroke-width="1"><animateMotion dur="${dur}s" begin="-${(dur*i/k).toFixed(2)}s" repeatCount="indefinite" path="${path}"/></rect>`;
+ return o}
+function swarmSVG(cx,cy,n,fresh){if(!n)return '';let o='';const rings=[[30,18],[38,23],[46,28],[54,33]];
+ for(let r=0;r<Math.min(n,4);r++)o+=swarmRing(cx,cy,rings[r][0],rings[r][1],SWARM_COL[r],8+r*3,14+r*5,r%2?1:-1,'3 3');
+ if(n>=SWARM_SEG)o=`<circle cx="${cx}" cy="${cy}" r="20" fill="#ffd166" opacity=".12"><animate attributeName="r" values="18;26;18" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values=".18;.05;.18" dur="3s" repeatCount="indefinite"/></circle>`+o;
+ o+=`<g><rect x="4" y="4" width="${n>=SWARM_SEG?78:70}" height="16" fill="#0a1020" stroke="${SWARM_COL[Math.min(n,4)-1]}" stroke-width="2"/><text x="9" y="16" class="svl" style="text-anchor:start;font-size:11px;fill:${SWARM_COL[Math.min(n,4)-1]}">${n>=SWARM_SEG?'TYPE II ✦':'SWARM '+n+'/4'}</text></g>`;
  if(fresh)o+=`<circle cx="${cx}" cy="${cy}" r="10" fill="none" stroke="#ffd166" stroke-width="3"><animate attributeName="r" from="10" to="170" dur="2.2s" fill="freeze"/><animate attributeName="opacity" from="1" to="0" dur="2.2s" fill="freeze"/></circle><text x="${cx}" y="${cy-62}" class="svl" style="fill:#ffd166" opacity="0">TYPE II CIVILIZATION<animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.15;.8;1" dur="5s" fill="freeze"/></text>`;
  return o}
-// The Dyson swarm on the galaxy map: a small ring of gold collectors circling the star (more of them per segment);
-// a Type II star also gets a second ring and a slow pulse of light.
-function miniSwarm(cx,cy,n){if(!n)return '';let o='';const rings=n>=SWARM_SEG?[[30,10,1,12],[38,15,-1,14]]:[[30,10,1,3+2*n]];
- for(const[rx,ry,dir,k] of rings){const dur=dir>0?9:13,sw=dir>0?1:0,path=`M${cx+rx},${cy} A${rx},${ry} 0 1,${sw} ${cx-rx},${cy} A${rx},${ry} 0 1,${sw} ${cx+rx},${cy}`;
-  for(let i=0;i<k;i++)o+=`<rect x="-2" y="-1" width="4" height="2" fill="${i%3?'#ffd166':'#fff1b8'}"><animateMotion dur="${dur}s" begin="-${(dur*i/k).toFixed(2)}s" repeatCount="indefinite" path="${path}"/></rect>`}
- if(n>=SWARM_SEG)o=`<circle cx="${cx}" cy="${cy}" r="24" fill="#ffd166" opacity=".12"><animate attributeName="r" values="22;32;22" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values=".2;.05;.2" dur="3s" repeatCount="indefinite"/></circle>`+o;
+// On the galaxy map: the same rings, smaller (one per segment, same colours).
+function miniSwarm(cx,cy,n){if(!n)return '';let o='';const rings=[[22,8],[27,10],[32,12],[37,14]];
+ if(n>=SWARM_SEG)o+=`<circle cx="${cx}" cy="${cy}" r="24" fill="#ffd166" opacity=".12"><animate attributeName="r" values="22;32;22" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values=".2;.05;.2" dur="3s" repeatCount="indefinite"/></circle>`;
+ for(let r=0;r<Math.min(n,4);r++)o+=swarmRing(cx,cy,rings[r][0],rings[r][1],SWARM_COL[r],3+r,9+r*3,r%2?-1:1,'2 2');
  return o}
 function shortRes(r){return {'Status quo.':'Walls hold','Supplies run short inside the walls.':'Supplies run short','The planetary shield is breached!':'Shield breached!','The defenders surrender!':'They surrender!','Disease breaks out in the siege lines.':'Disease in the lines'}[r]||r}
 // One siege round (every 30s): shells rain down and the shield flickers, then the planet's guns fire back at the fleet.
@@ -1342,7 +1453,9 @@ function siegeBox(e,mx,my){const age=(snow()-e.t)/1000;if(age>12.5||age<-1)retur
 
 function systemSVG(sys,clickable){const W=360,H=300,cx=W/2,cy=H/2;let o=`<svg viewBox="0 0 ${W} ${H}" class="svmap" shape-rendering="crispEdges">${bgStars(W,H,(sys.sysName||sys.name)+'s')}`;
  for(const r of [58,86,114,142])o+=`<ellipse cx="${cx}" cy="${cy}" rx="${r}" ry="${r*.62}" fill="none" stroke="#2c355c" stroke-width="2" stroke-dasharray="4 4"/>`;
- o+=pxStar(cx,cy,5,sys.ai?AICOL[sys.temper]:starCol(sys))+swarmSVG(cx,cy,sys.swarm||0,sys===SYS&&SV.anim&&SV.anim.kind==='typeI');
+ o+=(sys.ai?pxStar(cx,cy,5,AICOL[sys.temper]):starOf(sys,5,cx,cy))+swarmSVG(cx,cy,sys.swarm||0,sys===SYS&&SV.anim&&SV.anim.kind==='typeI');
+ // the system's own warships, when they are at home: a small fleet hovering over the star
+ if(!sys.ai){const hf=sys===SYS?myFleet():sys.fleet;if(hf&&hf.ships&&fleetPower(hf)>0&&['dock','guard'].includes((hf.loc||{s:'dock'}).s)){const b=fleetBox(hf);o+=`<g class="fleet homefleet" transform="translate(${Math.round(cx-b.w*HF/2)},${Math.round(cy-24-b.h*HF)}) scale(${HF})">${fleetIcon(hf,0,0,factionCol(sys===SYS?SYS_PID:sys.pid),false)}</g>`}}
  const owner=sys.ai?sys.pid:(sys===SYS?SYS_PID:sys.pid),occ=occOf(owner);
  (sys.planets||[]).forEach((p,i)=>{const[x,y]=planetXY(i,W,H);const R=p.st==='home'?6:p.st==='colony'?5:4,unk=p.st==='unknown',on=SV.sel===i;const ly=y<cy-20?y-R*3-8:y+R*3+20;
   const ring=p.owner?(p.owner===SYS_PID?'#7bd17b':'#ff6b6b'):p.st==='colony';const oc=occ.find(z=>z.i===i);
@@ -1371,16 +1484,24 @@ function isRift(id){const a=/^ai/.test(id)&&AIx(id);return !!(a&&a.rift)}
 function riftSVG(x,y,sealed){if(sealed)return `<rect x="${x-1}" y="${y-6}" width="2" height="12" fill="#5b4a7a" opacity=".5"/>`;let o='';const pts=[[0,-12],[3,-6],[-2,0],[3,6],[0,12]];
  for(let i=0;i<pts.length-1;i++){const[a,b]=[pts[i],pts[i+1]];o+=`<line x1="${x+a[0]}" y1="${y+a[1]}" x2="${x+b[0]}" y2="${y+b[1]}" stroke="#c77dff" stroke-width="4"/><line x1="${x+a[0]}" y1="${y+a[1]}" x2="${x+b[0]}" y2="${y+b[1]}" stroke="#7df9ff" stroke-width="1.5"/>`}
  return `<g><animate attributeName="opacity" values="1;.55;1;.8;1" dur="1.7s" repeatCount="indefinite"/>${o}<rect x="${x-6}" y="${y-2}" width="2" height="2" fill="#7df9ff"/><rect x="${x+5}" y="${y+4}" width="2" height="2" fill="#c77dff"/></g>`}
-function nodeXY(id){if(id==='center')return CENTER_XY;if(/^ai/.test(id))return aiXY(id);const g=id===SYS_PID?{slot:SYS.slot}:GAL.find(x=>x.pid===id);return GPOS[((g&&g.slot)||0)%5]}
+// Each player's star sits at its slot. If two systems ever share a slot (they join at the same moment), the newer
+// one is drawn at a free spot until the server moves it, so stars never sit on top of each other.
+function galPos(){const me=SYS_PID||'me',list=[{pid:me,slot:SYS.slot},...GAL.filter(g=>g.pid!==SYS_PID)],used=new Set(),pos={};
+ for(const g of list){let k=(((g.slot||0)%5)+5)%5;if(used.has(k)){const f=[0,1,2,3,4].find(i=>!used.has(i)&&!list.some(x=>x!==g&&(((x.slot||0)%5)+5)%5===i));if(f!=null)k=f}used.add(k);pos[g.pid]=GPOS[k]}return pos}
+function nodeXY(id){if(id==='center')return CENTER_XY;if(/^ai/.test(id))return aiXY(id);const P=galPos();return P[id===SYS_PID||id==='me'?(SYS_PID||'me'):id]||null}
 function allFleets(){const o=[];for(const g of GAL)if(g.fleet)o.push([g.pid,g.fleet]);for(const a of AIS)if(a.fleet&&!a.annexedBy)o.push([a.id,a.fleet]);return o}
-function fleetXY(id,fl){const l=fl.loc||{s:'dock'};if(l.s==='rally'){const ours=id===SYS_PID||WARS.some(w=>!w.ended&&w.sides.some(sd=>sd.includes(id)&&sd.includes(SYS_PID)));return [CENTER_XY[0]+(ours?-30:22),CENTER_XY[1]-4]}if(l.s==='move'){const a=nodeXY(l.from),b=nodeXY(l.to);if(!a||!b)return nodeXY(id);const t=Math.max(0,Math.min(1,(snow()-l.t0)/(l.t1-l.t0)));return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]}
+// A player's fleet at home (docked, posted or on guard) hovers just above its star, centred, clear of the name below.
+function fleetBox(fl){const n={d:Math.min(2,fl.ships.d),f:Math.min(3,fl.ships.f),c:Math.min(5,fl.ships.c)};return {w:Math.max(n.d?n.d*16-3:0,n.f?n.f*11-1:0,n.c?n.c*6-2:0),h:(n.d?8:0)+(n.f?6:0)+(n.c?4:0)}}
+const HF=1.5;function homeFleet(id,fl){const l=fl.loc||{s:'dock'};return !/^ai/.test(id)&&(l.s==='dock'||l.s==='guard')}
+function fleetXY(id,fl){const l=fl.loc||{s:'dock'};
+ if(homeFleet(id,fl)){const n=nodeXY(id);if(!n)return null;const b=fleetBox(fl);return [Math.round(n[0]-b.w*HF/2),Math.round(n[1]-20-b.h*HF)]}if(l.s==='rally'){const ours=id===SYS_PID||WARS.some(w=>!w.ended&&w.sides.some(sd=>sd.includes(id)&&sd.includes(SYS_PID)));return [CENTER_XY[0]+(ours?-30:22),CENTER_XY[1]-4]}if(l.s==='move'){const a=nodeXY(l.from),b=nodeXY(l.to);if(!a||!b)return nodeXY(id);const t=Math.max(0,Math.min(1,(snow()-l.t0)/(l.t1-l.t0)));return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]}
  const n=nodeXY(l.s==='orbit'?l.at:id);return n?[n[0]+(l.s==='orbit'?-14:12),n[1]+(l.s==='orbit'?-18:10)]:null}
 // Every faction flies its own colour: players by slot, AI empires by their banner.
 const FCOL_P=['#4fc3ff','#7cff6b','#ff9f1c','#d36bff','#ff6fb5'],FCOL_AI={ai0:'#ff4d4d',ai1:'#e0b04a',ai2:'#c8d0e8'},RIFT_COL='#c77dff';
 function factionCol(id){if(/^ai/.test(id))return isRift(id)?RIFT_COL:FCOL_AI[id]||'#ffd166';const g=id===SYS_PID?{slot:SYS.slot}:GAL.find(x=>x.pid===id);return FCOL_P[((g&&g.slot)||0)%5]}
 function fleetCol(id){return factionCol(id)}
 const CENTER_XY=[180,96];
-function nodeXY(id){if(id==='center')return CENTER_XY;if(/^ai/.test(id))return aiXY(id);const g=id===SYS_PID?{slot:SYS.slot}:GAL.find(x=>x.pid===id);return GPOS[((g&&g.slot)||0)%5]}
+
 // ---- Battle in the middle: both fleets line up, trade fire by ship type, losers burn, the winner holds the field ----
 function sideCol(ids,other){if(ids.includes(SYS_PID)||ids.some(x=>mutualAlly(SYS,x)))return '#8fd3ff';if(other.includes(SYS_PID)||other.some(x=>mutualAlly(SYS,x)))return '#ff6b6b';return ids[0]&&/^ai/.test(ids[0])?AICOL[(AIx(ids[0])||{}).temper]||'#ffd166':'#c3c9de'}
 function sumShips(list){const o={c:0,f:0,d:0};for(const s of list||[])for(const k in o)o[k]+=s[k]||0;return o}
@@ -1425,28 +1546,31 @@ function battleOverlay(e,mx,my){if(!(e.a.includes(SYS_PID)||e.b.includes(SYS_PID
 function boomAt(x,y,at){return boom(x,y,at)}
 
 function galaxySVG(){const W=360,H=250;let o=`<svg viewBox="0 0 ${W} ${H}" class="svmap" id="galmap" shape-rendering="crispEdges">${bgStars(W,H,'galaxy')}`;const me=SYS_PID||'me';
+ // the week and day, top left
+ {const wl=`WEEK ${SEASON.n} · DAY ${SEASON.day||1}${SEASON.crisis&&!SEASON.crisis.won?' · RIFTS':''}`;o+=`<g class="galweek"><rect x="3" y="3" width="${14+wl.length*8}" height="17" fill="#0a1020" stroke="#2c355c" stroke-width="2"/><text x="9" y="16" class="svl" style="text-anchor:start;fill:#ffd166;font-size:12px">${wl}</text></g>`}
  const others=[...GAL.filter(g=>g.pid!==SYS_PID).map(g=>g.pid),...AIS.filter(a=>!a.annexedBy).map(a=>a.id)];
  for(const id of others){const[a,b]=[nodeXY(me),nodeXY(id)];if(!a||!b)continue;
   if(atWar(id))o+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#ff5a5a" stroke-width="3" stroke-dasharray="3 5" opacity=".9"/>`;
   else if(mutualAlly(SYS,id))o+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#7bd17b" stroke-width="2" stroke-dasharray="6 4" opacity=".7"/>`}
  const seen=new Set();for(const r of activeRoutes(SYS)){const id=r.partner.pid;if(seen.has(id))continue;seen.add(id);const[a,b]=[nodeXY(me),nodeXY(id)];
   o+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#ffd166" stroke-width="2" opacity=".5"/>`+shipsOn(a[0],a[1],b[0],b[1],'#ffd166',2,5,true)}
- const node=(id,x,y,R,col,label,lcol,above)=>{const pk=SV.pick===id;return `<g class="svp" onclick="galClick('${id}')">${pk?`<rect x="${x-20}" y="${y-20}" width="40" height="40" fill="none" stroke="#ffd166" stroke-width="2" stroke-dasharray="6 3"/>`:''}${pxStar(x,y,R,col)}<rect x="${x-30}" y="${y-24}" width="60" height="56" fill="transparent"/><text x="${x}" y="${above?y-16:y+30}" class="svl${pk?' me':''}" ${lcol?`style="fill:${lcol}"`:''}>${escH(label)}</text></g>`};
- for(const g of [{...SYS,pid:me},...GAL.filter(g=>g.pid!==SYS_PID)])if(g.swarm){const[x,y]=GPOS[(g.slot||0)%5];o+=miniSwarm(x,y,g.swarm)}
- o+=node(me,...GPOS[SYS.slot%5],5,starCol(SYS),short(SYS.sysName||SYS.name)+(typeII(SYS)?' ✦':''),'#ffd166');
- for(const g of GAL.filter(g=>g.pid!==SYS_PID))o+=node(g.pid,...GPOS[(g.slot||0)%5],4,starCol(g),short(g.sysName||g.name)+(g.vassalOf?'*':'')+((g.swarm||0)>=SWARM_SEG?' ✦':''));
+ const node=(id,x,y,R,col,label,lcol,above,sun)=>{const pk=SV.pick===id;return `<g class="svp" onclick="galClick('${id}')">${pk?`<rect x="${x-20}" y="${y-20}" width="40" height="40" fill="none" stroke="#ffd166" stroke-width="2" stroke-dasharray="6 3"/>`:''}${sun?starOf({sun},R,x,y):pxStar(x,y,R,col)}<rect x="${x-30}" y="${y-24}" width="60" height="56" fill="transparent"/><text x="${x}" y="${above?y-16:y+30}" class="svl${pk?' me':''}" ${lcol?`style="fill:${lcol}"`:''}>${escH(label)}</text></g>`};
+ const GP=galPos();for(const g of [{...SYS,pid:me},...GAL.filter(g=>g.pid!==SYS_PID)])if(g.swarm&&GP[g.pid]){const[x,y]=GP[g.pid];o+=miniSwarm(x,y,g.swarm)}
+ o+=node(me,...GP[me],5,starCol(SYS),short(SYS.sysName||SYS.name)+(typeII(SYS)?' ✦':''),'#ffd166',false,SYS.sun||'yellow');
+ for(const g of GAL.filter(g=>g.pid!==SYS_PID))o+=node(g.pid,...GP[g.pid],4,starCol(g),short(g.sysName||g.name)+(g.vassalOf?'*':'')+((g.swarm||0)>=SWARM_SEG?' ✦':''),null,false,g.sun||'yellow');
  for(const a of AIS.filter(a=>!a.annexedBy&&!a.rift)){const op=a.opinion;o+=node(a.id,...APOS[a.id],4,AICOL[a.temper],a.name.split(' ')[0],op>=50?'#7bd17b':op<=-40?'#ff5a5a':'#c3c9de',true)}
  for(const a of AIS.filter(a=>a.rift)){const[x,y]=aiXY(a.id),pk=SV.pick===a.id;o+=`<g class="svp" onclick="galClick('${a.id}')">${riftSVG(x,y,!!a.annexedBy)}<rect x="${x-14}" y="${y-16}" width="28" height="32" fill="transparent"/>${a.annexedBy?'':`<text x="${x}" y="${y+24}" class="svl${pk?' me':''}" style="fill:#c77dff;font-size:11px">Rift</text>`}</g>`}
- for(let s=0;s<5;s++)if(s!==SYS.slot&&!GAL.some(g=>g.slot===s&&g.pid!==SYS_PID)){const[x,y]=GPOS[s];o+=`<text x="${x}" y="${y+5}" class="svl dim">open</text>`}
+ for(let s=0;s<5;s++)if(!Object.values(GP).includes(GPOS[s])){const[x,y]=GPOS[s];o+=`<text x="${x}" y="${y+5}" class="svl dim">open</text>`}
  // fleets: shown when away from home, or at home during a war
  const busy=new Set();for(const w of WARS)for(const e of w.events||[])if(e.kind==='battle'&&snow()-e.t<BT*5600&&snow()-e.t>-500&&(e.a.includes(SYS_PID)||e.b.includes(SYS_PID)))for(const x of [...e.a,...e.b])busy.add(x);
  for(const [id,fl] of allFleets()){if(!fleetPower(fl)||busy.has(id))continue;const xy=fleetXY(id,fl);if(!xy)continue;const away=fl.loc.s!=='dock',war=id===SYS_PID?WARS.some(w=>!w.ended&&w.sides.flat().includes(id)):!!atWar(id);
-  if(!(away||war))continue;const l=fl.loc;let mv='';
+  if(!(away||war||!/^ai/.test(id)))continue;const l=fl.loc;let mv='';
   if(l.s==='move'){const a=nodeXY(l.from),b=nodeXY(l.to);const opp=allFleets().some(([y,f])=>y!==id&&f.loc.s==='move'&&f.loc.from===l.to&&f.loc.to===l.from);
    const endT=opp?Math.max(l.t0,...allFleets().filter(([y,f])=>f.loc.s==='move'&&f.loc.from===l.to).map(([y,f])=>f.loc.t0))+(l.t1-l.t0)/2:l.t1;
    const tEnd=Math.max(0,Math.min(1,(endT-l.t0)/(l.t1-l.t0))),ex=a[0]+(b[0]-a[0])*tEnd,ey=a[1]+(b[1]-a[1])*tEnd,rem=Math.max(0.05,(endT-snow())/1000);
    mv=`<animateTransform attributeName="transform" type="translate" from="0,0" to="${(ex-xy[0]).toFixed(1)},${(ey-xy[1]).toFixed(1)}" dur="${rem.toFixed(2)}s" fill="freeze"/>`}
-  const flip=l.s==='move'&&nodeXY(l.to)[0]<nodeXY(l.from)[0];o+=`<g class="fleet">${mv}${fleetIcon(fl,xy[0],xy[1],fleetCol(id),flip)}</g>`}
+  const flip=l.s==='move'&&nodeXY(l.to)[0]<nodeXY(l.from)[0];
+  o+=homeFleet(id,fl)?`<g class="fleet" transform="translate(${xy[0]},${xy[1]}) scale(${HF})">${fleetIcon(fl,0,0,fleetCol(id),false)}</g>`:`<g class="fleet">${mv}${fleetIcon(fl,xy[0],xy[1],fleetCol(id),flip)}</g>`}
  // sieges in your wars: the siege box over the besieged world
  for(const w of WARS){if(!w.sides.flat().includes(SYS_PID))continue;const sEv=(w.events||[]).filter(e=>e.kind==='siege'&&snow()-e.t<12500&&snow()-e.t>-500).pop();if(sEv){const n=nodeXY(sEv.owner);if(n)o+=siegeBox(sEv,n[0],n[1])}}
  // battles where fleets met: a full battle scene at the meeting point
@@ -1504,18 +1628,30 @@ function planetPanel(sys,i,mine){const p=sys.planets[i];if(!p)return '';
   const show=SRES.filter(r=>COMMON.includes(r)||r===SYS.spec||SYS.res[r]>0||fr.includes(r));
   h+=`<div class="resgrid">${show.map(r=>{const net=prod[r]+flow[r]-(need[r]||0)-(fr.includes(r)?rn.n:0);return `<div>${dot(r)}<b>${SRES_NAME[r]}</b> ${SYS.res[r]} <i class="${net<0?'down':''}">${net>=0?'+':''}${net}/h</i>${need[r]?`<small>needs ${need[r]}/h</small>`:''}${r===SYS.spec?'<small>your rare good</small>':''}</div>`}).join('')}</div>
   ${rn.k?`<p class="note">Your people now want ${rn.k} kind${rn.k>1?'s':''} of foreign rare goods (${rn.n} each per hour). Only other players make them: trade, invest, win them in a war, or take their worlds.</p>`:''}
-  <div class="sysbtns"><button onclick="festival()">Hold a festival<small>15 Food: unrest −15</small></button><button onclick="peacekeepers()">Send peacekeepers<small>10 credits: unrest −30</small></button></div>
+  <div class="sysbtns"><button onclick="festival()">Hold a festival<small>15 Food: unrest −15</small></button><button onclick="peacekeepers()">Send peacekeepers<small>50 credits: unrest −30</small></button></div>
   ${sec('gen',`Your general · ${RANKS[(meRec().doctrines||[]).length]}`,generalPanel())}
   ${sec('dev',`Path to Type II · K ${kardashev(SYS).toFixed(2)}`,devPanel())}
   ${sec('tech',`Technologies · ${Object.keys(TECHS).reduce((a,k)=>a+techLv(k),0)} of ${Object.values(TECHS).reduce((a,t)=>a+t.max,0)}${meRec().techPts?` · ${meRec().techPts} free`:''}`,techPanel())}
-  ${sec('fleet',`Fleet · power ${fpow(fl)}`,`${fleetLine(SYS_PID,fl)}<p class="note">All your warships sail as one fleet. New ships join it wherever it is.</p>
-  ${Object.entries(SHIPS).map(([k,s])=>{const lv=(fl.up||{})[k]||0,nx=UPGS[k][lv];return `<div class="shiprow"><button onclick="buildShip('${k}')">Build a ${s.name}<small>Attack ${shipStat(fl,k,'atk')}, hull ${shipStat(fl,k,'hull')}, siege ${shipStat(fl,k,'siege')}. ${s.d} ${shipCost(k)} credits, ${Object.entries(s.res).map(([r,n])=>n+' '+SRES_NAME[r]).join(', ')}.</small></button>
-   ${nx?`<button class="rs" onclick="upgradeShip('${k}')">Upgrade ${lv+1}/3: ${nx.n} (${Object.entries(nx.fx).map(([a,b])=>'+'+b+' '+a).join(', ')}), ${costTxt(UPG_COST[lv],upgRes(k,lv))}</button>`:'<span class="note">Fully upgraded.</span>'}</div>`}).join('')}
-`)}
-  ${sec('works','Shipyard and works',`${SHOP.map(it=>`<button onclick="buy('${it.k}')">${it.l}<small>${typeof it.d==='function'?it.d():it.d} ${it.c} credits.</small></button>`).join('')}
+  ${sec('fleet',`Fleet · power ${fpow(fl)}`,fleetPanel(fl))}
+  ${sec('yard',`Shipyard · ${fl.ships.c+fl.ships.f+fl.ships.d} warships, ${SYS.ships} scout${SYS.ships===1?'':'s'}`,yardPanel(fl))}
+  ${sec('works','Works',`<p class="note">Lasting fixes for a shortage: each adds goods every hour, for the rest of the week.</p>${SHOP.filter(it=>it.cat==='works').map(it=>`<button onclick="buy('${it.k}')">${it.l}<small>${typeof it.d==='function'?it.d():it.d} ${it.c} credits.</small></button>`).join('')}
   ${availRares().length?'':`<p class="note">You are alone with your rare good for now, so every project uses ${SRES_NAME[SYS.spec]}. When other players arrive, you will need theirs, and they will need yours.</p>`}
-  <button onclick="smuggle()">Buy from smugglers<small>25 credits for 3 of the foreign rare good you have least of. Trading with players is far cheaper.</small></button>`)}`}
+  <button onclick="smuggle()">Buy from smugglers<small>125 credits for 3 of the foreign rare good you have least of. Trading with players is far cheaper.</small></button>`)}`}
  return h+'</div>'}
+// Fleet: where it is, what's in it, and its strength. The shipyard builds and upgrades; works make goods.
+function fleetPanel(fl){const n=fl.ships,tot=n.c+n.f+n.d;
+ return `${fleetLine(SYS_PID,fl)}<div class="fcomp">${['c','f','d'].map(k=>`<span>${shipIco(k,fl)}<b>${n[k]}</b> ${SHIPS[k].name}${n[k]===1?'':'s'}${pips((fl.up||{})[k]||0,3)}</span>`).join('')}</div>
+ <p class="note">${tot?'All your warships sail as one fleet under your general. New ships join it wherever it is.':'No warships yet. Build some in the shipyard.'} It shows over your star on both maps while it is home.</p>`}
+function shipIco(k,fl){return `<svg class="shipico" viewBox="-2 -3 19 11" shape-rendering="crispEdges">${shipPx(k,0,k==='c'?1:0,factionCol(SYS_PID),false)}</svg>`}
+function yardPanel(fl){const sc=SHOP.find(x=>x.k==='ship');
+ return `<div class="shipcard"><div class="shiphead"><b>Scout ship</b> <span class="note">you have ${SYS.ships}</span></div><button onclick="buy('ship')">Build a scout ship<small>${sc.d} ${sc.c} credits.</small></button></div>
+ ${Object.entries(SHIPS).map(([k,s])=>{const lv=(fl.up||{})[k]||0,nx=UPGS[k][lv];
+  return `<div class="shipcard"><div class="shiphead">${shipIco(k,fl)}<b>${s.name}</b> <span class="note">× ${fl.ships[k]}</span><span class="sstat">ATK ${shipStat(fl,k,'atk')} · HULL ${shipStat(fl,k,'hull')} · SIEGE ${shipStat(fl,k,'siege')}</span></div>
+  <p class="note">${s.d}</p>
+  <div class="sysbtns"><button onclick="buildShip('${k}')">Build<small>${shipCost(k)} credits, ${Object.entries(s.res).map(([r,n])=>n+' '+SRES_NAME[r]).join(', ')}.</small></button>
+  ${nx?`<button onclick="upgradeShip('${k}')">Upgrade ${lv+1}/3: ${nx.n}<small>${Object.entries(nx.fx).map(([a,b])=>'+'+b+' '+{atk:'attack',hull:'hull',siege:'siege'}[a]).join(', ')} on every ${s.name}. ${costTxt(UPG_COST[lv],upgRes(k,lv))}.</small></button>`:`<p class="note">Fully upgraded.</p>`}</div>
+  <div class="upgtrack">${UPGS[k].map((u,i)=>`<span class="${i<lv?'done':i===lv?'next':''}">${i<lv?'✓':i+1} ${u.n}</span>`).join('')}</div></div>`}).join('')}
+ <p class="note">Upgrades apply to every ship of that type and stay with you every week.</p>`}
 function offerCards(){const os=(meRec().offers||[]).filter(o=>o.season===SEASON.n&&o.day===SEASON.day);if(!os.length)return '';const g=investGoods(),gl=Object.entries(g).map(([r,n])=>n+' '+SRES_NAME[r]).join(', ');
  return os.map(o=>`<div class="evcard"><h3>Investment offer</h3><p class="note">${escH(nameOf(o.from))} will cover the foreign rare goods you need today${gl?` (${gl})`:' (you need none yet)'}, for <b>${o.credits} credits</b>.</p><div class="sysbtns"><button onclick="answerInvest('${o.id}',true)">Accept<small>Pay ${o.credits} credits${gl?', receive the goods':''}.</small></button><button onclick="answerInvest('${o.id}',false)">Decline<small>Nothing changes.</small></button></div></div>`).join('')}
 function investBtn(g){const n=investAsk(),day=SEASON.day,sent=(g.offers||[]).some(o=>o.from===SYS_PID&&o.day===day);
@@ -1538,7 +1674,7 @@ function aiPanel(a,brief){if(a.rift)return riftPanel(a);const s=SYS,al=mutualAll
  <p class="note">Opinion of you: <b>${opinionWord(a.opinion)}</b> (${a.opinion}) <span class="ubar" style="width:90px"><i style="width:${pct}%;background:${a.opinion>=50?'#7bd17b':a.opinion<=-40?'#ef7a6e':'#ffc857'}"></i></span></p>
  <p class="note">They hold: ${COMMON.map(r=>`${dot(r)}${a.res[r]||0}`).join(' ')}</p>
  ${brief?`<button onclick="galClick('${a.id}')">See their planets</button>`:''}
- ${w?'':`<div class="sysbtns"><button onclick="aiAct('${a.id}','envoy')">Send an envoy<small>5 credits. Opinion +5 (once an hour).</small></button><button onclick="aiAct('${a.id}','gift')">Send a gift ${sel('gift'+a.id,'food')}<small>10 of it. Opinion +8.</small></button></div>
+ ${w?'':`<div class="sysbtns"><button onclick="aiAct('${a.id}','envoy')">Send an envoy<small>25 credits. Opinion +5 (once an hour).</small></button><button onclick="aiAct('${a.id}','gift')">Send a gift ${sel('gift'+a.id,'food')}<small>10 of it. Opinion +8.</small></button></div>
  <p class="note">AI empires never ally with players, but they trade while their opinion of you is 0 or more, and hostile ones (opinion −20 or less) are the ones that threaten you.</p>`}
  ${routesWith(a.id)}${w?'':tradeForm(a.id,s.spec,[...COMMON].sort((x,y)=>(a.res[y]||0)-(a.res[x]||0))[0])}${al?'':warBtn(a.id)}</div>`}
 function warsPanel(){const mine=WARS.filter(w=>!w.ended&&w.sides.flat().includes(SYS_PID));
@@ -1563,9 +1699,12 @@ function crisisPanel(w,s){const rifts=AIS.filter(a=>a.rift),open=rifts.filter(a=
  return `<div class="nbr war" style="border-color:#c77dff"><b style="color:#c77dff">The Reflection</b>
  <p class="note">${rifts.length-open.length} of ${rifts.length} rifts closed.${mine?` Your mirror: ${mine.annexedBy?'<b>destroyed</b>.':escH(mine.fleet.admiral)+', fleet power <b>'+fpow(mine.fleet)+'</b>.'}`:''} The Reflection does not bargain. Destroy a mirror's fleet to close its rift. Every player fights in this one war, and battles with more than two sides meet in central space.</p>
  ${stanceBox(w,s)}${oddsLine(w.sides[s],open.map(a=>a.id))}${open.map(a=>fleetLine(a.id,a.fleet)).join('')}</div>`}
+function pips(n,max){return `<span class="pips">${Array.from({length:max},(_,i)=>`<i class="${i<n?'on':''}"></i>`).join('')}</span>`}
 function techPanel(){const pts=meRec().techPts||0;
  return `<h3>Technologies</h3><p class="note">Research is never lost: it stays with you every week.${pts?` You have <b>${pts}</b> free technology point${pts>1?'s':''} from beating the Reflection.`:''}</p>
- ${Object.entries(TECHS).map(([k,t])=>{const lv=techLv(k);return lv>=t.max?`<p class="note"><b>${t.n}</b> ${lv}/${t.max}: done. ${t.d}</p>`:`<button onclick="buyTech('${k}')">${t.n} ${lv+1}/${t.max}<small>${t.d} ${costTxt(TECH_COST[lv],techRes(k,lv))}.</small></button>${pts?`<button class="rs" onclick="buyTech('${k}',true)">Use a free point</button>`:''}`}).join('')}`}
+ ${TECH_CATS.map(([c,l,d])=>`<div class="tcat"><h4>${l} <small>${d}</small></h4>${Object.entries(TECHS).filter(([k,t])=>t.cat===c).map(([k,t])=>{const lv=techLv(k);
+  return lv>=t.max?`<div class="trow done"><b>${t.n}</b> ${pips(lv,t.max)}<small>${t.d} Fully researched.</small></div>`
+  :`<div class="trow"><button onclick="buyTech('${k}')"><b>${t.n}</b> ${pips(lv,t.max)} <span class="lvl">level ${lv+1}</span><small>${t.d} ${costTxt(TECH_COST[lv],techRes(k,lv))}.</small></button>${pts?`<button class="rs freept" onclick="buyTech('${k}',true)">Use a free point</button>`:''}</div>`}).join('')}</div>`).join('')}`}
 function devPanel(){const s=SYS,x=nextDev(s),k=kardashev(s);let h=`<h3>Path to Type II</h3><p class="note">Kardashev <b>${k.toFixed(2)}</b> <span class="ubar" style="width:110px"><i style="width:${Math.round((k-0.5)/1.5*100)}%;background:${typeII(s)?'#ffd166':'#8fd3ff'}"></i></span> ${typeII(s)?'<b>Type II civilization.</b> The swarm feeds every world.':`${DEV[s.dev||0].n}${s.swarm?`, swarm ${s.swarm}/${SWARM_SEG}`:''}.`}</p>`;
  if(s.proj)return h+`<p class="note">Building <b>${escH(s.proj.n)}</b>: ${s.proj.left} hour${s.proj.left===1?'':'s'} left.</p>`;
  if(!x)return h;const why=s.age<x.age?`Home world matures in ${x.age-s.age}h.`:established(s)<x.est?`Needs ${x.est} established colon${x.est===1?'y':'ies'} (you have ${established(s)}).`:'';
@@ -1645,12 +1784,13 @@ function renderSystems(){const s=SYS,e=era(s),ne=nextEra(s),hrs=Math.max(1,Math.
  else body=`${systemSVG(s,true)}<p class="note" style="text-align:center">Tap a planet.</p>${planetPanel(s,SV.sel,true)}`;
  const vas=meRec().vassalOf;
  const guide=creditGuide(SEASON.day,SEASON.n),taxDay=Math.round(taxOf(s)*24);
- app.innerHTML=`<div class="card" id="sysroot"><div class="turn">Systems multiplayer</div><h2>The ${escH(s.sysName||s.name)} System</h2>
+ app.innerHTML=`<div class="card" id="sysroot"><div class="turn">Systems multiplayer ${alphaTag()}</div><h2>The ${escH(s.sysName||s.name)} System</h2>${srvLine()}
  <div class="hrow"><span>Week <b>${SEASON.n}</b> · Day <b>${SEASON.day||1}</b>/7</span><span class="hbtns"><button class="rs" onclick="openHelp(SYS_RULES)">Rules</button><button class="rs" data-g="guidebtn" onclick="guideStart()">Guide</button></span></div>
  <div class="sysgrid">
  <span class="wide" data-g="credits">Credits: <b>${credits()}</b> <i>(${guide} needed today)</i> · Tax +${taxDay}/day</span>
+ ${(b=>`<span class="wide" data-g="bank"><i>This week: +${b.earned} earned · ${b.spent} spent (back if you lose your system)</i></span>`)(weekBank())}
  <span data-g="people">People ${s.pop}/${housing(s)}</span><span>Unrest ${s.unrest}% ${bar(s.unrest)}</span>
- <span class="wide">Age: ${e.name}${ne?` <i>(${ne.name} in ${ne.at-s.age}h)</i>`:''} · ${escH(sunOf(s).n)}, ${escH(worldOf(s).n.toLowerCase())}</span></div>
+ <span class="wide">Age: ${e.name}${ne?` <i>(${ne.name} in ${ne.at-s.age}h)</i>`:''} · ${escH(sunOf(s).n)}, ${escH(worldOf(s).n.toLowerCase())} · Leader: ${leaderOf(s).n}</span></div>
  ${civScale(s)}
  ${vas?`<p class="down">You are a vassal of ${escH(nameOf(vas))} and pay 1 Food, 1 Water and 1 ${SRES_NAME[s.spec]} each hour. Another player can free you by beating ${escH(nameOf(vas))} in a war.</p>`:''}
  ${s.unrest>=60?'<p class="down">Riots! Production is halved until unrest drops below 60%.</p>':''}
@@ -1666,7 +1806,8 @@ function civScale(s){const steps=['Outpost','Grid','Orbital','Type I','Swarm','T
 const G_HOME=()=>{SV={tab:'system',who:null,sel:0};renderSystems()},G_GAL=()=>{SV={tab:'galaxy',who:null,sel:0};renderSystems()};
 const GUIDE=[
  {t:'Welcome to Systems multiplayer',x:'A shared galaxy for up to 5 players and 3 AI empires. A game lasts one week. Every day is harder than the last, and day 7 brings the Reflection. This guide shows you around. Tap Next.'},
- {sel:'[data-g="credits"]',go:G_HOME,t:'Credits',x:'Credits pay for ships, colonies, defenses and technologies. The number in brackets is about what a steady player spends each day. Taxes pay part of it every hour; runs in the main game earn the rest.'},
+ {sel:'.srvline',go:G_HOME,t:'Your server',x:'Each server is its own galaxy. Tap Servers to see the list, move to another one, or create your own. Servers made by the admin are marked (Main).'},
+ {sel:'[data-g="credits"]',go:G_HOME,t:'Credits',x:'Credits pay for ships, colonies, defenses and technologies. The line below shows what you earned and spent this week: if you lose your system, everything you spent comes back. The number in brackets is about what a steady player spends each day. Taxes pay part of it every hour; runs in the main game earn the rest.'},
  {sel:'[data-g="civ"]',t:'Civilization scale',x:'Your civilization climbs from a Landfall outpost to Type I, then builds a Dyson swarm to become Type II. Each stage lets you run more colonies and raises your taxes.'},
  {sel:'[data-g="people"]',t:'People and unrest',x:'Your people need Food and Water, and later Ore, Fuel and other players\' rare goods. Running short raises unrest. At 60% unrest, riots halve your output.'},
  {sel:'.warnban',t:'Warnings',x:'Danger shows up here first: AI threats, invasions and the rifts. A BREAKING sticker appears the first time a new danger is spotted.'},
@@ -1675,15 +1816,17 @@ const GUIDE=[
  {sel:'.svmap',go:G_HOME,t:'Your system',x:'Tap a planet to see it. Send scouts to explore unknown worlds, then colonize them for more goods and room for more people.'},
  {sel:'.resgrid',go:G_HOME,t:'Your goods',x:'Each good shows your stock and its change per hour. A red number means you are running short. Fix it with colonies, trade, investing, or works from the shipyard.'},
  {sel:'[data-g="dev"]',t:'Development',x:'Start the next stage of your civilization here. Projects take hours and cost goods, including other players\' rare goods.'},
- {sel:'[data-g="tech"]',t:'Technologies',x:'Technologies make you stronger and are never lost: they carry over to every new week.'},
- {sel:'[data-g="fleet"]',t:'Your fleet',x:'Build and upgrade warships. All your ships fly as one fleet under your general, who earns promotions in battle.'},
- {sel:'[data-g="works"]',t:'Shipyard and works',x:'Scouts, farms, water purifiers, deep mines and rare-goods works: cheap, lasting fixes for a shortage.'},
+ {sel:'[data-g="gen"]',go:G_HOME,t:'Your general and renown',x:'Your general leads the fleet. Every main-game run and every battle earns renown: spend it here on general upgrades. Battle renown also brings promotions. Your general\'s type, and your leader\'s, give a small bonus with a tradeoff.'},
+ {sel:'[data-g="tech"]',t:'Technologies',x:'Technologies come in three groups: Economy, Defense and Fleet. They make you stronger and are never lost: they carry over to every new week.'},
+ {sel:'[data-g="fleet"]',t:'Your fleet',x:'All your warships fly as one fleet under your general, who earns promotions in battle. While it is home, it shows over your star.'},
+ {sel:'[data-g="yard"]',t:'Shipyard',x:'Build scouts and warships here, and upgrade each ship type. An upgrade fits every ship of that type and carries over to every new week.'},
+ {sel:'[data-g="works"]',t:'Works',x:'Farms, water purifiers, deep mines and rare-goods works: cheap, lasting fixes for a shortage. Smugglers sell foreign rare goods, at a steep price.'},
  {sel:'#galmap',go:G_GAL,t:'The galaxy',x:'Tap a star once for diplomacy, twice to see its planets. Green lines are alliances, gold lines are trade, red lines are war.'},
  {sel:'.ppanel',go:()=>{const g=GAL.find(x=>x.pid!==SYS_PID);if(!g)return false;SV={tab:'galaxy',who:null,pick:g.pid,sel:0};renderSystems()},t:'Other players',x:'Ally with other players to trade in full and fight side by side. Propose trade routes, or Invest: give them today\'s foreign rare goods for the credits you still need. They must accept.'},
  {sel:'.ppanel',go:()=>{const a=AIS.find(x=>!x.annexedBy&&!x.rift);if(!a)return false;SV={tab:'galaxy',who:null,pick:a.id,sel:0};renderSystems()},t:'AI empires',x:'AI empires never ally with players, but they trade while they like you. Envoys and gifts raise their opinion. Hostile empires threaten you once your fleet nears theirs, and they invade on days 3 and 5.'},
  {sel:'#livebox',go:G_GAL,t:'Wars',x:'Wars run in real time, even while you are away. Each war shows the odds, war exhaustion and the treaties you can sign. When you defend, choose Counterattack or Hold. If an AI takes your home world, you become its vassal until another player frees you.'},
  {t:'The Reflection',x:'On day 7 every war stops, and a mirror of each player\'s fleet comes through a rift. All players fight it together. Destroy a mirror\'s fleet to close its rift. Then the week ends, and everyone claims a new system.'},
- {sel:'[data-g="newplanet"]',go:G_HOME,t:'New planet',x:'This abandons your system for good: worlds, fleet, technologies, upgrades and general. Use it only to start over with a new star. Your credits are safe.'},
+ {sel:'[data-g="newplanet"]',go:G_HOME,t:'New planet',x:'This abandons your system for good: worlds, fleet, technologies, upgrades and general. Use it only to start over with a new star. You keep your credits, and what you spent this week comes back.'},
  {sel:'[data-g="guidebtn"]',t:'That\'s the tour',x:'Open this guide again any time with the Guide button. The Rules button lists every number. Good luck, Sovereign.'}];
 let G_I=-1,G_T=null;
 function guideSeen(){try{return localStorage.getItem('ss2guide')==='1'}catch(e){return true}}
@@ -1708,17 +1851,49 @@ function startPoll(){stopPoll();POLL=setInterval(async()=>{if(!document.getEleme
  map.replaceWith(tmp.firstElementChild);scheduleMeet();{const ob=document.querySelector('.warnban'),nb=warnBanner();if(ob||nb){const d=document.createElement('div');d.innerHTML=nb||'<i></i>';const el=d.firstElementChild;if(ob)nb?ob.replaceWith(el):ob.remove();else{const t=document.querySelector('#sysroot .tabs');if(t&&nb)t.before(el)}}}const lb=document.getElementById('livebox');if(lb&&!lb.contains(document.activeElement)){const t2=document.createElement('div');t2.innerHTML=warsPanel();lb.replaceWith(t2.firstElementChild)}},2000)}
 let MEET_T=null;function scheduleMeet(){if(MEET_T)return;let next=Infinity;for(const [id,fl] of allFleets())if(fl.loc.s==='move'){const m=fl.loc.to==='center'?fl.loc.t1+5100:fl.loc.t0+(fl.loc.t1-fl.loc.t0)/2;if(m>snow())next=Math.min(next,m)}
  if(next<Infinity)MEET_T=setTimeout(async()=>{MEET_T=null;await sysSync();if(document.getElementById('galmap')&&SV.tab==='galaxy'&&!SV.who){const t=document.createElement('div');t.innerHTML=galaxySVG();document.getElementById('galmap').replaceWith(t.firstElementChild)}},next-snow()+150)}
+// ---- Servers: each one is its own galaxy (5 players, 3 AI empires, one week per game). You play on one at a time.
+// The list shows first when you enter Systems multiplayer without a system. Admin servers are marked (Main).
+async function srvCall(op,extra){try{const r=await fetch('/api/systems',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify({id:ARCADE.id,op,by:ARCADE.name,...(extra||{})})});return await r.json()}catch(e){return null}}
+// your server was removed (by its creator or the admin): the system is gone, the week's spending comes back
+function lostServer(msg){const keep=SYS.leader,rf=refundWeek();SYS=newSystem(0);SYS.leader=keep;saveSys();SYS_PID=null;SERVER=null;
+ SYS_MSG=`${msg||'Your server was removed.'} Your system went with it.${rf}`;if(document.getElementById('sysroot')){stopPoll();serverScreen()}}
+async function serverScreen(){stopPoll();app.innerHTML='<div class="card" id="sysroot"><h2>Servers</h2><p class="note">Fetching the server list…</p></div>';
+ const j=await srvCall('servers');const msg=SYS_MSG;SYS_MSG='';
+ if(!j||!j.servers){app.innerHTML=`<div class="card" id="sysroot"><h2>Servers</h2><p class="down">Can't reach the server list. Systems multiplayer needs the website.</p><button style="text-align:center" onclick="serverScreen()">Try again</button><button style="text-align:center" onclick="start()">Back</button></div>`;return}
+ const cur=SYS&&SYS.sysName?SYS.srv:null;
+ const row=v=>{const here=v.id===cur,full=v.players>=v.max&&!here;
+  return `<div class="srvrow${here?' here':''}"><div class="srvname"><b>${escH(v.name)}</b>${v.main?' <span class="maintag">(Main)</span>':''}${v.yours?' <i>(yours)</i>':''}${here?' <i class="up">· you play here</i>':''}</div>
+  <small class="note">${v.players}/${v.max} players · Week ${v.week}, day ${v.day}${v.main?'':` · by ${escH(v.by||'a player')}`}</small>
+  <div class="srvbtns">${here?`<button class="rs on" onclick="showSystems()">Open</button>`:full?`<button class="rs locked">Full</button>`:`<button class="rs" onclick="joinServer('${v.id}',this)">${cur?'Move here':'Join'}</button>`}${v.yours?`<button class="rs" onclick="rmServer('${v.id}',this)">Remove</button>`:''}</div></div>`};
+ app.innerHTML=`<div class="card" id="sysroot"><div class="turn">Systems multiplayer ${alphaTag()}</div><h2>Choose a server</h2>${msg?`<p class="sysmsg">${escH(msg)}</p>`:''}
+ <p class="note">Each server is its own galaxy: up to 5 players and 3 AI empires, and a game lasts one week. You play on one server at a time.${cur?' Moving to another server abandons your system here (your credits are kept, and what you spent this week comes back).':''}</p>
+ ${j.servers.length?j.servers.map(row).join(''):'<p class="note">No servers yet. Create one below.</p>'}
+ ${j.canCreate?`<h3>Create your own server</h3><input id="srvname" class="arcin" maxlength="24" placeholder="Server name" autocomplete="off"><p id="srverr" class="down" style="min-height:22px"></p><button onclick="mkServer()">Create server<small>You can run one server. You, or the admin, can remove it.</small></button>`:''}
+ <button style="text-align:center;margin-top:10px" onclick="${cur?'showSystems()':'start()'}">Back</button></div>`;window.scrollTo(0,0)}
+async function joinServer(sid,b){
+ if(SYS&&SYS.sysName&&SYS.srv&&SYS.srv!==sid){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again: leave your system';return}
+  await sysCall('leave');const keep=SYS.leader,rf=refundWeek();SYS=newSystem(0);SYS.leader=keep;SYS_PID=null;SYS_MSG=`You left your old system.${rf}`}
+ SYS.srv=sid;SERVER=null;saveSys();nameScreen()}
+async function mkServer(){const n=document.getElementById('srvname').value.replace(/[^A-Za-z0-9 '-]/g,'').trim();if(n.length<2){document.getElementById('srverr').textContent='Use 2 to 24 letters or numbers.';return}
+ const j=await srvCall('mkserver',{name:n});if(!j||j.ok===false){document.getElementById('srverr').textContent=j?j.msg:'No connection.';return}
+ SYS_MSG=j.msg+(SYS&&SYS.sysName?'':' Join it to found your system there.');serverScreen()}
+async function rmServer(sid,b){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again: remove it for everyone';return}
+ const j=await srvCall('rmserver',{srv:sid});if(j&&j.ok!==false&&SYS&&SYS.srv===sid){if(SYS.sysName){lostServer(j.msg);return}SYS.srv=undefined;saveSys()}
+ SYS_MSG=j?j.msg:'No connection.';serverScreen()}
+function alphaTag(){return '<span class="alpha">ALPHA</span>'}
+function srvLine(){const v=SERVER;if(!v)return '';return `<div class="srvline">Server: <b>${escH(v.name)}</b>${v.main?' <span class="maintag">(Main)</span>':''} <button class="rs" onclick="serverScreen()">Servers</button></div>`}
 // Founding: name your system and home world, then pick your star and the kind of world you live on.
 let FOUND=null;
 function nameScreen(){const home=SYS.planets[0].n;FOUND=FOUND||{sys:SYS.name,home};const sun=sunOf(SYS),wd=worldOf(SYS);
  const chip=(set,k,v,cur)=>`<button class="pick${cur===k?' on':''}" onclick="foundPick('${set}','${k}')"><span class="pdot" style="background:${v.col}"></span>${v.n}<small>${v.d}</small></button>`;
- app.innerHTML=`<div class="card" id="sysroot"><div class="turn">Systems multiplayer</div><h2>Claim your star system</h2>${SYS_MSG?`<p class="sysmsg">${escH(SYS_MSG)}</p>`:''}
+ app.innerHTML=`<div class="card" id="sysroot"><div class="turn">Systems multiplayer ${alphaTag()}</div><h2>Claim your star system</h2>${SYS_MSG?`<p class="sysmsg">${escH(SYS_MSG)}</p>`:''}<div class="srvline">Server: <b id="foundsrv">…</b> <button class="rs" onclick="serverScreen()">Change</button></div>
  <p class="note">You can't do this alone. Colonies, upgrades and defenses all need rare goods that only other players make. The AI empires stand together, and sooner or later they come for you. Trade, ally with other players and fight side by side. Each game lasts one week, and every day is harder than the last. On day 7 the Reflection comes, and it takes every player together to stop it. Then the galaxy resets for a new, harder week. Your technologies, ship upgrades and general carry over.</p>
- <svg viewBox="0 0 160 70" class="foundsvg" shape-rendering="crispEdges">${bgStars(160,70,'found')}${pxStar(52,35,5,sun.col)}${pxPlanet(118,35,6,wd.col,false,false)}</svg>
+ <svg viewBox="0 0 160 70" class="foundsvg" shape-rendering="crispEdges">${bgStars(160,70,'found')}${starOf(SYS,5,52,35)}${pxPlanet(118,35,6,wd.col,false,false)}</svg>
  <p class="note">System name</p><input id="sysname" class="arcin" maxlength="16" value="${escH(FOUND.sys)}" autocomplete="off"><p class="note">Home world</p><input id="homename" class="arcin" maxlength="16" value="${escH(FOUND.home)}" autocomplete="off">
  <h3>Your star</h3><div class="pickrow">${Object.entries(SUNS).map(([k,v])=>chip('sun',k,v,SYS.sun||'yellow')).join('')}</div>
  <h3>Your home world</h3><div class="pickrow">${Object.entries(WORLDS).map(([k,v])=>chip('world',k,v,SYS.world||'temperate')).join('')}</div>
- <p id="nerr" class="down" style="min-height:30px"></p><button class="personal" style="text-align:center" onclick="setSysNames()">Found my system</button><button style="text-align:center" onclick="start()">Back</button></div>`;SYS_MSG=''}
+ <p id="nerr" class="down" style="min-height:30px"></p><button class="personal" style="text-align:center" onclick="setSysNames()">Found my system</button><button style="text-align:center" onclick="start()">Back</button></div>`;SYS_MSG='';
+ if(!SYS.srv){serverScreen();return}srvCall('servers').then(j=>{const v=j&&j.servers&&j.servers.find(x=>x.id===SYS.srv),el=document.getElementById('foundsrv');if(!el)return;if(!v){SYS.srv=undefined;saveSys();SYS_MSG='That server is gone. Pick another one.';serverScreen();return}el.innerHTML=escH(v.name)+(v.main?' <span class="maintag">(Main)</span>':'')})}
 function foundPick(set,k){FOUND={sys:document.getElementById('sysname').value,home:document.getElementById('homename').value};SYS[set]=k;saveSys();nameScreen()}
 // A leader for Systems: species, look, name and title. Other players see it in diplomacy.
 const SPECIES={Vorrani:'Vorrani (hive)',Celest:'Celest (luminous)',Kethari:'Kethari (machine)'};
@@ -1727,30 +1902,62 @@ let LD_FIRST=false;
 function leaderScreen(first){if(first!==undefined)LD_FIRST=!!first;const ld=sysLook(),L=fixLook(ld.look),E=L.e;
  const lbl={gender:'Gender',head:'Head',skin:'Skin',eyes:'Eyes',mouth:'Mouth',crest:'Crest',outfit:OUTFIT_LABEL[E]};
  const row=k=>`<div class="lrow"><button class="rs" onclick="sysCycle('${k}',-1)" aria-label="Previous ${lbl[k]}">‹</button><span><small>${lbl[k]}</small>${L[k]}</span><button class="rs" onclick="sysCycle('${k}',1)" aria-label="Next ${lbl[k]}">›</button></div>`;
- app.innerHTML=`<div class="card creator" id="sysroot"><div class="turn">Systems multiplayer</div><h2>Your leader</h2><p class="note">Other players see this leader when they open diplomacy with you.</p>
+ app.innerHTML=`<div class="card creator" id="sysroot"><div class="turn">Systems multiplayer ${alphaTag()}</div><h2>Your leader</h2><p class="note">Your leader rules your worlds; other players see them in diplomacy. Your general, next, leads your fleet.</p>
  <img class="bigport" src="${portraitURL(L)}" alt="Your leader's portrait">
  <div class="lrow" style="margin-bottom:6px"><button class="rs" onclick="sysCycle('e',-1)" aria-label="Previous species">‹</button><span style="flex:1;margin:0 8px"><small style="white-space:nowrap">Species</small>${SPECIES[E]}</span><button class="rs" onclick="sysCycle('e',1)" aria-label="Next species">›</button></div>
  <div class="lrows">${LOOK_KEYS.map(row).join('')}</div>
  <p class="note">Name</p><input id="ldname" class="arcin" maxlength="20" value="${escH(ld.name)}" autocomplete="off"><p class="note">Title</p><input id="ldtitle" class="arcin" maxlength="24" value="${escH(ld.title)}" autocomplete="off">
+ <h3>Leader type</h3><div class="pickrow">${Object.entries(LEADERS).map(([k,v])=>`<button class="pick${(ld.type||'sovereign')===k?' on':''}" onclick="ldType('${k}')">${v.n}<small>${v.d}</small></button>`).join('')}</div>
  <p id="lderr" class="down" style="min-height:24px"></p>
- <div class="crbtns"><button style="text-align:center" onclick="sysReroll()">Randomize</button><button class="personal" style="text-align:center" onclick="saveLeader()">${LD_FIRST?'Found my system':'Save leader'}</button></div></div>`}
+ <div class="crbtns"><button style="text-align:center" onclick="sysReroll()">Randomize</button><button class="personal" style="text-align:center" onclick="saveLeader()">${LD_FIRST?'Next: your general':'Save leader'}</button></div></div>`}
+function ldType(k){keepLdText();SYS.leader.type=k;leaderScreen()}
 function keepLdText(){const n=document.getElementById('ldname'),t=document.getElementById('ldtitle');if(n)SYS.leader.name=n.value;if(t)SYS.leader.title=t.value}
 function sysCycle(k,d){keepLdText();const L=SYS.leader.look;if(k==='e'){const o=['Vorrani','Celest','Kethari'];L.e=o[(o.indexOf(L.e)+d+3)%3];fixLook(L)}else{const o=optsFor(k,L.e);L[k]=o[(o.indexOf(L[k])+d+o.length)%o.length]}leaderScreen()}
 function sysReroll(){keepLdText();const e=SYS.leader.look.e;const L=randLook();L.e=e;SYS.leader.look=fixLook(L);leaderScreen()}
 function saveLeader(){const clean=(v,n)=>v.replace(/[^A-Za-z0-9 '-]/g,'').trim().slice(0,n);const n=clean(document.getElementById('ldname').value,20),t=clean(document.getElementById('ldtitle').value,24);
  if(n.length<2||t.length<2){document.getElementById('lderr').textContent='Give your leader a name and a title (2 letters or more).';return}
- SYS.leader.name=n;SYS.leader.title=t;saveSys();if(LD_FIRST){LD_FIRST=false;showSystems()}else{SYS_MSG=`${t} ${n} takes the throne.`;sysSync();showSystems(true)}}
+ SYS.leader.name=n;SYS.leader.title=t;saveSys();if(LD_FIRST){LD_FIRST=false;sysGen();saveSys();genScreen(true)}else{SYS_MSG=`${t} ${n} takes the throne.`;sysSync();showSystems(true)}}
+// Your general (separate from your leader) commands the fleet. General types (war) mirror the server's GEN_TYPES.
+const GENERALS={veteran:{n:'Veteran',d:'Steady. No change.'},raider:{n:'Raider',d:'+10% fleet attack, −10% siege strength.'},siegemaster:{n:'Siegemaster',d:'+20% siege strength, −5% fleet attack.'},warden:{n:'Warden',d:'+15% attack in battles over your own worlds, −5% attack everywhere else.'}};
+// General upgrades, bought with renown (main-game runs and battles earn it). 3 levels each.
+const GUPS={atk:{n:'Gunnery drills',d:'+4% fleet attack per level.'},siege:{n:'Siege engineers',d:'+8% siege strength per level.'},guard:{n:'Evasive maneuvers',d:'5% less damage from planetary guns per level.'}},GUP_COST=[10,20,35];
+const GEN_KEYS=['head','eyes','crest','outfit'];
+function sysGen(){if(!SYS.general){const L=randLook();L.e=((SYS.leader||{}).look||{}).e||L.e;const h=[...(ARCADE&&ARCADE.id||'gen')].reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7);
+ SYS.general={name:`${['Kaela','Oru','Vexa','Dorn','Ilsa','Tarek','Mira','Sol','Quell','Ysolde','Harrow','Brannoch'][h%12]} ${['Voss','Thane','Kade','Morrow','Ashgrave','Rhyne','Calder','Strand'][(h>>>4)%8]}`,type:'veteran',look:fixLook(L)}}return SYS.general}
 // Your leader is also your fleet's general. Renown from battles and sieges earns 3 promotions; each adds a doctrine.
 const RANKS=['Captain','Commodore','Admiral','Grand Admiral'],PROMOTE=[40,120,300],DOCT={atk:{n:'Attack doctrine',d:'+5% fleet attack'},siege:{n:'Siege doctrine',d:'+10% siege strength, 5% less damage from planetary guns'}};
 // Collapsible sections on the home world; the ones you open stay open across redraws.
 const SV_OPEN=new Set();
 function sec(k,title,html){return `<details class="sec" data-g="${k}"${SV_OPEN.has(k)?' open':''} ontoggle="this.open?SV_OPEN.add('${k}'):SV_OPEN.delete('${k}')"><summary>${title}</summary>${html.replace(/^\s*<h3>[^<]*<\/h3>/,'')}</details>`}
-function generalPanel(){const ld=sysLook(),me=meRec(),rn=me.renown||0,docs=me.doctrines||[],tier=PROMOTE.filter(n=>rn>=n).length,next=PROMOTE[tier];
+function generalPanel(){const g=sysGen(),me=meRec(),rn=me.renown||0,docs=me.doctrines||[],tier=PROMOTE.filter(n=>rn>=n).length,next=PROMOTE[tier],gt=GENERALS[g.type]||GENERALS.veteran,gup=me.gup||{},pts=renownPts();
  const pend=tier>docs.length,lo=PROMOTE[tier-1]||0,pct=next?Math.round(100*(rn-lo)/(next-lo)):100;
- return `<h3>Your general</h3><div style="overflow:hidden"><img class="sysport" src="${portraitURL(fixLook({...ld.look}))}" alt="Your general"><p class="note"><b>${RANKS[docs.length]} ${escH(ld.name)}</b>, ${escH(ld.title)}<br>Renown <b>${rn}</b>${next?` <span class="ubar" style="width:80px"><i style="width:${pct}%;background:#ffd166"></i></span> next promotion at ${next}`:' (highest rank)'}</p></div>
- <p class="note">${docs.length?'Doctrines: '+docs.map(d=>DOCT[d].n+' ('+DOCT[d].d+')').join('; ')+'.':'Win battles, hold sieges and take worlds to earn renown. Renown resets if you reset your planet.'}</p>
+ return `<h3>Your general</h3><div style="overflow:hidden"><img class="sysport" src="${portraitURL(fixLook({...g.look}))}" alt="Your general"><p class="note"><b>${RANKS[docs.length]} ${escH(g.name)}</b> · ${gt.n}<br><small>${gt.d}</small><br>Battle renown <b>${rn}</b>${next?` <span class="ubar" style="width:80px"><i style="width:${pct}%;background:#ffd166"></i></span> next promotion at ${next}`:' (highest rank)'}</p></div>
+ <p class="note">Renown to spend: <b>${pts}</b>. Every main-game run and every battle here earns it. Renown you spend this week comes back if you lose your system.</p>
+ <div class="sysbtns">${Object.entries(GUPS).map(([k,u])=>{const lv=gup[k]||0;return lv>=3?`<button class="locked">${u.n} ${pips(3,3)}<small>${u.d} Fully trained.</small></button>`:`<button onclick="buyGup('${k}')">${u.n} ${pips(lv,3)}<small>${u.d} ${GUP_COST[lv]} renown.</small></button>`}).join('')}</div>
+ <p class="note">${docs.length?'Doctrines: '+docs.map(d=>DOCT[d].n+' ('+DOCT[d].d+')').join('; ')+'.':'Battles, sieges and conquests raise battle renown; each promotion adds a doctrine.'}</p>
  ${pend?`<p class="note"><b>Promotion ready!</b> Choose a doctrine:</p><div class="sysbtns">${Object.entries(DOCT).map(([k,d])=>`<button onclick="promote('${k}')">${d.n}<small>${d.d}.</small></button>`).join('')}</div>`:''}
- <button class="rs" style="float:none" onclick="leaderScreen(false)">Edit leader</button>`}
+ <div class="srvbtns"><button class="rs" onclick="genScreen(false)">Edit general</button><button class="rs" onclick="leaderScreen(false)">Edit leader</button></div>`}
+async function buyGup(k){const lv=(meRec().gup||{})[k]||0;if(lv>=3)return;const c=GUP_COST[lv];if(renownPts()<c){SYS_MSG=`You need ${c} renown. You have ${renownPts()}. Win main-game runs and battles to earn more.`;return renderSystems()}
+ addRenown(-c,'spend');const j=await sysCall('gup',{skill:k});if(!j||j.ok===false){addRenown(c,'undo');SYS_MSG=j?j.msg:'No connection to the galaxy.'}else SYS_MSG=`${GUPS[k].n}, level ${lv+1}. ${j.msg}`;await sysSync();renderSystems()}
+// The general creator: smaller than the leader designer. Species, four looks, a name and a type.
+let GEN_FIRST=false;
+function genScreen(first){if(first!==undefined)GEN_FIRST=!!first;const g=sysGen(),L=fixLook(g.look),E=L.e;
+ const lbl={head:'Head',eyes:'Eyes',crest:'Crest',outfit:OUTFIT_LABEL[E]};
+ const row=k=>`<div class="lrow"><button class="rs" onclick="genCycle('${k}',-1)" aria-label="Previous ${lbl[k]}">‹</button><span><small>${lbl[k]}</small>${L[k]}</span><button class="rs" onclick="genCycle('${k}',1)" aria-label="Next ${lbl[k]}">›</button></div>`;
+ const chip=(k,v)=>`<button class="pick${g.type===k?' on':''}" onclick="genType('${k}')">${v.n}<small>${v.d}</small></button>`;
+ app.innerHTML=`<div class="card creator" id="sysroot"><div class="turn">Systems multiplayer ${alphaTag()}</div><h2>Your general</h2><p class="note">Your general commands your fleet in every battle and earns renown and promotions. Your leader rules at home.</p>
+ <div style="display:flex;gap:10px;align-items:center"><img class="sysport" style="width:72px;height:72px" src="${portraitURL(L)}" alt="Your general"><div style="flex:1"><div class="lrow"><button class="rs" onclick="genCycle('e',-1)" aria-label="Previous species">‹</button><span style="flex:1;margin:0 6px"><small style="white-space:nowrap">Species</small>${SPECIES[E]}</span><button class="rs" onclick="genCycle('e',1)" aria-label="Next species">›</button></div></div></div>
+ <div class="lrows">${GEN_KEYS.map(row).join('')}</div>
+ <p class="note">Name</p><input id="genname" class="arcin" maxlength="20" value="${escH(g.name)}" autocomplete="off">
+ <h3>General type</h3><div class="pickrow">${Object.entries(GENERALS).map(([k,v])=>chip(k,v)).join('')}</div>
+ <p id="generr" class="down" style="min-height:24px"></p>
+ <div class="crbtns"><button style="text-align:center" onclick="genReroll()">Randomize</button><button class="personal" style="text-align:center" onclick="saveGen()">${GEN_FIRST?'Found my system':'Save general'}</button></div></div>`}
+function keepGenName(){const n=document.getElementById('genname');if(n)SYS.general.name=n.value}
+function genCycle(k,d){keepGenName();const L=SYS.general.look;if(k==='e'){const o=['Vorrani','Celest','Kethari'];L.e=o[(o.indexOf(L.e)+d+3)%3];fixLook(L)}else{const o=optsFor(k,L.e);L[k]=o[(o.indexOf(L[k])+d+o.length)%o.length]}genScreen()}
+function genType(k){keepGenName();SYS.general.type=k;genScreen()}
+function genReroll(){keepGenName();const e=SYS.general.look.e,L=randLook();L.e=e;SYS.general.look=fixLook(L);genScreen()}
+function saveGen(){const n=document.getElementById('genname').value.replace(/[^A-Za-z0-9 '-]/g,'').trim().slice(0,20);if(n.length<2){document.getElementById('generr').textContent='Give your general a name (2 letters or more).';return}
+ SYS.general.name=n;saveSys();if(GEN_FIRST){GEN_FIRST=false;showSystems()}else{SYS_MSG=`${GENERALS[SYS.general.type].n} ${n} takes command of the fleet.`;sysSync();showSystems(true)}}
 async function promote(k){const j=await sysCall('promote',{skill:k});SYS_MSG=j?(j.msg||''):'No connection to the galaxy.';await sysSync();renderSystems()}
 function leaderBlock(ld,who){if(!ld||!ld.look)return '';return `<div style="overflow:hidden;margin:4px 0"><img class="sysport" src="${portraitURL(fixLook({...ld.look}))}" alt="${escH(who)} leader"><p class="note"><b>${escH(ld.title)} ${escH(ld.name)}</b><br>${SPECIES[ld.look.e]||''}</p></div>`}
 function setSysNames(){const clean=v=>v.replace(/[^A-Za-z0-9 '-]/g,'').trim().slice(0,16);const a=clean(document.getElementById('sysname').value),b=clean(document.getElementById('homename').value);
@@ -1758,15 +1965,17 @@ function setSysNames(){const clean=v=>v.replace(/[^A-Za-z0-9 '-]/g,'').trim().sl
  SYS.sysName=a;SYS.planets[0].n=b;FOUND=null;sysLook();saveSys();ach('claim');leaderScreen(true)}
 async function showSystems(quick){
  if(!SYS){SYS=loadSys();if(!SYS){SYS=await restoreSys();if(SYS)SYS_MSG='Your system was restored from the galaxy server.'}if(!SYS)SYS=newSystem(0);saveSys()}
- if(!SYS.sysName)return nameScreen();
+ // Systems from before servers existed (or with no server) start over on a server of the player's choice.
+ if(SYS.sysName&&!SYS.srv){const keep=SYS.leader;const rf=refundWeek();SYS=newSystem(0);SYS.leader=keep;saveSys();SYS_MSG=`Systems multiplayer now has servers, and every galaxy starts fresh. Pick a server and found a new system.${rf}`}
+ if(!SYS.sysName)return SYS.srv&&quick?nameScreen():serverScreen();
  if(!quick){SV={tab:'system',who:null,sel:0};const n=catchUp(SYS);saveSys();if(n)SYS_MSG=`${n} hour${n>1?'s':''} passed while you were away.`;
-  app.innerHTML='<div class="card" id="sysroot"><h2>Systems multiplayer</h2><p class="note">Contacting the galaxy…</p></div>';const keep=SYS_MSG;await sysSync();if(!SYS_MSG)SYS_MSG=keep;const m=catchUp(SYS);if(m)saveSys()}
+  app.innerHTML='<div class="card" id="sysroot"><h2>Systems multiplayer <span class="alpha">ALPHA</span></h2><p class="note">Contacting the galaxy…</p></div>';const keep=SYS_MSG;await sysSync();if(!SYS_MSG)SYS_MSG=keep;const m=catchUp(SYS);if(m)saveSys()}
  renderSystems();startPoll();if(!guideSeen())setTimeout(guideWhenClear,700)}
 // the first-run guide waits for any achievement banner to leave the screen
 function guideWhenClear(){if(guideSeen()||!document.getElementById('sysroot'))return;if(document.querySelector('.achban'))return setTimeout(guideWhenClear,600);guideStart()}
 function start(){TUT=null;
  if(!ARCADE)return showName();
- app.innerHTML=`${splash()?`<img class="splash" src="${splash()}" alt="">`:''}<h1 class="logo"><span class="l1">STAR SOVEREIGN</span> <span class="l2">II</span></h1><p class="note" style="margin:0 0 10px">3rd Edition</p><p class="sub">Twelve turns. Then it arrives.</p><div class="introbox"><p class="intro">Build your empire, then defend it. Choose ⚔ to go in person: bigger rewards, real danger. Keep your people loyal and the Thal in check.</p></div><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="openHelp(RULES)">Rules</button><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="openHelp()">How to play</button><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="showBoard()">Scoreboard</button><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="showAch()">Achievements</button><button class="rs adminbtn" onclick="showAdmin()">Admin</button><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="showTutorial()">Tutorial</button><button class="rs" style="float:none;margin:-6px 0 14px" onclick="showSystems()">Systems multiplayer</button>${qPending()?`<p class="note down" style="margin:0 0 10px">Quantum debt: your next run has a 1 in 3 chance of ending in sudden quantum death.</p>`:''}<p class="note" style="margin:0 0 10px">Playing as <b>${escH(ARCADE.name)}</b></p>
+ app.innerHTML=`${splash()?`<img class="splash" src="${splash()}" alt="">`:''}<h1 class="logo"><span class="l1">STAR SOVEREIGN</span> <span class="l2">II</span></h1><p class="note" style="margin:0 0 10px">3rd Edition</p><p class="sub">Twelve turns. Then it arrives.</p><div class="introbox"><p class="intro">Build your empire, then defend it. Choose ⚔ to go in person: bigger rewards, real danger. Keep your people loyal and the Thal in check.</p></div><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="openHelp(RULES)">Rules</button><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="openHelp()">How to play</button><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="showBoard()">Scoreboard</button><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="showAch()">Achievements</button><button class="rs adminbtn" onclick="showAdmin()">Admin</button><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="showTutorial()">Tutorial</button><button class="rs" style="float:none;margin:-6px 0 14px" onclick="showSystems()">Systems multiplayer <span class="alpha">ALPHA</span></button>${qPending()?`<p class="note down" style="margin:0 0 10px">Quantum debt: your next run has a 1 in 3 chance of ending in sudden quantum death.</p>`:''}<p class="note" style="margin:0 0 10px">Playing as <b>${escH(ARCADE.name)}</b></p>
  ${loadSave()?`<div class="card"><h2>Game in progress</h2><button onclick="resume()">Resume your game</button></div>`:''}<div class="card"><h2>Choose your empire</h2><p class="note" style="margin:0 0 10px">Skilled max: win rate a strong player reaches. Random: win rate picking at random.</p>${EMPIRES.map((e,i)=>`<button onclick="pickEmp(${i})"><b>${e.name}</b> <span class="diff d-${e.diff}">${e.diff}</span><small>${e.desc}<br><span class="warn">${e.perk}</span><br>${recLine(e.diff)}</small>${credLine(e.diff)}</button>`).join('')}<button class="rs" style="float:none;display:block;margin:6px auto 0" onclick="resetRec(this)">Reset win rates</button></div><div class="exp">${qOn()?`<button class="rs ${narrOn()?'on':''}" aria-pressed="${narrOn()}" onclick="narrToggle()">Narrative mode</button>`:''}<button class="rs ${qOn()?'on':''}" aria-pressed="${qOn()}" title="Experimental features: Quantum suicide and Narrative mode" onclick="qToggle()">Experimental</button></div>`;
 }
 function pickEmp(i){
@@ -2073,7 +2282,7 @@ function end(win,title,msg,fight){
  const unlock=win&&!wasDlc&&title==='Victory'&&!TUT;dlc=false;
  achEnd(win,wasDlc,CR);
  const dlcThreat=wasDlc?(win?0:10):null; // the campaign settles the Thal for good: 0/10 on a win, 10/10 on a loss
- const result=`<div class="stampban ${win?'sw':'sl'}">${title}</div><p>${msg}</p>${CR&&CR.n?`<p class="credline">+${CR.n} credits${CR.bonus?` and a +${CR.bonus} back-to-back bonus`:''} for Systems. You now have ${credits()}.</p>`:''}${unlock?`<button class="personal" style="text-align:center" onclick="startDLC()">DLC: The Thal Reckoning<small>10 more turns to deal with the Thal for good, using your ${LABELS[route]}. Your empire carries over.</small>${dlcCredLine(emp.diff)}</button>`:''}${TUT?`<p class="note">Tutorial complete. Real runs are saved, count on the scoreboard and, after a victory, unlock the DLC.</p>`:''}<button style="text-align:center" onclick="start()">${TUT?'Play for real':'Play again'}</button>`;
+ const result=`<div class="stampban ${win?'sw':'sl'}">${title}</div><p>${msg}</p>${CR&&CR.n?`<p class="credline">+${CR.n} credits${CR.bonus?` and a +${CR.bonus} back-to-back bonus`:''} ${CR.r?` and +${CR.r} renown for your general`:''} for Systems. You now have ${credits()} credits${CR.r?` and ${renownPts()} renown`:''}.</p>`:''}${unlock?`<button class="personal" style="text-align:center" onclick="startDLC()">DLC: The Thal Reckoning<small>10 more turns to deal with the Thal for good, using your ${LABELS[route]}. Your empire carries over.</small>${dlcCredLine(emp.diff)}</button>`:''}${TUT?`<p class="note">Tutorial complete. Real runs are saved, count on the scoreboard and, after a victory, unlock the DLC.</p>`:''}<button style="text-align:center" onclick="start()">${TUT?'Play for real':'Play again'}</button>`;
  if(!fight){if(dlcThreat!==null)threat=dlcThreat;app.innerHTML=header()+(wasDlc||TUT?'':recBox(emp.diff))+`<div class="card" style="text-align:center">${result}</div>`+logBox();return}
  const tok=++endToken;
  app.innerHTML=`<div id="hdr">${before}</div><div class="card" style="text-align:center"><div id="arenaBox">${(lastDlc=wasDlc)?arenaDLC(win,route):arena(win,route)}</div><div id="resSlot"><p class="note suspense">The battle rages.</p></div></div><div id="recSlot"></div>`;

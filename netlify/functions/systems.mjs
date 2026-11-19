@@ -33,7 +33,7 @@ const BAST = 0.25, LANCE = 0.2, HOLD_BONUS = 0.1;
 const SIEGE_AWAY = 90 * 60000, LAND = 60000, LAND_AWAY = 60 * 60000;
 // The Reflection: each player's mirror fleet. Its strength grows with the season, not with your fleet,
 // so the galaxy wins it by standing together. Destroying a mirror fleet collapses its rift.
-const REFLECT = { atk: 14, season: 0.45, regen: 0.25 };
+const REFLECT = { atk: 11, season: 0.45, regen: 0.5 }; // tuned 11-19 with skilled and unskilled sim players (3 players, week 1)
 // Against the Reflection, a world's guns grow with its civilization: x1 for a Landfall outpost up to x4 for Type II.
 const kOf = (p) => (p.swarm ? 1 + 0.25 * p.swarm : [0.5, 0.7, 0.85, 1][p.dev || 0] || 0.5);
 const COMMON = ["food", "water", "ore", "fuel"], RARE = ["crystal", "plasma", "spice", "alloy", "relic"], RES = [...COMMON, ...RARE];
@@ -60,6 +60,11 @@ const AI_DEF = [
 ];
 // Generals: a player's leader commands the fleet and earns renown. Promotions at these totals each add one doctrine.
 const RANKS = ["Captain", "Commodore", "Admiral", "Grand Admiral"], PROMOTE = [40, 120, 300];
+// General types (war): each a small bonus with a tradeoff. home = extra attack when fighting over your own worlds.
+const GEN_TYPES = { veteran: {}, raider: { atk: 0.10, siege: -0.10 }, siegemaster: { siege: 0.20, atk: -0.05 }, warden: { home: 0.15, atk: -0.05 } };
+// General upgrades, bought with renown (the client pays): 3 levels each.
+const GUP = { atk: { per: 0.04 }, siege: { per: 0.08 }, guard: { per: 0.05 } };
+const LEADER_TYPES = ["sovereign", "steward", "industrialist", "diplomat", "zealot"];
 const DOCTRINE = { atk: { atk: 0.05 }, siege: { siege: 0.10, guard: 0.05 } };
 const tierOf = (renown) => PROMOTE.filter((n) => (renown || 0) >= n).length;
 const ADM_FIRST = ["Kaela", "Oru", "Vexa", "Dorn", "Ilsa", "Tarek", "Mira", "Sol", "Brannoch", "Quell", "Ysolde", "Harrow"];
@@ -92,6 +97,7 @@ function hurt(fl, amount) {
   }
 }
 
+const cleanLook = (l) => Object.fromEntries(Object.entries(l || {}).slice(0, 10).map(([k, v]) => [String(k).replace(/[^a-z]/g, "").slice(0, 8), String(v).replace(/[^A-Za-z]/g, "").slice(0, 12)]));
 function cleanSys(s, pid, slot, prev) {
   s = s || {};
   const res = {}; for (const r of RES) res[r] = int(s.res && s.res[r], 0, 1e6);
@@ -107,58 +113,158 @@ function cleanSys(s, pid, slot, prev) {
     allies: (Array.isArray(s.allies) ? s.allies : []).map(ref).filter(Boolean).slice(0, 10),
     accepted: (Array.isArray(s.accepted) ? s.accepted : []).map((x) => String(x).replace(/[^A-Za-z0-9]/g, "").slice(0, 16)).slice(0, 16),
     spec: RES.includes(s.spec) ? s.spec : undefined, sun: ["yellow", "red", "blue", "white"].includes(s.sun) ? s.sun : "yellow", world: ["temperate", "ocean", "desert", "volcanic", "jungle"].includes(s.world) ? s.world : "temperate", evAt: int(s.evAt, 0, 9e12) || undefined,
-    leader: s.leader ? { name: txt(s.leader.name, 20), title: txt(s.leader.title, 24),
-      look: Object.fromEntries(Object.entries(s.leader.look || {}).slice(0, 10).map(([k, v]) => [String(k).replace(/[^a-z]/g, "").slice(0, 8), String(v).replace(/[^A-Za-z]/g, "").slice(0, 12)])) } : undefined, born: int(s.born, 0, 9e12) || undefined,
+    leader: s.leader ? { name: txt(s.leader.name, 20), title: txt(s.leader.title, 24), type: LEADER_TYPES.includes(s.leader.type) ? s.leader.type : "sovereign",
+      look: cleanLook(s.leader.look) } : undefined,
+    general: s.general ? { name: txt(s.general.name, 20), type: GEN_TYPES[s.general.type] ? s.general.type : "veteran", look: cleanLook(s.general.look) } : undefined, born: int(s.born, 0, 9e12) || undefined,
     ships: int(s.ships, 0, 99), boost: { food: int(s.boost && s.boost.food, 0, 99), water: int(s.boost && s.boost.water, 0, 99), ore: int(s.boost && s.boost.ore, 0, 99), spec: int(s.boost && s.boost.spec, 0, 199) },
     proj: s.proj && ["dev", "swarm"].includes(s.proj.kind) ? { kind: s.proj.kind, left: int(s.proj.left, 0, 99), n: txt(s.proj.n, 40) } : null,
     renown: prev ? prev.renown || 0 : 0, doctrines: prev ? prev.doctrines || [] : [],
     fleet: prev && prev.fleet ? prev.fleet : newFleet(admiralFor(pid), START_FLEET), vassalOf: prev ? prev.vassalOf || null : null, updated: Date.now() };
 }
 // The same three AI empires every week, a little bigger and better armed each time.
-const aiScale = (n) => 1 + 0.15 * (n - 1);
+// Each new week is harder: +15% a week, plus a bonus that grows with the players in the galaxy (+5% per player beyond the first, every week).
+const aiScale = (n, bonus = 0) => 1 + 0.15 * (n - 1) + bonus;
 // Hourly chance an AI empire adds a ship in peacetime (doubled by day 7), and the wartime build interval.
 const AI_GROW = { aggressive: 0.08, merchant: 0.04, wary: 0.06 }, AI_WARBUILD = 90 * 60000;
-function newAI(n = 1) {
-  return { last: Date.now(), list: AI_DEF.map((a) => { const sc = aiScale(n), fl = newFleet(a.admiral, Object.fromEntries(Object.entries(a.ships).map(([k, v]) => [k, Math.round(v * sc)])));
+function newAI(n = 1, bonus = 0) {
+  return { last: Date.now(), list: AI_DEF.map((a) => { const sc = aiScale(n, bonus), fl = newFleet(a.admiral, Object.fromEntries(Object.entries(a.ships).map(([k, v]) => [k, Math.round(v * sc)])));
     fl.up = { c: Math.min(3, Math.max(0, n - 2)), f: Math.min(3, Math.max(0, n - 3)), d: Math.min(3, Math.max(0, n - 4)) };
     return { id: a.id, name: a.name, temper: a.temper, base: a.base,
     planets: a.planets.map(([n, r], i) => ({ n, r, owner: null, home: i === 0 })), res: { food: 20, water: 20, ore: 20, fuel: 20 },
     fleet: fl, opinion: {}, allies: [], overlord: null, envoyAt: {}, threat: {}, warAt: 0, buildAt: 0, annexedBy: null }; }), invadeAt: 0, warned: false, endedAt: 0 };
 }
 
+// ---------- servers: several galaxies, each in its own blob store ----------
+// The list lives in the "systems" store (blob "servers"), with the admin password and "where" (pid -> server it plays on).
+// Admin servers are marked Main. Any player may create one server; its creator or the admin can remove it.
+// A player plays on one server at a time: founding a system on another server removes the old one.
+const MAX_SERVERS = 10, headers = { "Cache-Control": "no-store" };
+const hashPass = (pw) => pidOf("admin-pass:" + pw);
+const json = (o, status = 200) => Response.json(o, { status, headers });
+const galaxyStore = (sid) => getStore("sys-" + sid);
+async function wipeStore(st) { for (const b of (await st.list()).blobs) await st.delete(b.key); }
+async function summaries(servers, me, withPlayers) {
+  const out = [];
+  for (const s of servers.list) {
+    const st = galaxyStore(s.id), keys = (await st.list()).blobs.map((b) => b.key), pk = keys.filter((k) => /^[a-f0-9]{12}$/.test(k));
+    const season = await st.get("season", { type: "json" }), now = Date.now();
+    const row = { id: s.id, name: s.name, main: !!s.main, by: s.by || "", yours: s.owner === me, players: pk.length, max: MAX,
+      week: season ? season.n : 1, day: season ? Math.min(7, 1 + Math.floor((now - season.start) / DAY)) : 1, created: s.created };
+    if (withPlayers) row.list = (await Promise.all(pk.map((k) => st.get(k, { type: "json" })))).filter(Boolean)
+      .map((p) => ({ pid: p.pid, name: p.name, sysName: p.sysName, slot: p.slot, spec: RARE[p.slot % 5], seen: p.seen || 0 }));
+    out.push(row);
+  }
+  return out.sort((a, b) => (b.main - a.main) || (a.created - b.created));
+}
 export default async (req) => {
-  const store = getStore("systems");
-  const headers = { "Cache-Control": "no-store" };
   if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
   let body; try { body = await req.json(); } catch { return new Response("Bad request", { status: 400 }); }
   const id = cleanId(body.id); if (id.length < 8) return new Response("Bad request", { status: 400 });
-  const me = pidOf(id), op = String(body.op || "sync"), now = Date.now();
+  const me = pidOf(id), op = String(body.op || "sync"), now = Date.now(), reg = getStore("systems");
+  let servers = await reg.get("servers", { type: "json" });
+  if (!servers) { // first run: a fresh Main galaxy
+    servers = { list: [{ id: "main", name: "Main Galaxy", main: true, owner: "admin", by: "Admin", created: now }], removed: {} };
+    await reg.setJSON("servers", servers); }
+  servers.removed ||= {};
+  const list = async (msg, extra) => json({ ok: true, msg, servers: await summaries(servers, me), canCreate: !servers.list.some((s) => s.owner === me) && servers.list.length < MAX_SERVERS, now, ...(extra || {}) });
+  // removing a server wipes its galaxy; its players find out on their next call (and get their week's spending back)
+  const removeServer = async (sid) => { servers.list = servers.list.filter((s) => s.id !== sid); servers.removed[sid] = now;
+    for (const k in servers.removed) if (now - servers.removed[k] > 30 * DAY) delete servers.removed[k];
+    await reg.setJSON("servers", servers); await wipeStore(galaxyStore(sid)); };
+  if (op === "servers") return list();
+  if (op === "mkserver") {
+    const name = txt(body.name, 24);
+    if (name.length < 2) return json({ ok: false, msg: "Give your server a name (2 to 24 letters or numbers)." });
+    if (servers.list.some((s) => s.owner === me)) return json({ ok: false, msg: "You already run a server. Remove it first to make another." });
+    if (servers.list.length >= MAX_SERVERS) return json({ ok: false, msg: `The list is full (${MAX_SERVERS} servers).` });
+    const s = { id: Math.random().toString(36).slice(2, 10), name, main: false, owner: me, by: txt(body.by, 12) || "A player", created: now };
+    servers.list.push(s); await reg.setJSON("servers", servers); return list(`Server "${name}" is up.`, { made: s.id });
+  }
+  if (op === "rmserver") { const s = servers.list.find((x) => x.id === body.srv);
+    if (!s) return json({ ok: false, msg: "That server is already gone." });
+    if (s.owner !== me) return json({ ok: false, msg: "Only its creator or the admin can remove a server." });
+    await removeServer(s.id); return list(`Server "${s.name}" was removed.`); }
+  if (op === "admin") {
+    // Admin: sign in with the password (default 1234, hashed), see every server and its players, create Main servers,
+    // remove any server, kick a system, change the password.
+    const adm = (await reg.get("admin", { type: "json" })) || { pass: hashPass("1234"), fails: [] };
+    adm.fails = (adm.fails || []).filter((t) => now - t < 10 * 60000);
+    let res = null;
+    if (adm.fails.length >= 5) res = { ok: false, msg: "Too many wrong passwords. Try again in 10 minutes." };
+    else if (hashPass(String(body.pass || "").slice(0, 40)) !== adm.pass) { adm.fails.push(now); res = { ok: false, msg: "Wrong password." }; }
+    await reg.setJSON("admin", adm);
+    if (res) return json(res);
+    let msg;
+    if (body.act === "setpass") { const np = String(body.newpass || ""); if (np.length < 4 || np.length > 40) return json({ ok: false, msg: "Use 4 to 40 characters." }); adm.pass = hashPass(np); await reg.setJSON("admin", adm); msg = "Password changed."; }
+    else if (body.act === "mkserver") { const name = txt(body.name, 24); if (name.length < 2) return json({ ok: false, msg: "Give the server a name (2 to 24 letters or numbers)." });
+      if (servers.list.length >= MAX_SERVERS) return json({ ok: false, msg: `The list is full (${MAX_SERVERS} servers).` });
+      servers.list.push({ id: Math.random().toString(36).slice(2, 10), name, main: true, owner: "admin", by: "Admin", created: now }); await reg.setJSON("servers", servers); msg = `Main server "${name}" is up.`; }
+    else if (body.act === "rmserver") { const s = servers.list.find((x) => x.id === body.srv); if (!s) return json({ ok: false, msg: "That server is already gone." }); await removeServer(s.id); msg = `Server "${s.name}" was removed.`; }
+    else if (body.act === "resetsrv") { // full wipe: back to day 1 of the same week, no extra difficulty; systems, technologies, upgrades and generals go
+      const s = servers.list.find((x) => x.id === body.srv); if (!s) return json({ ok: false, msg: "That server is gone." });
+      const st = galaxyStore(s.id), old = (await st.get("season", { type: "json" })) || { n: 1, chronicle: [] };
+      s.resetAt = now; await reg.setJSON("servers", servers); await wipeStore(st);
+      await st.setJSON("season", { n: old.n || 1, start: now, chronicle: [...(old.chronicle || []), { n: old.n || 1, text: `Week ${old.n || 1}: the admin reset the galaxy.` }].slice(-8), bonus: old.bonus || 0 });
+      msg = `${s.name} was reset to day 1 of week ${old.n || 1}. Its players get back the credits and renown they spent there this week.`; }
+    else if (body.act === "kick") { const s = servers.list.find((x) => x.id === body.srv); if (!s) return json({ ok: false, msg: "That server is gone." });
+      const r = await (await galaxy({ ...body, op: "adminkick" }, s, true)).json(); if (r.ok === false) return json(r); msg = r.msg; }
+    return json({ ok: true, msg, servers: await summaries(servers, me, true), now });
+  }
+  // the scheduled tick runs every galaxy
+  if (op === "tick" && !body.srv) { let first = null; for (const s of servers.list) { const r = await galaxy(body, s, false); first ||= r; } return first || json({ ok: true }); }
+  let sid = String(body.srv || "").replace(/[^a-z0-9]/g, "").slice(0, 12);
+  if (!sid) { const where = (await reg.get("where", { type: "json" })) || {}; sid = where[me] || "main"; } // old clients, and "mine" on a new device
+  const srv = servers.list.find((s) => s.id === sid);
+  if (!srv) return json({ ok: false, gone: true, srv: sid, msg: servers.removed[sid] ? "That server was removed. Pick another one, or create your own." : "That server doesn't exist. Pick one from the list.", now });
+  return galaxy(body, srv, false);
+};
+// ---------- one galaxy ----------
+async function galaxy(body, srv, trusted) {
+  const sid = srv.id, store = galaxyStore(sid), reg = getStore("systems");
+  const id = cleanId(body.id), me = pidOf(id), op = String(body.op || "sync"), now = Date.now();
 
   const keys = (await store.list()).blobs.map((b) => b.key);
-  const players = (await Promise.all(keys.filter((k) => /^[a-f0-9]{12}$/.test(k)).map((k) => store.get(k, { type: "json" })))).filter(Boolean);
+  let players = (await Promise.all(keys.filter((k) => /^[a-f0-9]{12}$/.test(k)).map((k) => store.get(k, { type: "json" })))).filter(Boolean);
+  // Systems an admin kicked or a player abandoned (New planet). Every call rewrites what it changed, so a call that was
+  // already running when a system was removed could write it straight back. Any copy older than the removal is dropped here.
+  const kicked = (await store.get("kicked", { type: "json" })) || {}; // pid -> when an admin removed that system
+  const left = (await store.get("left", { type: "json" })) || {}; // pid -> when its owner abandoned it
+  const goneAt = (pid, k = kicked, l = left) => Math.max(k[pid] || 0, l[pid] || 0, srv.resetAt || 0);
+  const stale = (p, k, l) => { const g = goneAt(p.pid, k, l); return g > 0 && !((p.joined || p.born || 0) > g); };
+  for (const p of players.filter((p) => stale(p))) { await store.delete(p.pid); await store.delete("in-" + p.pid); }
+  players = players.filter((p) => !stale(p));
+  for (const p of players) if (!p.joined) p.joined = p.born || p.updated || now;
+  // Every record as loaded, so only what this call really changed gets written back (fewer clashes between calls).
+  const orig = new Map(players.map((p) => [p.pid, JSON.stringify(p)]));
   for (const p of players) if (!p.fleet || !p.fleet.loc) p.fleet = newFleet(admiralFor(p.pid), p.fleet && p.fleet.ships);
   for (const p of players) if (/undefined/.test(p.fleet.admiral)) p.fleet.admiral = admiralFor(p.pid);
-  const general = (p) => { p.renown ||= 0; p.doctrines ||= []; const b = { atk: 0, siege: 0, guard: 0 };
+  const general = (p) => { p.renown ||= 0; p.doctrines ||= []; p.gup ||= {}; const b = { atk: 0, siege: 0, guard: 0, home: 0 };
     for (const d of p.doctrines) for (const k in DOCTRINE[d] || {}) b[k] += DOCTRINE[d][k];
-    p.fleet.buff = b; if (p.leader && p.leader.name) p.fleet.admiral = `${RANKS[p.doctrines.length]} ${p.leader.name}`; };
+    const gt = GEN_TYPES[(p.general || {}).type] || {}; for (const k in gt) b[k] += gt[k];
+    for (const k in GUP) b[k] += GUP[k].per * Math.min(3, p.gup[k] || 0);
+    p.fleet.buff = b; const nm = (p.general && p.general.name) || (p.leader && p.leader.name); if (nm) p.fleet.admiral = `${RANKS[p.doctrines.length]} ${nm}`; };
   for (const p of players) general(p);
   const renown = (x, n) => { const p = !isAI(x) && P(x); if (!p) return; const before = tierOf(p.renown); p.renown = Math.min(99999, (p.renown || 0) + n);
     if (tierOf(p.renown) > before) tell(x, { t: "promotion", msg: `${p.leader ? p.leader.name : "Your admiral"} has earned a promotion! Choose a doctrine on your home world.` }); };
   const P = (pid) => players.find((p) => p.pid === pid);
-  let season = (await store.get("season", { type: "json" })) || { n: 1, start: now, chronicle: [] };
+  const rawSeason = await store.get("season", { type: "json" }), rawAI = await store.get("ai", { type: "json" });
+  const origSeasonS = JSON.stringify(rawSeason), origAIS = JSON.stringify(rawAI); // before anything below changes them
+  let season = rawSeason || { n: 1, start: now, chronicle: [] };
   season.chronicle ||= [];
-  let ai = (await store.get("ai", { type: "json" })) || newAI(season.n);
-  { const fresh = newAI(season.n); // upgrade old saves in place
+  let ai = rawAI || newAI(season.n, season.bonus || 0);
+  { const fresh = newAI(season.n, season.bonus || 0); // upgrade old saves in place
     for (const k of ["invadeAt", "warned", "endedAt"]) if (ai[k] === undefined) ai[k] = fresh[k];
     for (const d of fresh.list) { const a = ai.list.find((x) => x.id === d.id); if (!a) { ai.list.push(d); continue; }
       for (const k in d) if (a[k] === undefined) a[k] = d[k];
       if (!a.fleet || !a.fleet.loc) a.fleet = newFleet(d.fleet.admiral, a.fleet && a.fleet.ships ? a.fleet.ships : d.fleet.ships); } }
   const self0 = players.find((p) => p.pid === me); if (self0) self0.seen = now;
   for (const a of ai.list) if (a.allies && a.allies.length) a.allies = []; // AI empires no longer ally with players
-  let wars = (await store.get("wars", { type: "json" })) || [];
-  const kicked = (await store.get("kicked", { type: "json" })) || {}; // pid -> when an admin removed that system
-  const inboxes = {};
-  for (const p of players) inboxes[p.pid] = (await store.get("in-" + p.pid, { type: "json" })) || [];
+  const rawWars = await store.get("wars", { type: "json" });
+  let wars = rawWars || [];
+  // as stored (a blob that doesn't exist yet compares as "null", so new defaults always get saved)
+  const origShared = { ai: origAIS, season: origSeasonS, wars: JSON.stringify(rawWars) };
+  const inboxes = {}, origIn = {};
+  for (const p of players) { inboxes[p.pid] = (await store.get("in-" + p.pid, { type: "json" })) || []; origIn[p.pid] = JSON.stringify(inboxes[p.pid]); }
   const inbox = async (pid) => (inboxes[pid] ||= []);
   const tell = (pid, ev) => { if (isAI(pid) || !P(pid)) return; (inboxes[pid] ||= []).push({ ...ev, at: now }); };
   const A = (x) => ai.list.find((a) => a.id === x);
@@ -175,8 +281,8 @@ export default async (req) => {
   const award = (w, side, n) => { for (const x of w.sides[side]) w.score[x] = (w.score[x] || 0) + n; };
   const opinion = (a, pid, d) => { a.opinion[pid] = Math.max(-100, Math.min(100, (a.opinion[pid] ?? a.base) + d)); };
   const ev = (w, e) => { w.events.push({ ...e, t: e.t || now }); w.events = w.events.slice(-30); };
-  const planetsOf = (x) => (isAI(x) ? A(x).planets.map((p, i) => ({ n: p.n, i, home: !!p.home, ok: !p.owner })) : (P(x).planets || []).map((p, i) => ({ n: p.n, i, home: p.st === "home", ok: p.st === "home" || p.st === "colony" })));
-  const pdef = (owner, i) => (isAI(owner) ? 0 : ((P(owner).planets || [])[i] || {}).def || 0);
+  const planetsOf = (x) => (isAI(x) ? ((A(x) || {}).planets || []).map((p, i) => ({ n: p.n, i, home: !!p.home, ok: !p.owner })) : ((P(x) || {}).planets || []).map((p, i) => ({ n: p.n, i, home: p.st === "home", ok: p.st === "home" || p.st === "colony" })));
+  const pdef = (owner, i) => (isAI(owner) ? 0 : (((P(owner) || {}).planets || [])[i] || {}).def || 0);
   const occupied = (w, owner, i) => w.occ.find((o) => o.owner === owner && o.i === i);
   const isRift = (x) => isAI(x) && !!(A(x) || {}).rift;
   const gone = (x) => !F(x) || (isAI(x) && !!A(x).annexedBy);
@@ -200,7 +306,7 @@ export default async (req) => {
   const standGuard = (w, x) => { const fl = F(x).fleet; if (outmatched(w, x)) { fl.loc = { s: "dock", at: x, until: 0, post: true }; return; }
     const nw = nextWorld(w, x); fl.loc = { s: "guard", at: x, i: nw ? nw.i : 0 }; if (online(x)) (w.ask ||= {})[x] = true; };
   // Planetary guns join any battle fought over their world: the home world's batteries, or a colony's defenses.
-  const guns = (owner, i) => { if (isRift(owner)) return 0; const home = isAI(owner) ? true : ((P(owner).planets || [])[i] || {}).st === "home";
+  const guns = (owner, i) => { if (isRift(owner)) return 0; const home = isAI(owner) ? true : (((P(owner) || {}).planets || [])[i] || {}).st === "home";
     const dl = pdef(owner, i), g = home ? (isAI(owner) ? HOME_FIRE.ai : HOME_FIRE.player) * 0.6 + 3 * dl : 1.5 * dl; return g * (1 + BAST * techOf(owner, "bast")); };
   const watched = (w, owner) => isAI(owner) || (sideOf(w, owner) < 0 ? online(owner) : w.sides[sideOf(w, owner)].some(online));
   const guardSpot = (x) => { const l = F(x).fleet.loc; return l.s === "guard" ? l.i : 0; };
@@ -238,6 +344,36 @@ export default async (req) => {
   const nextTarget = () => invasionTargets().sort((x, y) => power(y.fleet) + 3 * (y.planets || []).length - power(x.fleet) - 3 * (x.planets || []).length)[0];
   const freeAI = () => ai.list.filter((a) => !a.rift && !a.annexedBy && !(a.overlord && P(a.overlord)));
   const tellAll = (msg, t = "scourge") => { for (const p of players) tell(p.pid, { t, msg }); };
+  // Two systems on one slot (two players joining at the same moment, or an old copy written back) would sit on the
+  // same star on the galaxy map and make the same rare good. The newer one moves to a free slot.
+  { const kept = new Set(), dup = [];
+    for (const p of [...players].sort((a, b) => (a.joined || 0) - (b.joined || 0))) { if (Number.isInteger(p.slot) && p.slot >= 0 && p.slot < MAX && !kept.has(p.slot)) kept.add(p.slot); else dup.push(p); }
+    for (const p of dup) { const i = [...Array(MAX).keys()].find((k) => !kept.has(k)); if (i === undefined) continue; kept.add(i); p.slot = i; p.spec = RARE[i];
+      const h = (p.planets || []).find((q) => q.st === "home"); if (h) h.r = RARE[i];
+      tell(p.pid, { t: "slot", msg: `Your system moved to a free place in the galaxy. Your rare good is now ${RARE[i]}.` }); } }
+  // Take a system out of the galaxy (kick or New planet): its wars, sieges, mirror, alliances, routes and offers go with it.
+  // Other members of its wars fight on; a war ends only when one side has nobody left.
+  const dropSystem = async (pid, term) => {
+    await store.delete(pid); await store.delete("in-" + pid);
+    const m = ai.list.find((a) => a.rift && a.mirror === pid), out = [pid, ...(m ? [m.id] : [])];
+    if (m) ai.list = ai.list.filter((a) => a !== m);
+    for (const w of live()) {
+      if (!w.sides.flat().some((x) => out.includes(x)) && !w.occ.some((o) => out.includes(o.owner))) continue;
+      for (const s of w.sides) for (const x of out) { const i = s.indexOf(x); if (i >= 0) s.splice(i, 1); }
+      w.occ = w.occ.filter((o) => !out.includes(o.owner) && !out.includes(o.by));
+      for (const x of out) delete w.siege[x]; for (const k in w.siege) if (out.includes((w.siege[k] || {}).owner)) delete w.siege[k];
+      // (the Reflection's war stays open: players who found a new system join it again)
+      if (!w.crisis && (!w.sides[0].length || !w.sides[1].length || !w.sides.flat().some((x) => !isAI(x)))) { w.ended = now; w.outcome = { by: null, term }; ev(w, { kind: "peace", term }); }
+    }
+    // its open rift closes with it; if every rift left is closed, the Reflection is beaten
+    if (m && season.crisis && !season.crisis.won) { const rifts = ai.list.filter((a) => a.rift);
+      if (rifts.length && rifts.every((a) => a.annexedBy)) { season.crisis.won = now; const cw = live().find((x) => x.crisis); if (cw) { cw.ended = now; cw.outcome = { by: null, term: "sealed" }; } } }
+    const k = players.findIndex((p) => p.pid === pid); if (k >= 0) players.splice(k, 1); delete inboxes[pid];
+    // fleets flying to it or orbiting it go home
+    for (const f of [...players.map((p) => p.fleet), ...ai.list.map((a) => a.fleet)]) { const l = f && f.loc; if (l && (out.includes(l.at) || out.includes(l.to) || out.includes(l.from))) { f.loc = { s: "dock" }; } }
+    for (const p of players) { p.allies = (p.allies || []).filter((x) => x !== pid); p.offers = (p.offers || []).filter((o) => o.from !== pid); p.routes = (p.routes || []).filter((r) => r.to !== pid); if (p.vassalOf === pid) p.vassalOf = null; }
+    for (const a of ai.list) if (a.overlord === pid) a.overlord = null;
+  };
   const homeOf = (x) => x; // every faction's fleet docks at its own system
   const goHome = (fl, x) => { fl.loc = { s: "dock", at: homeOf(x), until: now + 5 * 60000 }; };
 
@@ -251,7 +387,7 @@ export default async (req) => {
     const site = typeof where === "string" && F(where) ? where : null, gi = site ? (isAI(site) ? 0 : guardSpot(site)) : 0;
     const kx = (ids, foes) => (site && !isAI(site) && foes.some(isRift) ? 2 * kOf(P(site)) : 1);
     const gA = site && sideA.includes(site) ? guns(site, gi) * kx(sideA, sideB) : 0, gB = site && sideB.includes(site) ? guns(site, gi) * kx(sideB, sideA) : 0;
-    const mult = (ids, foes) => ids.map((x) => (1 + (site === x ? HOLD_BONUS : 0)) * (foes.some(isRift) ? 1 + LANCE * techOf(x, "lance") : 1));
+    const mult = (ids, foes) => ids.map((x) => (1 + (site === x ? HOLD_BONUS + (((F(x) || {}).fleet || {}).buff || {}).home || 0 : 0)) * (foes.some(isRift) ? 1 + LANCE * techOf(x, "lance") : 1));
     const mA = mult(sideA, sideB), mB = mult(sideB, sideA);
     for (let r = 0; r < 6; r++) {
       const pa = (fa.reduce((s, f, j) => s + power(f) * mA[j], 0) + gA) * luck(), pb = (fb.reduce((s, f, j) => s + power(f) * mB[j], 0) + gB) * luck();
@@ -383,7 +519,7 @@ export default async (req) => {
   // All players fight it together in one war. Destroying a mirror fleet collapses its rift; mirrors that only retreat
   // regrow from their rifts every hour.
   function mirrorFleet(p) {
-    const mult = 1 + REFLECT.season * (season.n - 1), s = (p.fleet && p.fleet.ships) || START_FLEET, tot = s.c + s.f + s.d;
+    const mult = 1 + REFLECT.season * (season.n - 1) + (season.bonus || 0), s = (p.fleet && p.fleet.ships) || START_FLEET, tot = s.c + s.f + s.d;
     const mix = tot >= 3 ? { c: s.c / tot, f: s.f / tot, d: s.d / tot } : { c: 0.5, f: 0.4, d: 0.1 }, up = { ...((p.fleet && p.fleet.up) || {}) };
     const per = ["c", "f", "d"].reduce((a, k) => a + mix[k] * shipStat({ up }, k, "atk"), 0), n = REFLECT.atk * mult / per;
     const ships = Object.fromEntries(["c", "f", "d"].map((k) => [k, Math.round(mix[k] * n)])); if (!ships.c && !ships.f && !ships.d) ships.f = 1;
@@ -455,8 +591,9 @@ export default async (req) => {
       : `Week ${n}: the Reflection endured. ${sealed.length} of ${mirrors.length} rifts were closed${Object.keys(fallen).length ? `, and ${Object.keys(fallen).map(nameOf).join(", ")} fell to their own mirrors` : ""}.`;
     season.chronicle.push({ n, won, sealed: sealed.length, rifts: mirrors.length, foes: ai.list.filter((a) => !a.rift).map((a) => a.name), text: story });
     const start = season.start + SEASON_DAYS * DAY;
-    season = { n: n + 1, start: now - start > SEASON_DAYS * DAY ? now : start, chronicle: season.chronicle.slice(-8) };
-    ai = newAI(season.n); wars = [];
+    const bonus = (season.bonus || 0) + 0.05 * Math.max(0, players.length - 1);
+    season = { n: n + 1, start: now - start > SEASON_DAYS * DAY ? now : start, chronicle: season.chronicle.slice(-8), bonus: Math.round(bonus * 100) / 100 };
+    ai = newAI(season.n, season.bonus); wars = [];
     tellAll(`Week ${season.n} begins. Name your new system. The AI empires return stronger. ${story}`, "season");
   }
   while (now >= season.start + SEASON_DAYS * DAY) rollSeason();
@@ -471,7 +608,7 @@ export default async (req) => {
       for (const p of a.planets) if (!p.owner) a.res[p.r] = Math.min(400, (a.res[p.r] || 0) + 3);
       for (const pl of players) if (pl.vassalOf === a.id) for (const r of ["food", "ore", "fuel"]) a.res[r] = Math.min(400, (a.res[r] || 0) + 1);
       // The AI grows faster every day of the season and in every new season; dreadnoughts appear as the week goes on.
-      if (Math.random() < AI_GROW[a.temper] * (1 + ht) * Math.sqrt(aiScale(season.n))) a.fleet.ships[Math.random() < 0.12 * ht ? "d" : Math.random() < 0.7 - 0.2 * ht ? "c" : "f"]++;
+      if (Math.random() < AI_GROW[a.temper] * (1 + ht) * Math.sqrt(aiScale(season.n, season.bonus || 0))) a.fleet.ships[Math.random() < 0.12 * ht ? "d" : Math.random() < 0.7 - 0.2 * ht ? "c" : "f"]++;
       // and it refits its fleet on day 3 and day 5
       { const up = Math.min(3, Math.max(0, season.n - 2)) + (dy >= 3 ? 1 : 0) + (dy >= 5 ? 1 : 0); for (const k of ["c", "f"]) a.fleet.up[k] = Math.max(a.fleet.up[k] || 0, Math.min(3, k === "c" ? up : up - 1)); }
       for (const pl of players) { const o = a.opinion[pl.pid] ?? a.base; a.opinion[pl.pid] = o + Math.sign(a.base - o); }
@@ -517,6 +654,10 @@ export default async (req) => {
       }
     }
   }
+  // a war can't hold a faction that no longer exists (a removed system or a closed mirror's old id)
+  for (const w of live()) { const ghosts = w.sides.flat().filter((x) => !F(x)); if (!ghosts.length) continue;
+    for (const s of w.sides) for (const x of ghosts) s.splice(s.indexOf(x), 1);
+    if (!w.crisis && (!w.sides[0].length || !w.sides[1].length)) { w.ended = now; w.outcome = { by: null, term: "left" }; } }
   for (const w of live()) { let n = 0; while (!w.ended && w.t <= now && n++ < MAX_STEPS) stepWar(w); if (now - w.t > MAX_STEPS * STEP) w.t = now; }
   // AI makes peace: it enforces a demand when it can, or accepts white peace after losing its fleet.
   for (const w of live()) for (const x of w.sides.flat()) if (isAI(x) && !w.crisis && !w.ended) {
@@ -558,39 +699,29 @@ export default async (req) => {
   const self = P(me);
   const fail = (msg) => { out = { ok: false, msg }; };
 
-  if (op === "mine") { out.mine = self || null; }
-  else if (op === "admin") {
-    // Admin: sign in with the password (default 1234, hashed in the store), list players, kick a system, change the password.
-    const hashPass = (pw) => pidOf("admin-pass:" + pw);
-    const adm = (await store.get("admin", { type: "json" })) || { pass: hashPass("1234"), fails: [] };
-    adm.fails = (adm.fails || []).filter((t) => now - t < 10 * 60000);
-    if (adm.fails.length >= 5) fail("Too many wrong passwords. Try again in 10 minutes.");
-    else if (hashPass(String(body.pass || "").slice(0, 40)) !== adm.pass) { adm.fails.push(now); fail("Wrong password."); }
-    else {
-      if (body.act === "kick") { const t = P(ref(body.target));
-        if (!t) fail("No such player.");
-        else { // the system is gone, and so is its rare good: nobody needs or trades it any more
-          const spec = RARE[t.slot % 5].replace(/^./, (c) => c.toUpperCase()); await store.delete(t.pid); await store.delete("in-" + t.pid); kicked[t.pid] = now;
-          for (const w of live()) if (sideOf(w, t.pid) >= 0) { w.ended = now; w.outcome = { by: null, term: "kicked" }; }
-          players.splice(players.indexOf(t), 1); delete inboxes[t.pid];
-          for (const p of players) { p.allies = (p.allies || []).filter((x) => x !== t.pid); p.offers = (p.offers || []).filter((o) => o.from !== t.pid); p.routes = (p.routes || []).filter((r) => r.to !== t.pid); if (p.vassalOf === t.pid) p.vassalOf = null;
-            tell(p.pid, { t: "kicked", msg: `${t.sysName || t.name} has left the galaxy. Nobody needs ${spec} any more.` }); }
-          for (const a of ai.list) if (a.res && a.res[spec]) a.res[spec] = 0;
-          out.msg = `${t.sysName || t.name} was removed. ${spec} is gone from the galaxy.`; } }
-      else if (body.act === "setpass") { const np = String(body.newpass || ""); if (np.length < 4 || np.length > 40) fail("Use 4 to 40 characters."); else { adm.pass = hashPass(np); out.msg = "Password changed."; } }
-      if (out.ok !== false) out.players = players.map((p) => ({ pid: p.pid, name: p.name, sysName: p.sysName, slot: p.slot, spec: RARE[p.slot % 5], seen: p.seen || 0 }));
-    }
-    await store.setJSON("admin", adm); await store.setJSON("kicked", kicked);
-  }
+  if (op === "mine") { out.mine = self ? { ...self, srv: sid } : null; }
+  else if (op === "adminkick" && trusted) { const t = P(ref(body.target));
+    if (!t) fail("No such player.");
+    else { // the system is gone, and so is its rare good: nobody needs or trades it any more
+      const key = RARE[t.slot % 5], spec = key.replace(/^./, (c) => c.toUpperCase()); kicked[t.pid] = now;
+      await store.setJSON("kicked", kicked); // saved first, so calls already running drop their copy
+      await dropSystem(t.pid, "kicked");
+      for (const p of players) tell(p.pid, { t: "kicked", msg: `${t.sysName || t.name} has left the galaxy. Nobody needs ${spec} any more.` });
+      for (const a of ai.list) if (a.res && a.res[key]) a.res[key] = 0; // (this used to look up "Crystal", not "crystal", so AI stocks never cleared)
+      out.msg = `${t.sysName || t.name} was removed from ${srv.name}. ${spec} is gone from that galaxy.`; } }
   else if (op === "tick") { /* the scheduled function: the steps above already ran */ }
   else if (op === "promote") { if (!self) fail("No system."); else if (!DOCTRINE[body.skill]) fail("Unknown doctrine."); else if (self.doctrines.length >= tierOf(self.renown)) fail("No promotion waiting.");
     else { self.doctrines.push(body.skill); general(self); out.msg = `Promoted to ${RANKS[self.doctrines.length]}.`; } }
   else if (op === "resetgen") { if (self) { self.renown = 0; self.doctrines = []; general(self); } }
-  else if (op === "leave") { await store.delete(me); await store.delete("in-" + me); for (const w of live()) if (sideOf(w, me) >= 0) w.ended = now;
-    // drop the record from this call too, or the save at the end would write it straight back
-    const k = players.findIndex((p) => p.pid === me); if (k >= 0) players.splice(k, 1); delete inboxes[me];
-    for (const p of players) { p.allies = (p.allies || []).filter((x) => x !== me); p.offers = (p.offers || []).filter((o) => o.from !== me); } }
+  else if (op === "leave") { // New planet: the old system leaves the galaxy for good
+    // (this used to end every war the player was in, the Reflection included, for everyone)
+    if (self) { left[me] = now; for (const k in left) if (now - left[k] > 30 * DAY) delete left[k];
+      await store.setJSON("left", left); await dropSystem(me, "left"); } }
   else if (op === "sync") {
+    // one server at a time: a new system here removes the player's system on any other server
+    const moveHere = async () => { const where = (await reg.get("where", { type: "json" })) || {}, old = where[me];
+      if (old && old !== sid) { const os = galaxyStore(old); if (await os.get(me, { type: "json" })) { const lf = (await os.get("left", { type: "json" })) || {}; lf[me] = now; await os.setJSON("left", lf); await os.delete(me); await os.delete("in-" + me); } }
+      where[me] = sid; await reg.setJSON("where", where); };
     const box = await inbox(me);
     let slot = self ? self.slot : -1;
     if (slot < 0) { const taken = new Set(players.map((p) => p.slot)); for (let i = 0; i < MAX; i++) if (!taken.has(i)) { slot = i; break; } }
@@ -599,8 +730,13 @@ export default async (req) => {
     else if (body.sys && self && (int(body.sys.season, 0, 1e6) || 1) !== season.n) out.stale = true;
     // a system an admin removed can't come back; a new one (founded after the kick) can
     else if (body.sys && !self && kicked[me] && !(int(body.sys.born, 0, 9e12) > kicked[me])) out.kicked = true;
-    else if (body.sys && !box.length) { const rec = cleanSys(body.sys, me, slot, self); rec.season = season.n; rec.seen = now; if (self) Object.assign(self, rec); else players.push(rec); general(self || rec); }
+    // the admin reset this server: a system from before the reset can't come back
+    else if (body.sys && !self && srv.resetAt && !(int(body.sys.born, 0, 9e12) > srv.resetAt)) out.reset = true;
+    else if (body.sys && !box.length) { const rec = cleanSys(body.sys, me, slot, self); rec.season = season.n; rec.seen = now; if (self) Object.assign(self, rec); else { rec.joined = now; players.push(rec); await moveHere(); } general(self || rec); }
     out.pid = me; out.slot = slot; out.inbox = box.splice(0);
+    // when this system joined the galaxy: if it changes, the server lost the old one (the client refunds the week's spending)
+    out.joined = (P(me) || {}).joined || 0;
+    out.srv = sid;
   } else if (!self) fail("Open Systems first to claim a system.");
   else if (op === "war") {
     const t = ref(body.target);
@@ -645,6 +781,10 @@ export default async (req) => {
       if (mode === "attack" && alive(fl) && (fl.loc.s === "guard" || (fl.loc.s === "dock" && !(fl.loc.until > now)))) launch(w, me, s, now);
       if (mode === "hold" && fl.loc.s === "move" && fl.loc.from === me && !fl.loc.back) standGuard(w, me);
       out.msg = mode === "attack" ? "Your fleet goes on the attack." : "Your fleet holds position over your worlds."; }
+  } else if (op === "gup") { // a general upgrade, paid in renown by the client
+    const k = GUP[body.skill] ? body.skill : null; self.gup ||= {};
+    if (!k) fail("Unknown upgrade."); else if ((self.gup[k] || 0) >= 3) fail("Already at the highest level.");
+    else { self.gup[k] = (self.gup[k] || 0) + 1; general(self); out.msg = "Your general trains hard. The upgrade is in."; }
   } else if (op === "upgrade") {
     const k = ["c", "f", "d"].includes(body.ship) ? body.ship : null; if (!k) fail("Unknown ship."); else if (self.fleet.up[k] >= 3) fail("Fully upgraded."); else { self.fleet.up[k]++; out.msg = "Upgrade installed across the fleet."; }
   } else if (op === "peace") {
@@ -672,14 +812,20 @@ export default async (req) => {
 
   for (const a of ai.list) if (a.overlord && !P(a.overlord)) a.overlord = null;
   for (const p of players) if (p.offers) p.offers = p.offers.filter((o) => o.season === season.n && o.day === dayOf());
-  await store.setJSON("ai", ai); await store.setJSON("season", season); await store.setJSON("wars", wars.filter((w) => !w.ended || now - w.ended < HOUR));
-  for (const p of players) await store.setJSON(p.pid, p);
-  for (const pid in inboxes) await store.setJSON("in-" + pid, inboxes[pid]);
+  // Write back only what changed. A system removed while this call ran is never written back.
+  const keepWars = wars.filter((w) => !w.ended || now - w.ended < HOUR);
+  if (JSON.stringify(ai) !== origShared.ai) await store.setJSON("ai", ai);
+  if (JSON.stringify(season) !== origShared.season) await store.setJSON("season", season);
+  if (JSON.stringify(keepWars) !== origShared.wars) await store.setJSON("wars", keepWars);
+  const k2 = (await store.get("kicked", { type: "json" })) || kicked, l2 = (await store.get("left", { type: "json" })) || left;
+  players = players.filter((p) => !stale(p, k2, l2));
+  for (const p of players) { const j = JSON.stringify(p); if (j !== orig.get(p.pid)) await store.setJSON(p.pid, p); }
+  for (const pid in inboxes) if (players.some((p) => p.pid === pid) && JSON.stringify(inboxes[pid]) !== (origIn[pid] || "[]")) await store.setJSON("in-" + pid, inboxes[pid]);
   const view = (a) => ({ ...a, opinion: a.opinion[me] ?? a.base, envoyAt: undefined, threat: undefined, threatens: !!(a.threat || {})[me], strikeAt: (a.threat || {})[me] ? Math.max(a.threat[me] + THREAT_WAIT * HOUR, (a.warAt || 0) + 12 * HOUR) : 0, myAlly: a.allies.includes(me) });
   const seasonView = { n: season.n, start: season.start, day: dayOf(), heat: Math.round(heat() * 100) / 100, ends: season.start + SEASON_DAYS * DAY, crisisAt: season.start + CRISIS_AT,
     crisis: season.crisis ? { at: season.crisis.at, won: season.crisis.won || 0, rifts: ai.list.filter((a) => a.rift).length, sealed: ai.list.filter((a) => a.rift && a.annexedBy).length } : null,
     invasions: INVASIONS.map((d) => season.start + d), chronicle: season.chronicle.slice(-3) };
-  return Response.json({ ...out, now, season: seasonView, systems: players, ai: ai.list.map(view), scourge: { invadeAt: ai.invadeAt, endedAt: ai.endedAt, free: freeAI().length, next: !ai.endedAt && freeAI().length ? (nextTarget() || {}).pid || null : null }, rulesAI: { THREAT_AT }, ranks: { RANKS, PROMOTE, DOCTRINE }, wars: wars.filter((w) => !w.ended || now - w.ended < 10 * 60000), max: MAX, rules: { SHIP, UPG, TERMS, STEP, TRAVEL, TECH, REFLECT } }, { status, headers });
-};
+  return Response.json({ ...out, now, server: { id: sid, name: srv.name, main: !!srv.main, yours: srv.owner === me, resetAt: srv.resetAt || 0 }, rulesGen: { GEN_TYPES, GUP, bonus: season.bonus || 0 }, season: seasonView, systems: players, ai: ai.list.map(view), scourge: { invadeAt: ai.invadeAt, endedAt: ai.endedAt, free: freeAI().length, next: !ai.endedAt && freeAI().length ? (nextTarget() || {}).pid || null : null }, rulesAI: { THREAT_AT }, ranks: { RANKS, PROMOTE, DOCTRINE }, wars: wars.filter((w) => !w.ended || now - w.ended < 10 * 60000), max: MAX, rules: { SHIP, UPG, TERMS, STEP, TRAVEL, TECH, REFLECT } }, { status, headers });
+}
 
 export const config = { path: "/api/systems" };
