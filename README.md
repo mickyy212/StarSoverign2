@@ -11,9 +11,14 @@ A pixel-art sci-fi roleplay game that runs in the browser. You rule a star empir
 - On a player's first visit, the game asks for an arcade name. It is saved on that device.
 - Each device keeps lifetime win rates for Easy, Normal and Hard, separately for the main story and the DLC.
 - Results are sent to `/api/scores`, a Netlify Function in `netlify/functions/scores.mjs`. It stores one record per device in Netlify Blobs, so everyone sees the same scoreboard.
+- Players can remove themselves from the scoreboard (Remove me, then tap again to confirm). This deletes their name and lifetime stats.
 - If the function isn't available (for example, when the page is opened as a plain file), the scoreboard shows only that device.
 
 Scores are reported by the player's browser, so a determined player could fake them. That's fine for a friendly scoreboard.
+
+## Other features
+- **Tutorial:** a guided run for each difficulty, with a tip each turn. Tutorial runs aren't saved and don't count.
+- **Quantum suicide:** a final-battle option. It gives a 10% chance of +10 power. Afterwards, the next run (or the DLC, if you go straight into it) has a 1 in 3 chance of sudden quantum death.
 
 ## Files
 - `index.html`: the whole game in one file.

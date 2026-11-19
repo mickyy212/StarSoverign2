@@ -1,6 +1,7 @@
 // Shared scoreboard for Star Sovereign II.
 // GET  /api/scores?me=<deviceId>  -> list of {name, life, me}
 // POST /api/scores  {id, name, life} -> saves this device's lifetime record
+// DELETE /api/scores {id} -> removes this device from the scoreboard
 import { getStore } from "@netlify/blobs";
 
 const DIFFS = ["Easy", "Normal", "Hard"];
@@ -41,6 +42,15 @@ export default async (req) => {
     const name = String(body.name || "").replace(/[^A-Za-z0-9 _.-]/g, "").trim().slice(0, 12);
     if (id.length < 8 || name.length < 2) return new Response("Bad request", { status: 400 });
     await store.setJSON(id, { name, life: clean(body.life), updated: Date.now() });
+    return Response.json({ ok: true }, { headers });
+  }
+
+  if (req.method === "DELETE") {
+    let body;
+    try { body = await req.json(); } catch { return new Response("Bad request", { status: 400 }); }
+    const id = String(body.id || "").replace(/[^A-Za-z0-9-]/g, "").slice(0, 40);
+    if (id.length < 8) return new Response("Bad request", { status: 400 });
+    await store.delete(id);
     return Response.json({ ok: true }, { headers });
   }
 
