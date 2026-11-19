@@ -30,6 +30,8 @@ Scores are reported by the player's browser, so a determined player could fake t
 - **One week per game.** Each day is harder than the last. On day 7 the Reflection comes: a mirror of every player's fleet, which all players fight together. Then everything resets and players name new systems. Technologies, ship upgrades and generals carry over, and every week starts a little harder. The in-game **Rules** button lists the exact numbers.
 - **Credits needed today:** a daily guide (30 on day 1, then 50 + 5 per day, +5 per week) measured with `tools/systems-sim.mjs`. Systems pays taxes every hour; main-game runs earn the rest.
 - **The world keeps turning.** `netlify/functions/tick.mjs` is a Netlify scheduled function that runs every 5 minutes, so wars, AI empires and the week's clock move on while nobody is online. Sieges slow down while the whole defending side is away.
+- **Founding:** pick a star (Yellow, Red dwarf, Blue giant, White dwarf) and a home world (Temperate, Ocean, Desert, Volcanic, Jungle), each a small trade-off. **New planet** abandons your system for good and lets you claim a new one.
+- **Guide:** a step-by-step tour of the Systems multiplayer screens runs the first time and from the Guide button.
 - **Investing:** from another player's panel, offer them a day of the foreign rare goods they need in return for the credits you still need today. It costs you no goods and only happens if they accept.
 - **Breaking news:** a sticker slaps onto the warning banner when an AI attack is planned or the rifts are about to open.
 - The **Systems multiplayer** button opens your star system. Up to 5 players share one galaxy with 3 AI empires (`netlify/functions/systems.mjs`, Netlify Blobs store "systems").
@@ -41,7 +43,7 @@ Scores are reported by the player's browser, so a determined player could fake t
 - **Trade:** pick the resources and amounts per hour, or press **Auto** to propose a swap that covers what each side is short of. Allies trade in full; otherwise 1 unit per hour is lost in transit. AI empires trade while they like you, and wars suspend trade.
 - **AI empires:** Zhaal Brood (aggressive raiders), Ost Guild (merchants) and Silent Vigil (wary).
   - You raise their opinion with envoys (5 credits) and gifts (10 of a resource).
-  - At opinion 50 they'll ally with you. Allied AI empires defend you and join your wars.
+  - AI empires never ally with players, but they trade while they like you (opinion 0 or more).
   - Hostile AI raid players.
 - **War is real time.**
   - Every faction has one fleet under an admiral with a generated name; AI admirals are fixed (Swarm-Marshal Grisk the Devourer, Commodore Penhallow of the Gilded Fleet, Warden-Admiral Sael, Who Does Not Blink).

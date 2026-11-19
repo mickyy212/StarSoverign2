@@ -106,7 +106,7 @@ function cleanSys(s, pid, slot, prev) {
     age: int(s.age, 0, 1e6), dev: int(s.dev, 0, 3), swarm: int(s.swarm, 0, 4), pop: int(s.pop, 0, 1e5), unrest: int(s.unrest, 0, 100), res, planets, routes,
     allies: (Array.isArray(s.allies) ? s.allies : []).map(ref).filter(Boolean).slice(0, 10),
     accepted: (Array.isArray(s.accepted) ? s.accepted : []).map((x) => String(x).replace(/[^A-Za-z0-9]/g, "").slice(0, 16)).slice(0, 16),
-    spec: RES.includes(s.spec) ? s.spec : undefined, evAt: int(s.evAt, 0, 9e12) || undefined,
+    spec: RES.includes(s.spec) ? s.spec : undefined, sun: ["yellow", "red", "blue", "white"].includes(s.sun) ? s.sun : "yellow", world: ["temperate", "ocean", "desert", "volcanic", "jungle"].includes(s.world) ? s.world : "temperate", evAt: int(s.evAt, 0, 9e12) || undefined,
     leader: s.leader ? { name: txt(s.leader.name, 20), title: txt(s.leader.title, 24),
       look: Object.fromEntries(Object.entries(s.leader.look || {}).slice(0, 10).map(([k, v]) => [String(k).replace(/[^a-z]/g, "").slice(0, 8), String(v).replace(/[^A-Za-z]/g, "").slice(0, 12)])) } : undefined, born: int(s.born, 0, 9e12) || undefined,
     ships: int(s.ships, 0, 99), boost: { food: int(s.boost && s.boost.food, 0, 99), water: int(s.boost && s.boost.water, 0, 99), ore: int(s.boost && s.boost.ore, 0, 99), spec: int(s.boost && s.boost.spec, 0, 199) },
@@ -154,6 +154,7 @@ export default async (req) => {
       for (const k in d) if (a[k] === undefined) a[k] = d[k];
       if (!a.fleet || !a.fleet.loc) a.fleet = newFleet(d.fleet.admiral, a.fleet && a.fleet.ships ? a.fleet.ships : d.fleet.ships); } }
   const self0 = players.find((p) => p.pid === me); if (self0) self0.seen = now;
+  for (const a of ai.list) if (a.allies && a.allies.length) a.allies = []; // AI empires no longer ally with players
   let wars = (await store.get("wars", { type: "json" })) || [];
   const inboxes = {};
   for (const p of players) inboxes[p.pid] = (await store.get("in-" + p.pid, { type: "json" })) || [];
@@ -561,7 +562,10 @@ export default async (req) => {
   else if (op === "promote") { if (!self) fail("No system."); else if (!DOCTRINE[body.skill]) fail("Unknown doctrine."); else if (self.doctrines.length >= tierOf(self.renown)) fail("No promotion waiting.");
     else { self.doctrines.push(body.skill); general(self); out.msg = `Promoted to ${RANKS[self.doctrines.length]}.`; } }
   else if (op === "resetgen") { if (self) { self.renown = 0; self.doctrines = []; general(self); } }
-  else if (op === "leave") { await store.delete(me); await store.delete("in-" + me); for (const w of live()) if (sideOf(w, me) >= 0) w.ended = now; }
+  else if (op === "leave") { await store.delete(me); await store.delete("in-" + me); for (const w of live()) if (sideOf(w, me) >= 0) w.ended = now;
+    // drop the record from this call too, or the save at the end would write it straight back
+    const k = players.findIndex((p) => p.pid === me); if (k >= 0) players.splice(k, 1); delete inboxes[me];
+    for (const p of players) { p.allies = (p.allies || []).filter((x) => x !== me); p.offers = (p.offers || []).filter((o) => o.from !== me); } }
   else if (op === "sync") {
     const box = await inbox(me);
     let slot = self ? self.slot : -1;
@@ -636,7 +640,7 @@ export default async (req) => {
     else if (a.rift) fail("The Reflection has nothing to say to you.");
     else if (act === "envoy") { if (now - (a.envoyAt[me] || 0) < HOUR) fail("Your last envoy is still on the road. Try again within the hour."); else { a.envoyAt[me] = now; opinion(a, me, 5); out.msg = `${a.name} receives your envoy warmly.`; } }
     else if (act === "gift") { opinion(a, me, 8); out.msg = `${a.name} accepts your gift.`; }
-    else if (act === "ally") { if ((a.opinion[me] ?? a.base) < 50) fail(`${a.name} doesn't trust you enough yet. Get their opinion to 50.`); else if (warOf(a.id, me)) fail("Make peace first."); else { if (!a.allies.includes(me)) a.allies.push(me); out.msg = `${a.name} agrees to an alliance.`; } }
+    else if (act === "ally") fail("AI empires don't make alliances with players. You can still trade with them.");
     else if (act === "unally") { a.allies = a.allies.filter((x) => x !== me); opinion(a, me, -30); out.msg = `${a.name} is offended.`; }
   }
 
