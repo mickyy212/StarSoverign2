@@ -18,8 +18,8 @@ Scores are reported by the player's browser, so a determined player could fake t
 
 ## Other features
 - **Tutorial:** a guided run for each difficulty, with a tip each turn. Tutorial runs aren't saved and don't count.
-- **Experimental button** (bottom of the start screen, off by default): turns on empire storylines and Quantum suicide.
 - **Empire storylines:** each empire has 3 events of its own (2 appear per run) and its own voice lines on shared events.
+- **Experimental button** (bottom of the start screen, off by default): turns on Quantum suicide and reveals the Narrative mode button (branching events).
 - **Quantum suicide:** a final-battle option. It gives a 10% chance of +10 power. Afterwards, the next run (or the DLC, if you go straight into it) has a 1 in 3 chance of sudden quantum death.
 
 ## Files
