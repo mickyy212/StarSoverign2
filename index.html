@@ -396,6 +396,7 @@ small.gain{display:flex;align-items:center;gap:6px;width:max-content;max-width:1
 button.quantum{border-color:#7d4bd6;background:#21173a}button.quantum small{color:#cdb6ff}
 .exp{display:flex;align-items:center;justify-content:center;gap:8px;margin:14px 0 4px;font-size:20px;color:var(--dim)}.exp span{opacity:.8}.exp .rs{float:none;margin:0}.exp .rs.on{border-color:#7d4bd6;color:#cdb6ff}
 .voice{font-size:20px;color:#b9a6e8;margin:-4px 0 12px;padding-left:10px;border-left:4px solid #4b3a7a}
+.aside{font-size:20px;color:#8f98b8;margin:-4px 0 12px}
 </style>
 </head>
 <body>
@@ -680,7 +681,9 @@ Object.assign(MEMO,{"The Blood Choir": ["The Great Song you led is still sung on
 Object.assign(ETAG,{"The Blood Choir": "home", "The Early Brood": "home", "The Right of Challenge": "home", "The Dimming": "home", "The Silent Vote": "home", "Envoys of Light": "home", "The Dissenting Mind": "home", "The Hidden Archive": "home", "The Organic Petition": "home"});
 function expOn(){return qOn()}
 function voiceFor(e){const V=EMP_VOICE[EK()];if(!V)return '';const L=V[ETAG[e.t]]||V.home;let h=0;for(const ch of e.t)h=(h*31+ch.charCodeAt(0))>>>0;return L[h%L.length]}
-const DISPATCH=["Deep-space listening posts report nothing unusual. Nothing at all, which is unusual.", "Core trade convoy three days overdue. Insurers stop answering.", "Star near the core goes dark. Astronomers: something is in front of it.", "Core refugees arrive babbling about \"the hungry dark.\"", "Two core outposts go silent. Last transmission: chewing.", "Scanners track a mass the size of a nebula leaving the core.", "The Thal quietly double their border patrols. Not facing you.", "A distant empire's distress call cuts off mid-sentence.", "Scientists still can't name it. They've stopped trying.", "Your coreward colonies report their stars going out, one by one.", "Evacuation drills on every world. Nobody asks where to.", "It reaches your border tomorrow. GNN staff told to go home."];
+const DISPATCH_POOL=[["Deep-space listening posts report nothing unusual. Nothing at all, which is unusual.", "Core stock exchange closes early. Nobody will say why.", "Galactic weather service issues its first ever \"unknown\" warning."], ["Core trade convoy three days overdue. Insurers stop answering.", "Deep-core freighter found drifting. Crew missing, coffee still warm.", "Pilgrim ships to the core turn back. Captains won't say what they saw."], ["Star near the core goes dark. Astronomers: something is in front of it.", "Core lighthouse beacon falls silent mid-broadcast.", "Survey ship reports a star near the core \"blinking, like an eye.\""], ["Core refugees arrive babbling about \"the hungry dark.\"", "First refugee ships dock. Passengers refuse to look coreward.", "Refugee children all draw the same picture: teeth."], ["Two core outposts go silent. Last transmission: chewing.", "Mining colony Ketter-9 stops reporting. So does its moon.", "Core distress calls go out one by one, like candles."], ["Scanners track a mass the size of a nebula leaving the core.", "Something enormous is moving out of the core. It is not a fleet.", "Deep telescopes catch movement near the core. Then they catch nothing at all."], ["The Thal quietly double their border patrols. Not facing you.", "Thal ambassadors ask, very politely, about your evacuation plans.", "Thal markets crash. Thal bunkers sell out in an hour."], ["A distant empire's distress call cuts off mid-sentence.", "The Orrin Dominion, thirty worlds strong, stops answering. All thirty.", "An entire empire vanishes from star charts. Cartographers are told to stop asking."], ["Scientists still can't name it. They've stopped trying.", "Leading xenobiologist resigns live on air: \"It isn't alive. It's hungry.\"", "Every probe sent coreward this week has come back empty. Some came back chewed."], ["Your coreward colonies report their stars going out, one by one.", "Night sky over your border worlds is darker every evening.", "Coreward colonists say the dark has a sound. Nobody can describe it twice."], ["Evacuation drills on every world. Nobody asks where to.", "Churches, labs and taverns all report record crowds.", "Shipyards run day and night. Nobody has asked for overtime pay."], ["It reaches your border tomorrow. GNN staff told to go home.", "Final bulletin: it arrives at dawn. GNN thanks you for watching.", "Border sensors go white. GNN will stay on the air as long as it can."]];
+let DISPATCH=DISPATCH_POOL.map(v=>v[0]);
+function rollDispatch(){DISPATCH=DISPATCH_POOL.map(v=>v[Math.floor(Math.random()*v.length)])}
 let mem=[];
 function echoFor(e){const tg=ETAG[e.t];if(!tg)return '';const m=[...mem].reverse().find(x=>x.tag===tg&&!x.used&&x.from!==e.t);if(!m)return '';m.used=true;return m.text}
 // ---------- DLC: The Thal Reckoning (unlocked by a main-game victory) ----------
@@ -742,11 +745,11 @@ function showDLCFinal(){
 }
 // Autosave: survives page reloads (app switching, updates). One save per browser.
 const SAVE='ss2v2save';
-function saveGame(t){if(TUT)return;try{localStorage.setItem(SAVE,JSON.stringify({e:EMPIRES.indexOf(emp),t:TRAITS.indexOf(trait),S,turn:t,deck:deck.map(d=>d.t),log,threat,hp,injT,aug,cores,closeUsed,renown,dlc,prog,route,look,mem,news,qd}))}catch(_){}}
+function saveGame(t){if(TUT)return;try{localStorage.setItem(SAVE,JSON.stringify({e:EMPIRES.indexOf(emp),t:TRAITS.indexOf(trait),S,turn:t,deck:deck.map(d=>d.t),log,threat,hp,injT,aug,cores,closeUsed,renown,dlc,prog,route,look,mem,news,qd,dsp:DISPATCH}))}catch(_){}}
 function clearSave(){try{localStorage.removeItem(SAVE)}catch(_){}}
 function loadSave(){try{const g=JSON.parse(localStorage.getItem(SAVE));return g&&EMPIRES[g.e]&&TRAITS[g.t]&&g.deck&&g.deck.every(t=>EVENTS.some(e=>e.t===t)||DLC_EVENTS.some(e=>e.t===t)||Object.values(EMP_EVENTS).flat().some(e=>e.t===t))?g:null}catch(_){return null}}
 function resume(){const g=loadSave();if(!g){clearSave();return start()}
- emp=EMPIRES[g.e];trait=TRAITS[g.t];S=g.S;turn=g.turn;deck=g.deck.map(t=>EVENTS.find(e=>e.t===t)||DLC_EVENTS.find(e=>e.t===t)||Object.values(EMP_EVENTS).flat().find(e=>e.t===t));dlc=!!g.dlc;prog=g.prog||0;look=g.look||null;mem=g.mem||[];news=g.news||'';qd=g.qd||0;if(g.route)route=g.route;log=g.log||[];threat=g.threat;hp=g.hp;injT=g.injT;aug=g.aug;cores=g.cores;closeUsed=g.closeUsed;renown=g.renown||0;showEvent()}
+ emp=EMPIRES[g.e];trait=TRAITS[g.t];S=g.S;turn=g.turn;deck=g.deck.map(t=>EVENTS.find(e=>e.t===t)||DLC_EVENTS.find(e=>e.t===t)||Object.values(EMP_EVENTS).flat().find(e=>e.t===t));dlc=!!g.dlc;prog=g.prog||0;look=g.look||null;mem=g.mem||[];news=g.news||'';qd=g.qd||0;if(Array.isArray(g.dsp)&&g.dsp.length===DISPATCH_POOL.length)DISPATCH=g.dsp;if(g.route)route=g.route;log=g.log||[];threat=g.threat;hp=g.hp;injT=g.injT;aug=g.aug;cores=g.cores;closeUsed=g.closeUsed;renown=g.renown||0;showEvent()}
 
 // ---- Arcade name + lifetime scoreboard (per device; shared online when /api/scores exists) ----
 const ARC='ss2arcade',DIFFS=['Easy','Normal','Hard'];
@@ -786,6 +789,8 @@ const QFLAV={military:'Your fleet jumps down a thousand possible flanking routes
  science:'Your scientists entangle the weapon with its own future firing data, so the shot lands as if it had already been perfectly aimed.'};
 function qOn(){try{return localStorage.getItem('ss2qon')==='1'}catch(e){return false}}
 function qToggle(){try{localStorage.setItem('ss2qon',qOn()?'0':'1')}catch(e){}start();window.scrollTo(0,document.body.scrollHeight)}
+// Quantum suicide only appears when it is the only way left to win: even max luck (+3) and leading from the front (+3) fall short, but +10 and max luck would not.
+function qOnlyHope(){const b=basePower(route),t=b.stat+b.stab+b.en+b.ren+(b.prog||0)-b.pen,need=dlc?NEED_DLC:NEED;return t+6<need&&t+13>=need}
 function qPending(){try{return localStorage.getItem(QKEY)==='1'}catch(e){return false}}
 function qSet(v){try{v?localStorage.setItem(QKEY,'1'):localStorage.removeItem(QKEY)}catch(e){}}
 function qStartRun(turns){qd=0;if(TUT||!qPending())return;qSet(false);if(Math.random()<1/3)qd=1+Math.floor(Math.random()*turns)}
@@ -822,6 +827,7 @@ function pickTrait(j){
  trait=TRAITS[j];closeUsed=false;renown=0;mem=[];[...EVENTS,...Object.values(EMP_EVENTS).flat()].forEach(x=>{delete x._echoTurn;delete x._echo});S={...emp.s};turn=1;log=[];threat=3;hp='Healthy';injT=0;aug=false;
  cores=emp.name.startsWith('Kethari')?1:0;
  deck=[...EVENTS];for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}deck=deck.slice(0,TURNS); // fair shuffle
+ rollDispatch();news='';
  if(expOn()&&EMP_EVENTS[EK()]){const own=[...EMP_EVENTS[EK()]].sort(()=>Math.random()-.5).slice(0,2);deck=[...deck.slice(0,TURNS-own.length),...own];for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}}
  qStartRun(TURNS);
  look=null;showCreator();
@@ -885,7 +891,7 @@ function showEvent(){
  if(qd&&turn===qd){qd=0;return end(false,'Quantum Death','The branches you discarded in your last final battle come back to collect. Reality quietly edits you out, mid-sentence. Somewhere, another version of you carries on.')}
  {const tt=turn;setTimeout(()=>{if(!dlc&&turn===tt&&!app.querySelector('.result'))tutAdd(TUT_TIPS[tt-1]||'')})}
  const e=deck[turn-1];
- app.innerHTML=header()+`<div class="card"><div class="turn">${dlc?'The Thal Reckoning, turn':'Turn'} ${turn} of ${dlc?DLC_TURNS:TURNS}</div><span class="beststat">${(()=>{const k=dlc?route:BEST[EK()];return `Best stat: ${icon(k)} ${LABELS[k]}`})()}</span><h2>${e.t}</h2>${(()=>{if(dlc)return '';if(e._echoTurn!==turn){e._echo=echoFor(e);e._echoTurn=turn}return e._echo?`<p class="echo">${e._echo}</p>`:''})()}<p>${e.x}</p>${!dlc&&expOn()?`<p class="voice">${voiceFor(e)}</p>`:''}${e.c.map(choiceBtn).join('')}${(dlc?news:DISPATCH[turn-1])?`<div class="dispatch"><span class="bn-tag"><i></i>GNN</span> ${dlc?news:DISPATCH[turn-1]}</div>`:''}</div>`+logBox();
+ app.innerHTML=header()+`<div class="card"><div class="turn">${dlc?'The Thal Reckoning, turn':'Turn'} ${turn} of ${dlc?DLC_TURNS:TURNS}</div><span class="beststat">${(()=>{const k=dlc?route:BEST[EK()];return `Best stat: ${icon(k)} ${LABELS[k]}`})()}</span><h2>${e.t}</h2><p>${e.x}</p>${(()=>{if(dlc)return '';if(e._echoTurn!==turn){e._echo=echoFor(e);e._echoTurn=turn}const a=e._echo||(expOn()?voiceFor(e):'');return a?`<p class="aside">${a}</p>`:''})()}${e.c.map(choiceBtn).join('')}${(dlc?news:DISPATCH[turn-1])?`<div class="dispatch"><span class="bn-tag"><i></i>GNN</span> ${dlc?news:DISPATCH[turn-1]}</div>`:''}</div>`+logBox();
 }
 function fmt(fx){const a=Object.entries(fx).filter(([k,v])=>v).map(([k,v])=>{const lbl=k==='threat'?'Thal Threat':LABELS[k];const good=k==='threat'?v<0:v>0;return `<span class="${good?'up':'down'}">${v>0?'+':''}${v} ${lbl}</span>`});return a.join(', ')}
 function apply(fx){const real={};for(const k in fx){if(k==='threat'){const o=threat;threat=Math.max(0,Math.min(10,threat+fx[k]));real[k]=threat-o}else{const o=S[k];S[k]=clamp(S[k]+fx[k]);real[k]=S[k]-o}}return real}
@@ -942,8 +948,8 @@ function pickRoute(k){
  app.innerHTML=header()+`<div class="card"><div class="turn">Final battle</div><h2>Where will you fight?</h2>
  <button onclick="finale(false)">Command from the rear<small>Safe. No bonus.</small></button>
  <button class="personal ${r.death>=10?'lethal':''}" onclick="finale(true)">⚔ Lead from the front: +3 power<span class="risk">${r.death>=10?'☠ Deadly. ':''}Combat risk: ${r.inj}% injury (lose the bonus), ${r.death}% death${saveNote()}</span></button>
- ${qOn()?`<button class="quantum" onclick="finale('q')">Quantum suicide<small>${QFLAV[route]} It works 10% of the time: +10 power. The discarded branches don't go quietly. Win or lose, your next run then has a 1 in 3 chance of sudden quantum death${dlc?'':' (the DLC counts, if you go straight into it)'}.${TUT?' In the tutorial, nothing carries over.':''}</small></button>`:''}</div>`;
- tutAdd('Commanding from the rear is safe. Leading in person adds power but risks your life.'+(qOn()?' Quantum suicide is a long shot with a cost that follows you into your next run.':''));
+ ${qOn()&&qOnlyHope()?`<button class="quantum" onclick="finale('q')">Quantum suicide<small>${QFLAV[route]} It works 10% of the time: +10 power. The discarded branches don't go quietly. Win or lose, your next run then has a 1 in 3 chance of sudden quantum death${dlc?'':' (the DLC counts, if you go straight into it)'}.${TUT?' In the tutorial, nothing carries over.':''}</small></button>`:''}</div>`;
+ tutAdd('Commanding from the rear is safe. Leading in person adds power but risks your life.'+(qOn()&&qOnlyHope()?' Quantum suicide only appears when nothing else can win. It is a long shot with a cost that follows you into your next run.':''));
 }
 function finale(front){
  const b=basePower(route);let p=b.stat+b.stab+b.en+b.ren+b.prog-b.pen+Math.floor(Math.random()*4),note='';
