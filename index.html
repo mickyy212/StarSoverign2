@@ -461,6 +461,10 @@ button.quantum{border-color:#7d4bd6;background:#21173a}button.quantum small{colo
 button.locked{opacity:.55}.nbr.war{border-color:#ef7a6e}.warbox{border:2px dashed #ef7a6e;padding:6px 8px;margin:8px 0}.warbtn{border-color:#ef7a6e!important;color:#ef7a6e}
 .shiprow{border-bottom:2px solid var(--edge);padding-bottom:6px;margin-bottom:6px}
 .alpha{display:inline-block;font-size:11px;padding:0 4px;margin-left:4px;color:#0a1020;background:#ff9f43;vertical-align:middle;letter-spacing:1px}
+.recbtns{display:flex;justify-content:center;gap:8px;margin:6px 0 0}.recbtns .rs{float:none;margin:0}.recbtns .rs.on{border-color:#ffd166;color:#ffd166}
+.tbar{position:relative;height:20px;margin:4px 0 8px;background:#0a1020;border:2px solid #2c355c}.tbar i{position:absolute;left:0;top:0;bottom:0;background:#8fd3ff;transition:width 1s linear}.tbar.low i{background:#ff6b4a}.tbar span{position:relative;display:block;text-align:center;font-size:13px;line-height:16px;color:#fff}
+button.timepick{outline:3px solid #ffd166;outline-offset:2px;animation:tpick .4s steps(2) 3}@keyframes tpick{50%{outline-color:transparent}}
+.timeup{border-left:4px solid #ffd166;background:#1a1606;padding:6px 10px;margin:0 0 8px;color:#ffe9a8}
 .srvrow{border:2px solid #2c355c;background:rgba(10,16,32,.55);padding:6px 8px;margin:8px 0;overflow:hidden}.srvrow.here{border-color:#ffd166}.srvrow small{display:block}.srvbtns{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;margin-top:4px}.srvbtns .rs{float:none;margin:0}.maintag{color:#ffd166}.srvline{font-size:15px;margin:2px 0 4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.srvline .rs{float:none;margin:0 0 0 auto;padding:2px 6px;font-size:14px}
 .tcat{margin:6px 0 10px}.tcat h4{margin:6px 0 4px;color:#ffd166;font-size:17px;font-weight:normal;border-bottom:2px solid #2c355c;padding-bottom:3px}.tcat h4 small{display:block;color:#8f98b8;font-size:13px}
 .trow{margin:4px 0}.trow button{margin:0}.trow.done{padding:6px 8px;border:2px dashed #2c355c;color:#9fb7c9}.trow.done small{display:block;color:#8f98b8}.trow .lvl{color:#8fd3ff;font-size:14px}.trow .freept{float:none;display:block;margin:4px 0 0 auto}
@@ -616,13 +620,17 @@ let REC={Easy:{w:0,n:0},Normal:{w:0,n:0},Hard:{w:0,n:0}};
 try{const r=JSON.parse(localStorage.getItem('ss2rec2'));if(r&&r.Easy&&r.Normal&&r.Hard)REC=r}catch(_){}
 function saveRec(){try{localStorage.setItem('ss2rec2',JSON.stringify(REC))}catch(_){}}
 function record(d,win){let r=REC[d];if(r.n>=10)r=REC[d]={w:0,n:0};r.n++;if(win)r.w++;saveRec()}
-function resetRec(b){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again to reset';setTimeout(()=>{if(document.body.contains(b)){delete b.dataset.armed;b.textContent='Reset win rates'}},3000);return}
- REC={Easy:{w:0,n:0},Normal:{w:0,n:0},Hard:{w:0,n:0}};saveRec();start()}
-function pct(d){const r=REC[d];return r.n?Math.round(100*r.w/r.n):0}
-function rcls(d){if(!REC[d].n)return'';const p=pct(d),t=TARGET[d];return p>=t-5?'up':p>=t-25?'warn':'down'}
-function recLine(d){const r=REC[d];const done=r.n>=10;
+// Reset win stats: clears your latest runs here and takes you off the scoreboard; new runs put you back on.
+function resetRec(b){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again: reset and leave the scoreboard';setTimeout(()=>{if(document.body.contains(b)){delete b.dataset.armed;b.textContent='Reset win stats'}},3000);return}
+ REC={Easy:{w:0,n:0},Normal:{w:0,n:0},Hard:{w:0,n:0}};saveRec();if(ARCADE){ARCADE.runs=[];ARCADE.life=blankLife();ARCADE.hidden=false;saveArcade();
+  try{fetch('/api/scores',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:ARCADE.id})}).catch(()=>{})}catch(e){}}start()}
+// Win stats come from your latest 20 runs, the same runs the scoreboard counts.
+function recOf(d){return ARCADE?lifeOfRuns(ARCADE.runs).main[d]:{w:0,n:0}}
+function pct(d){const r=recOf(d);return r.n?Math.round(100*r.w/r.n):0}
+function rcls(d){if(!recOf(d).n)return'';const p=pct(d),t=TARGET[d];return p>=t-5?'up':p>=t-25?'warn':'down'}
+function recLine(d){const r=recOf(d),all=ARCADE?(ARCADE.runs||[]).length:0;
  const odds=`<span class="odds"><span>Skilled max: ~${TARGET[d]}%</span><span>Random: ~${RANDOM[d]}%</span></span>`;
- if(!r.n)return `<span class="recl">${odds}</span>`;return `<span class="recl">${done?'Last 10':'Current 10'}: <b class="${rcls(d)}">${r.n?pct(d)+'%':'—'}</b> (${r.w}/${r.n})${done?', resets next game':''}${odds}</span>`}
+ if(!r.n)return `<span class="recl">${odds}</span>`;return `<span class="recl">Your latest ${BOARD_KEEP} runs: <b class="${rcls(d)}">${pct(d)}%</b> (${r.w}/${r.n} here, ${all}/${BOARD_KEEP} runs in all)${odds}</span>`}
 function recBox(d){const r=REC[d];const done=r.n>=10;
  return `<div class="rec"><div><div class="rec-l">${d}: ${done?'last 10 games':'current 10 games'}</div><div class="rec-v ${rcls(d)}">${r.n?pct(d)+'%':'—'}</div></div><div class="rec-r"><b>${r.w}</b> ${r.w===1?'win':'wins'} / <b>${r.n}</b> ${r.n===1?'game':'games'}<br><span class="note">Skilled play wins up to ~${TARGET[d]}%, ${done?'complete, resets next game':`next up: game ${r.n+1} of 10`}</span></div></div>`;
 }
@@ -637,6 +645,7 @@ const HELP=`<h2>How to play</h2><ol>
 <li><b>Thal Threat rises every turn.</b> At the end it costs 1 power at 5+ and 3 at 8+. Lower it when it's cheap.</li>
 <li><b>Win to unlock the DLC,</b> The Thal Reckoning: 10 more turns with your empire as it is, plus +4 Energy and +3 Stability. Buttons show which choices add progress for your route. Progress counts as power in the final move, which needs 34.</li>
 <li><b>The end:</b> you will need about 16 power. When the moment comes, lead in person (+3) only if you are short.</li>
+<li><b>Timed</b> (on by default, the button next to Reset win stats): you get 60 seconds for every choice, the final battle included. When time runs out, a choice is made at random and the next screen tells you which. Tutorial runs are never timed.</li>
 </ol><h2>Credits for Systems multiplayer</h2><p class="note">Every finished run pays credits. Harder empires pay more.</p>
 <table class="credtab"><tr><th></th><th>Kethari<br><small>Easy</small></th><th>Celest<br><small>Normal</small></th><th>Vorrani<br><small>Hard</small></th></tr>
 <tr><td>Main story won</td><td>8</td><td>25</td><td>50</td></tr><tr><td>Main story lost</td><td>2</td><td>5</td><td>8</td></tr>
@@ -839,6 +848,7 @@ function showDLCFinal(){
  app.innerHTML=header()+`<div class="card"><div class="turn">The Thal Reckoning: final move</div><h2>${goal}</h2><p>Ten turns of maneuvering come down to this.</p>
  <button onclick="pickRoute('${route}')">Make your move<small class="eq"><span class="gauge"><i style="width:${Math.min(100,Math.round(100*t/NEED_DLC))}%"></i></span><span class="gv"><b>${t}</b> power, need ${NEED_DLC} <span class="need">(+0–3 luck)</span></span><span class="bd">${icon(route)}${b.stat} + ${icon('stability')}${b.stab} + ${icon('energy')}${b.en}${b.ren?` + ${icon('star')}${b.ren}`:''} + ${icon('flag')}${b.prog}${b.pen?` − ${icon('thal')}${b.pen}`:''}</span></small></button>
  <p class="note">${PROGN[route]} is the campaign progress you earned for your route. Thal Threat still costs you power: −1 at 5+, −3 at 8+.</p></div>`;
+ startTimer();
 }
 // Autosave: survives page reloads (app switching, updates). One save per browser.
 const SAVE='ss2v2save';
@@ -862,7 +872,7 @@ const ACHS=[
  {id:'front',n:'Front Line',d:'Lead from the front in a final battle and live through it.'},
  {id:'bold',n:'Into the Breach',d:'Make 5 personal (⚔) choices in one run.'},
  {id:'claim',n:'A Star of Your Own',d:'Found your system in Systems multiplayer.'},
- {id:'quantum',r:1,n:'Many Worlds',d:'Win a final battle on a quantum suicide that works.'},
+ {id:'quantum',r:1,secret:1,n:'Many Worlds',d:'Win a final battle on a gamble that pays off against every odd.'},
  {id:'flawless',r:1,n:'Untouchable',d:'Win a run with 4 or more personal choices, every one a success.'},
  {id:'throne',r:1,n:'Never Left the Throne',d:'Win the main story without a single personal (⚔) choice, not even in the final battle.'},
  {id:'reboot',r:1,n:'Backup Core',d:'Die, reboot from a backup core, and still win the run.'},
@@ -891,7 +901,7 @@ function achBanner(a){if(typeof document==='undefined'||!document.createElement|
  const el=document.createElement('div');el.className='achban'+(a.r?' rare':'');el.setAttribute('role','status');
  el.innerHTML=`<div class="achicon">${achIcon(a,'achico big')}${Array.from({length:a.r?10:6},(_,i)=>`<i style="--a:${Math.round(i*360/(a.r?10:6))}deg"></i>`).join('')}</div><div class="achtxt"><b>${a.r?'★ Rare achievement':'Achievement'}</b><span>${a.n}</span><small>${a.d}</small></div><em class="shine"></em>`;box.appendChild(el);
  setTimeout(()=>el.classList.add('out'),4200);setTimeout(()=>el.remove(),4900)}
-function showAch(){const g=achGot(),n=ACHS.filter(a=>g[a.id]).length,row=a=>`<div class="achrow${g[a.id]?' got':''}${a.r?' rare':''}"><i>${g[a.id]?achIcon(a):'·'}</i><div><b>${a.n}</b><small>${a.d}${g[a.id]?` <span class="note">(${new Date(g[a.id]).toLocaleDateString()})</span>`:''}</small></div></div>`;
+function showAch(){const g=achGot(),n=ACHS.filter(a=>g[a.id]).length,row=a=>`<div class="achrow${g[a.id]?' got':''}${a.r?' rare':''}"><i>${g[a.id]?achIcon(a):'·'}</i><div><b>${a.secret&&!g[a.id]?'???':a.n}</b><small>${a.secret&&!g[a.id]?'A secret. It unlocks when it happens.':a.d}${g[a.id]?` <span class="note">(${new Date(g[a.id]).toLocaleDateString()})</span>`:''}</small></div></div>`;
  app.innerHTML=`<div class="card"><h2>Achievements</h2><p class="note">${n} of ${ACHS.length} unlocked on this device.</p><h3>Common</h3>${ACHS.filter(a=>!a.r).map(row).join('')}<h3 style="color:#d6b8ff">★ Rare</h3>${ACHS.filter(a=>a.r).map(row).join('')}<button style="text-align:center;margin-top:12px" onclick="start()">Back</button></div>`;window.scrollTo(0,0)}
 // ---- Admin: sign in (password default 1234, changeable), see every server and its players, kick a system, create Main servers, remove any server.
 let ADMIN_PASS='';
@@ -925,7 +935,7 @@ function lifeOfRuns(runs){const o=blankLife();for(const r of runs||[])if(o[r.m]&
 function saveArcade(){try{localStorage.setItem(ARC,JSON.stringify(ARCADE))}catch(e){}}
 function escH(t){return String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 // sends your latest runs; the server adds any it doesn't have yet (so a run finished offline still counts later)
-function pushScore(){if(!ARCADE)return;try{fetch('/api/scores',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:ARCADE.id,name:ARCADE.name,runs:ARCADE.runs||[]})}).catch(()=>{})}catch(e){}}
+function pushScore(){if(!ARCADE||ARCADE.hidden)return;try{fetch('/api/scores',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:ARCADE.id,name:ARCADE.name,runs:ARCADE.runs||[]})}).catch(()=>{})}catch(e){}}
 function lifeRecord(isDlc,d,win){if(!ARCADE||!d)return;const r=ARCADE.life[isDlc?'dlc':'main'][d];r.n++;if(win)r.w++;
  ARCADE.runs=[...(ARCADE.runs||[]),{m:isDlc?'dlc':'main',d,w:win?1:0,t:Date.now()}].slice(-BOARD_KEEP);saveArcade();pushScore()}
 function showName(again){
@@ -935,13 +945,15 @@ function setName(){const v=document.getElementById('arcname').value.replace(/[^A
  if(v.length<2){document.getElementById('namerr').textContent='Use 2 to 12 letters or numbers.';return}
  if(!ARCADE)ARCADE={id:(window.crypto&&crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2)),name:v,life:blankLife()};else ARCADE.name=v;
  saveArcade();pushScore();start()}
-function removeMe(b){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again: deletes your name and your runs';setTimeout(()=>{if(document.body.contains(b)){delete b.dataset.armed;b.textContent='Remove me from the scoreboard'}},4000);return}
- const id=ARCADE&&ARCADE.id;try{fetch('/api/scores',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})}).catch(()=>{})}catch(e){}
- try{localStorage.removeItem(ARC)}catch(e){}ARCADE=null;showName()}
+// Remove me: takes you off the shared scoreboard but keeps your name and your runs on this device. Add me back puts them up again.
+function removeMe(b){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again: take me off the scoreboard';setTimeout(()=>{if(document.body.contains(b)){delete b.dataset.armed;b.textContent='Remove me from the scoreboard'}},4000);return}
+ try{fetch('/api/scores',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:ARCADE.id})}).catch(()=>{})}catch(e){}
+ ARCADE.hidden=true;saveArcade();showBoard()}
+function addMeBack(){ARCADE.hidden=false;saveArcade();pushScore();setTimeout(()=>showBoard(),400)}
 let boardTab='main';
 function cell(r,d){const x=r&&r[d];return x&&x.n?`${Math.round(100*x.w/x.n)}% <i>(${x.w}/${x.n})</i>`:'—'}
 async function showBoard(tab){if(tab)boardTab=tab;const T=boardTab;
- app.innerHTML=`<div class="card"><h2>Scoreboard</h2><div class="tabs"><button class="${T==='main'?'on':''}" onclick="showBoard('main')">Main story</button><button class="${T==='dlc'?'on':''}" onclick="showBoard('dlc')">DLC</button></div><div id="board"><p class="note">Loading…</p></div><button style="text-align:center" onclick="showName(true)">Change name</button><button style="text-align:center" onclick="start()">Back</button><button class="rs" style="float:none;display:block;margin:10px auto 0" onclick="removeMe(this)">Remove me from the scoreboard</button></div>`;
+ app.innerHTML=`<div class="card"><h2>Scoreboard</h2><div class="tabs"><button class="${T==='main'?'on':''}" onclick="showBoard('main')">Main story</button><button class="${T==='dlc'?'on':''}" onclick="showBoard('dlc')">DLC</button></div><div id="board"><p class="note">Loading…</p></div><button style="text-align:center" onclick="showName(true)">Change name</button><button style="text-align:center" onclick="start()">Back</button>${ARCADE.hidden?`<button style="text-align:center" onclick="addMeBack()">Add me back to the scoreboard<small>Your latest ${BOARD_KEEP} runs go back up.</small></button>`:`<button class="rs" style="float:none;display:block;margin:10px auto 0" onclick="removeMe(this)">Remove me from the scoreboard</button>`}</div>`;
  let rows=null,res=null;try{const r=await fetch('/api/scores?me='+encodeURIComponent(ARCADE.id),{cache:'no-store'});if(r.ok)res=await r.json()}catch(e){}
  if(boardTab!==T||!document.getElementById('board'))return;
  if(res&&Array.isArray(res.rows)){rows=res.rows;
@@ -950,11 +962,11 @@ async function showBoard(tab){if(tab)boardTab=tab;const T=boardTab;
  else if(Array.isArray(res))rows=res;
  const online=!!rows;if(!online)rows=[];
  const mine=rows.find(x=>x.me);rows=rows.filter(x=>!x.me);
- rows.push({name:ARCADE.name,life:mine&&mine.runs==null&&!(ARCADE.runs||[]).length?mine.life:lifeOfRuns(ARCADE.runs),me:true});
- if(online&&(ARCADE.runs||[]).length&&!(mine&&mine.runs>=ARCADE.runs.length))pushScore();
+ if(!ARCADE.hidden)rows.push({name:ARCADE.name,life:mine&&mine.runs==null&&!(ARCADE.runs||[]).length?mine.life:lifeOfRuns(ARCADE.runs),me:true});
+ if(online&&!ARCADE.hidden&&(ARCADE.runs||[]).length&&!(mine&&mine.runs>=ARCADE.runs.length))pushScore();
  const games=x=>DIFFS.reduce((a,d)=>a+((x.life&&x.life[T]&&x.life[T][d]&&x.life[T][d].n)||0),0),wins=x=>DIFFS.reduce((a,d)=>a+((x.life&&x.life[T]&&x.life[T][d]&&x.life[T][d].w)||0),0);
  rows.sort((a,b)=>wins(b)-wins(a)||games(b)-games(a));
- document.getElementById('board').innerHTML=(online?'':`<p class="note">The shared scoreboard works on the website. Here it shows this device only.</p>`)+`<p class="note">Win rates over each player's latest ${BOARD_KEEP} runs.</p>`+rows.map((x,k)=>`<div class="brow${x.me?' me':''}"><b>${k+1}. ${escH(x.name)}${x.me?' (you)':''}</b><span class="bc"><span>Easy ${cell(x.life&&x.life[T],'Easy')}</span><span>Normal ${cell(x.life&&x.life[T],'Normal')}</span><span>Hard ${cell(x.life&&x.life[T],'Hard')}</span></span></div>`).join('');
+ document.getElementById('board').innerHTML=(online?'':`<p class="note">The shared scoreboard works on the website. Here it shows this device only.</p>`)+(ARCADE.hidden?`<p class="note">You are not on the scoreboard. Your runs still count here, and you can add yourself back below.</p>`:'')+`<p class="note">Win rates over each player's latest ${BOARD_KEEP} runs.</p>`+rows.map((x,k)=>`<div class="brow${x.me?' me':''}"><b>${k+1}. ${escH(x.name)}${x.me?' (you)':''}</b><span class="bc"><span>Easy ${cell(x.life&&x.life[T],'Easy')}</span><span>Normal ${cell(x.life&&x.life[T],'Normal')}</span><span>Hard ${cell(x.life&&x.life[T],'Hard')}</span></span></div>`).join('');
 }
 
 // ---- Quantum suicide: a final-battle gamble whose cost lands on the next run ----
@@ -962,12 +974,12 @@ const QKEY='ss2qcurse';let qd=0; // qd = turn of this run on which quantum death
 const QFLAV={military:'Your fleet tries a thousand flanking routes at once, then collapses reality onto the one where the enemy is wide open.',
  influence:'Your envoys send the call to arms down a thousand branches of reality and keep the one where every ally says yes.',
  science:'Your scientists entangle the weapon with its own future, so the shot lands as if already perfectly aimed.'};
-function qOn(){try{return localStorage.getItem('ss2qon')==='1'}catch(e){return false}}
+function qOn(){return true} // Quantum suicide is part of the main game (the Experimental toggle is gone)
 function qToggle(){try{localStorage.setItem('ss2qon',qOn()?'0':'1')}catch(e){}start();window.scrollTo(0,document.body.scrollHeight)}
 // Quantum suicide only appears when it is the only way left to win: even max luck (+3) and leading from the front (+3) fall short, but +10 and max luck would not.
 function qOnlyHope(){const b=basePower(route),t=b.stat+b.stab+b.en+b.ren+(b.prog||0)-b.pen,need=dlc?NEED_DLC:NEED;return t+6<need&&t+13>=need}
 // Narrative mode: each choice decides which kind of event comes next (Thal intrigue, the core, or home affairs).
-function narrOn(){try{return qOn()&&localStorage.getItem('ss2narr')==='1'}catch(e){return false}} // experimental only
+function narrOn(){return false} // Narrative mode was removed
 function narrToggle(){try{localStorage.setItem('ss2narr',narrOn()?'0':'1')}catch(e){}start();window.scrollTo(0,document.body.scrollHeight)}
 function narrBranch(c){if(!narrOn()||dlc||turn>=TURNS)return;const fx=c.fx||{};
  const want=(fx.military>0||fx.threat)?'thal':fx.science>0?'core':'home';
@@ -995,7 +1007,7 @@ const TUT_TIPS=[
 'Last turn. After this, the final test begins.'];
 function tutBox(t){return TUT?`<div class="tut"><b>Tutorial</b> ${t}<button class="rs" style="float:none;display:block;margin:8px 0 0" onclick="TUT=null;start()">Quit tutorial</button></div>`:''}
 function tutAdd(t){if(!TUT||!t)return;app.querySelectorAll('.tut').forEach(x=>x.remove());const c=app.querySelector('.card');if(c)c.insertAdjacentHTML('beforebegin',tutBox(t))}
-function showTutorial(){TUT=null;app.innerHTML=`<div class="card"><h2>Tutorial</h2><p>Play a guided run. Tips explain how the game works as you go. Tutorial runs are not saved and do not count on the scoreboard.</p>${['Easy','Normal','Hard'].map(d=>{const i=EMPIRES.findIndex(e=>e.diff===d);return `<button onclick="TUT='${d}';pickEmp(${i})"><b>${EMPIRES[i].name}</b> <span class="diff d-${d}">${d}</span><small>${TUT_INTRO[d]}</small></button>`}).join('')}<button style="text-align:center" onclick="start()">Back</button></div>`}
+function showTutorial(){TUT=null;app.innerHTML=`<div class="card"><h2>Tutorial</h2><p>Play a guided run. Tips explain how the game works as you go. Tutorial runs are not saved, do not count on the scoreboard and are never timed. Normal runs give you 60 seconds per choice while Timed is on (the button next to Reset win stats); if time runs out, a choice is made for you at random.</p>${['Easy','Normal','Hard'].map(d=>{const i=EMPIRES.findIndex(e=>e.diff===d);return `<button onclick="TUT='${d}';pickEmp(${i})"><b>${EMPIRES[i].name}</b> <span class="diff d-${d}">${d}</span><small>${TUT_INTRO[d]}</small></button>`}).join('')}<button style="text-align:center" onclick="start()">Back</button></div>`}
 // ================= SYSTEMS: shared galaxy with players, AI empires, trade and war =================
 // One tick = one real hour (up to 72 catch up). Credits come from finished runs (see CREDITS).
 // <sim-core> (tools/systems-sim.mjs runs everything between the sim-core markers)
@@ -1976,7 +1988,7 @@ function guideWhenClear(){if(guideSeen()||!document.getElementById('sysroot'))re
 function start(){TUT=null;
  if(!ARCADE)return showName();
  app.innerHTML=`${splash()?`<img class="splash" src="${splash()}" alt="">`:''}<h1 class="logo"><span class="l1">STAR SOVEREIGN</span> <span class="l2">II</span></h1><p class="note" style="margin:0 0 10px">3rd Edition</p><p class="sub">Twelve turns. Then it arrives.</p><div class="introbox"><p class="intro">Build your empire, then defend it. Choose ⚔ to go in person: bigger rewards, real danger. Keep your people loyal and the Thal in check.</p></div><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="openHelp(RULES)">Rules</button><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="openHelp()">How to play</button><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="showBoard()">Scoreboard</button><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="showAch()">Achievements</button><button class="rs adminbtn" onclick="showAdmin()">Admin</button><button class="rs" style="float:none;margin:-6px 8px 14px 0" onclick="showTutorial()">Tutorial</button><button class="rs" style="float:none;margin:-6px 0 14px" onclick="showSystems()">Systems multiplayer <span class="alpha">ALPHA</span></button>${qPending()?`<p class="note down" style="margin:0 0 10px">Quantum debt: your next run has a 1 in 3 chance of ending in sudden quantum death.</p>`:''}<p class="note" style="margin:0 0 10px">Playing as <b>${escH(ARCADE.name)}</b></p>
- ${loadSave()?`<div class="card"><h2>Game in progress</h2><button onclick="resume()">Resume your game</button></div>`:''}<div class="card"><h2>Choose your empire</h2><p class="note" style="margin:0 0 10px">Skilled max: win rate a strong player reaches. Random: win rate picking at random.</p>${EMPIRES.map((e,i)=>`<button onclick="pickEmp(${i})"><b>${e.name}</b> <span class="diff d-${e.diff}">${e.diff}</span><small>${e.desc}<br><span class="warn">${e.perk}</span><br>${recLine(e.diff)}</small>${credLine(e.diff)}</button>`).join('')}<button class="rs" style="float:none;display:block;margin:6px auto 0" onclick="resetRec(this)">Reset win rates</button></div><div class="exp">${qOn()?`<button class="rs ${narrOn()?'on':''}" aria-pressed="${narrOn()}" onclick="narrToggle()">Narrative mode</button>`:''}<button class="rs ${qOn()?'on':''}" aria-pressed="${qOn()}" title="Experimental features: Quantum suicide and Narrative mode" onclick="qToggle()">Experimental</button></div>`;
+ ${loadSave()?`<div class="card"><h2>Game in progress</h2><button onclick="resume()">Resume your game</button></div>`:''}<div class="card"><h2>Choose your empire</h2><p class="note" style="margin:0 0 10px">Skilled max: win rate a strong player reaches. Random: win rate picking at random.</p>${EMPIRES.map((e,i)=>`<button onclick="pickEmp(${i})"><b>${e.name}</b> <span class="diff d-${e.diff}">${e.diff}</span><small>${e.desc}<br><span class="warn">${e.perk}</span><br>${recLine(e.diff)}</small>${credLine(e.diff)}</button>`).join('')}<div class="recbtns"><button class="rs" onclick="resetRec(this)">Reset win stats</button><button class="rs ${timedOn()?'on':''}" aria-pressed="${timedOn()}" title="60 seconds per choice; when time runs out, a choice is made at random" onclick="timedToggle()">Timed ${timedOn()?'on':'off'}</button></div></div>`;
 }
 function pickEmp(i){
  emp=EMPIRES[i];
@@ -2022,6 +2034,24 @@ function logBox(){return log.length?`<div class="card log">${log.slice().reverse
 function saveNote(){return trait&&trait.id==='daring'&&!closeUsed?' (your close call turns it into a bad injury)':cores?' (your backup core brings you back)':''}
 function progTag(c){if(!dlc)return '';const a=(c.fx.p||{})[route]||0,f=c.r?((c.ff||{}).p||{})[route]||0:0;if(!a&&!f)return '';return `<small class="up">+${a} ${PROGN[route]}${c.r?(f?` if it succeeds (+${f} if it fails)`:' if it succeeds'):''}</small>`}
 function statTag(c){const k=dlc?route:BEST[EK()];if(!((c.fx||{})[k]>0))return '';return `<small class="gain">${icon(k)} Builds ${LABELS[k]}${c.r?' if it succeeds':''}</small>`}
+// ---- Timed mode (on by default): 60 seconds per choice in the main story, the DLC and the final battle (never in the tutorial).
+// When time runs out a choice is made at random: the chosen button flashes, and the next screen says what was picked.
+function timedOn(){try{return localStorage.getItem('ss2timed')!=='0'}catch(e){return true}}
+function timedToggle(){try{localStorage.setItem('ss2timed',timedOn()?'0':'1')}catch(e){}start()}
+let TIMER=null,TIME_LIMIT=60;
+function stopTimer(){if(TIMER){clearInterval(TIMER.iv);TIMER=null}}
+function startTimer(){stopTimer();if(TUT||!timedOn()||typeof document==='undefined'||typeof app.querySelector!=='function')return;const card=app.querySelector('.card');if(!card)return;
+ const btns=[...card.querySelectorAll('button')].filter(b=>/^(choose|pickRoute|finale)\(/.test(b.getAttribute('onclick')||''));if(!btns.length)return;
+ const tok=String(Math.random()).slice(2);card.dataset.timer=tok;
+ const bar=document.createElement('div');bar.className='tbar';bar.innerHTML=`<i style="width:100%"></i><span>${TIME_LIMIT}s to choose</span>`;
+ const at=card.querySelector('.turn');at?at.after(bar):card.prepend(bar);let left=TIME_LIMIT;
+ TIMER={iv:setInterval(()=>{if(!document.querySelector(`[data-timer="${tok}"]`))return stopTimer();
+  if(document.getElementById('help')||document.hidden)return; // paused while help is open or the app is in the background
+  left--;bar.firstChild.style.width=(100*left/TIME_LIMIT)+'%';bar.classList.toggle('low',left<=10);bar.lastChild.textContent=left>0?`${left}s to choose`:"Time's up!";
+  if(left>0)return;stopTimer();const b=btns[Math.floor(Math.random()*btns.length)],label=((b.childNodes[0]||{}).textContent||b.textContent).trim();
+  btns.forEach(x=>x.disabled=true);b.classList.add('timepick');bar.lastChild.textContent=`Time's up! Chosen at random: ${label}`;
+  setTimeout(()=>{if(!document.querySelector(`[data-timer="${tok}"]`))return;b.disabled=false;b.click();
+   const c=app.querySelector('.card');if(c)c.insertAdjacentHTML('afterbegin',`<p class="timeup">⏱ Time ran out. Chosen at random: <b>${escH(label)}</b></p>`)},1500)},1000)}}
 function choiceBtn(c,i){
  if(!c.r)return `<button onclick="choose(${i})">${c.l}${progTag(c)}</button>`;
  const k=risk(c.r[0],c.r[1],c.r[2]);const lethal=k.death>=10;
@@ -2053,6 +2083,7 @@ function showEvent(){
  {const tt=turn;setTimeout(()=>{if(!dlc&&turn===tt&&!app.querySelector('.result'))tutAdd(TUT_TIPS[tt-1]||'')})}
  const e=deck[turn-1];
  app.innerHTML=header()+`<div class="card"><div class="turn">${dlc?'The Thal Reckoning, turn':'Turn'} ${turn} of ${dlc?DLC_TURNS:TURNS}</div><span class="beststat">${(()=>{const k=dlc?route:BEST[EK()];return `Best stat: ${icon(k)} ${LABELS[k]}`})()}</span><h2>${e.t}</h2><p>${e.x}</p>${(()=>{if(dlc)return '';if(e._echoTurn!==turn){e._echo=echoFor(e);e._echoTurn=turn}const a=e._echo||voiceFor(e);return a?`<p class="aside">${a}</p>`:''})()}${e.c.map(choiceBtn).join('')}${(dlc?news:DISPATCH[turn-1])?`<div class="dispatch"><span class="bn-tag"><i></i>GNN</span> ${dlc?news:DISPATCH[turn-1]}</div>`:''}</div>`+logBox();
+ startTimer();
 }
 function fmt(fx){const a=Object.entries(fx).filter(([k,v])=>v).map(([k,v])=>{const lbl=k==='threat'?'Thal Threat':LABELS[k];const good=k==='threat'?v<0:v>0;return `<span class="${good?'up':'down'}">${v>0?'+':''}${v} ${lbl}</span>`});return a.join(', ')}
 function apply(fx){const real={};for(const k in fx){if(k==='threat'){const o=threat;threat=Math.max(0,Math.min(10,threat+fx[k]));real[k]=threat-o}else{const o=S[k];S[k]=clamp(S[k]+fx[k]);real[k]=S[k]-o}}return real}
@@ -2118,6 +2149,7 @@ function showFinal(){
  ${R.map(([l,k])=>{const b=basePower(k);const t=b.stat+b.stab+b.en+b.ren-b.pen;return `<button onclick="pickRoute('${k}')">${l}<small class="eq"><span class="gauge"><i style="width:${Math.min(100,Math.round(100*t/NEED))}%"></i></span><span class="gv"><b>${t}</b> power, need ${NEED} <span class="need">(+0–3 luck)</span></span><span class="bd">${icon(k)}${b.stat} + ${icon('stability')}${b.stab} + ${icon('energy')}${b.en}${b.ren?` + ${icon('star')}${b.ren}`:''}${b.pen?` − ${icon('thal')}${b.pen}`:''}</span></small></button>`}).join('')}
  <p class="note">The Thal stab you in the back if their Threat is 5+ (−1) or 8+ (−3).</p></div>`;
  tutAdd('Pick which stat to fight with. Each option shows your power against what you need. Luck adds 0 to 3 on top.');
+ startTimer();
 }
 function pickRoute(k){
  route=k;const r=risk('combat',25,20);
@@ -2125,7 +2157,8 @@ function pickRoute(k){
  <button onclick="finale(false)">Command from the rear<small>Safe. No bonus.</small></button>
  <button class="personal ${r.death>=10?'lethal':''}" onclick="finale(true)">⚔ Lead from the front: +3 power<span class="risk">${r.death>=10?'☠ Deadly. ':''}Combat risk: ${r.inj}% injury (lose the bonus), ${r.death}% death${saveNote()}</span></button>
  ${qOn()&&qOnlyHope()?`<button class="quantum" onclick="finale('q')">Quantum suicide<small>${QFLAV[route]} It works 10% of the time: +10 power. The discarded branches don't go quietly. Win or lose, your next run then has a 1 in 3 chance of sudden quantum death${dlc?'':' (the DLC counts, if you go straight into it)'}.${TUT?' In the tutorial, nothing carries over.':''}</small></button>`:''}</div>`;
- tutAdd('Commanding from the rear is safe. Leading in person adds power but risks your life.'+(qOn()&&qOnlyHope()?' Quantum suicide only appears when nothing else can win. It is a long shot with a cost that follows you into your next run.':''));
+ tutAdd('Commanding from the rear is safe. Leading in person adds power but risks your life.');
+ startTimer();
 }
 function finale(front){
  const b=basePower(route);let p=b.stat+b.stab+b.en+b.ren+b.prog-b.pen+Math.floor(Math.random()*4),note='';
