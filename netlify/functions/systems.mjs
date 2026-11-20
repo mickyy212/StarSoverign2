@@ -58,6 +58,10 @@ const TERMS = { white: 0, claim: 45, reparations: 45, claimrep: 90, claims: 80, 
 const FORT = { home: 3, colony: 1 }, HOME_FIRE = { player: 10, ai: 8 };
 const CENTER = "center"; // wars with more than two factions fight one grand battle in central space
 const START_FLEET = { c: 3, f: 1, d: 0 }; // every new player starts with a small fleet (attack 6: about half an AI fleet)
+// The galactic council: each day one law is put to a vote; it passes if yes beats no (players and AI empires one vote each)
+// and then holds for the next day. AI empires vote by temperament (built-in rules, shown to players in advance).
+const LAWS = { ceasefire: "Ceasefire", bonds: "War bonds", accord: "Research accord", tithe: "Tithe" }, LAW_KEYS = Object.keys(LAWS);
+const AI_VOTE = { aggressive: { ceasefire: "no", bonds: "yes", accord: "no", tithe: "yes" }, merchant: { ceasefire: "yes", bonds: "no", accord: "yes", tithe: "no" }, wary: { ceasefire: "yes", bonds: "no", accord: "yes", tithe: "yes" } };
 const THREAT_AT = 0.8, THREAT_WAIT = 2, THREAT_REST = 36, WARN = 12, JOIN_ODDS = { aggressive: 1, wary: 0.7, merchant: 0.4 };
 const AI_DEF = [
   { id: "ai0", name: "Zhaal Brood", temper: "aggressive", base: -30, admiral: "Swarm-Marshal Grisk the Devourer", ships: { c: 6, f: 2, d: 0 }, planets: [["Gorr", "food"], ["Skarn", "ore"], ["Vex", "fuel"]] },
@@ -86,6 +90,11 @@ const hashNum = (s) => { let h = 7; for (const c of s) h = (h * 31 + c.charCodeA
 const admiralFor = (pid) => { const h = hashNum(pid); return `Admiral ${ADM_FIRST[h % 12]} ${ADM_LAST[(h >>> 4) % 10]}, ${ADM_EPI[(h >>> 8) % 8]}`; };
 const newFleet = (admiral, ships) => ({ admiral, ships: { c: 0, f: 0, d: 0, ...(ships || {}) }, dmg: { c: 0, f: 0, d: 0 }, up: { c: 0, f: 0, d: 0 }, loc: { s: "dock" } });
 const shipStat = (fl, k, s) => UPG[k].slice(0, fl.up[k] || 0).reduce((a, u) => a + (u[s] || 0), SHIP[k][s]);
+// Ship counters (rock-paper-scissors): corvettes swarm dreadnoughts, frigates hunt corvettes, dreadnoughts smash frigates.
+// Each ship type gets +50% attack, scaled by the share of the enemy's hull made of the type it counters.
+const COUNTER = { c: "d", f: "c", d: "f" }, COUNTER_BONUS = 0.5;
+const hullShare = (fleets) => { const h = { c: 0, f: 0, d: 0 }; for (const fl of fleets) for (const k of ["c", "f", "d"]) h[k] += fl.ships[k] * shipStat(fl, k, "hull"); const t = h.c + h.f + h.d || 1; return { c: h.c / t, f: h.f / t, d: h.d / t }; };
+const powerVs = (fl, foes) => { const sh = hullShare(foes); return ["c", "f", "d"].reduce((a, k) => a + fl.ships[k] * shipStat(fl, k, "atk") * (1 + COUNTER_BONUS * sh[COUNTER[k]]), 0) * (1 + ((fl.buff || {}).atk || 0)); };
 const power = (fl) => ["c", "f", "d"].reduce((a, k) => a + fl.ships[k] * shipStat(fl, k, "atk"), 0) * (1 + ((fl.buff || {}).atk || 0));
 const hull = (fl) => ["c", "f", "d"].reduce((a, k) => a + fl.ships[k] * shipStat(fl, k, "hull"), 0) - (fl.dmg.c + fl.dmg.f + fl.dmg.d);
 const siegeBonus = (fl) => Math.min(3, Math.floor(["c", "f", "d"].reduce((a, k) => a + fl.ships[k] * shipStat(fl, k, "siege"), 0) * (1 + ((fl.buff || {}).siege || 0)) / 6));
@@ -109,7 +118,7 @@ function cleanSys(s, pid, slot, prev) {
   const res = {}; for (const r of RES) res[r] = int(s.res && s.res[r], 0, 1e6);
   const planets = (Array.isArray(s.planets) ? s.planets : []).slice(0, 12).map((p) => ({
     n: txt(p.n, 20) || "World", r: RES.includes(p.r) ? p.r : "food",
-    st: ["home", "unknown", "explored", "colony"].includes(p.st) ? p.st : "unknown", from: ref(p.from) || undefined, def: int(p.def, 0, 3), age: p.age == null ? undefined : int(p.age, 0, 1e6) }));
+    st: ["home", "unknown", "explored", "colony"].includes(p.st) ? p.st : "unknown", from: ref(p.from) || undefined, def: int(p.def, 0, 3), role: ["mine", "fort", "yard", "lab"].includes(p.role) ? p.role : undefined, age: p.age == null ? undefined : int(p.age, 0, 1e6) }));
   const routes = (Array.isArray(s.routes) ? s.routes : []).slice(0, 8).map((t) => ({
     rid: String(t.rid || "").replace(/[^A-Za-z0-9]/g, "").slice(0, 16), to: ref(t.to),
     a: { r: RES.includes(t.a && t.a.r) ? t.a.r : "food", n: int(t.a && t.a.n, 1, 9) },
@@ -280,7 +289,7 @@ async function galaxy(body, srv, trusted) {
   const live = () => wars.filter((w) => !w.ended);
   const warOf = (x, y) => live().find((w) => (w.sides[0].includes(x) && w.sides[1].includes(y)) || (w.sides[1].includes(x) && w.sides[0].includes(y)));
   const sideOf = (w, x) => (w.sides[0].includes(x) ? 0 : w.sides[1].includes(x) ? 1 : -1);
-  const exAdd = (w, side, n) => { w.ex ||= [0, 0]; w.ex[side] = Math.min(100, Math.round((w.ex[side] + n) * 10) / 10); return n; };
+  const exAdd = (w, side, n) => { w.ex ||= [0, 0]; w.ex[side] = Math.min(100, Math.round((w.ex[side] + n) * 1000) / 1000); return n; }; // kept to 0.001: time adds 0.017 a step (rounding to 0.1 used to drop it)
   const popOf = (owner, home) => (home ? (isAI(owner) ? 24 : (P(owner) || {}).pop || 8) : 8);
   const shipVal = (b, a) => ["c", "f", "d"].reduce((t, k) => t + Math.max(0, (b[k] || 0) - (a[k] || 0)) * EX.ship[k], 0);
   const termCost = (w, term, foeSide) => Math.round(TERMS[term] * (1 - EX.discount * ((w.ex || [0, 0])[foeSide] || 0) / 100));
@@ -288,7 +297,7 @@ async function galaxy(body, srv, trusted) {
   const opinion = (a, pid, d) => { a.opinion[pid] = Math.max(-100, Math.min(100, (a.opinion[pid] ?? a.base) + d)); };
   const ev = (w, e) => { w.events.push({ ...e, t: e.t || now }); w.events = w.events.slice(-30); };
   const planetsOf = (x) => (isAI(x) ? ((A(x) || {}).planets || []).map((p, i) => ({ n: p.n, i, home: !!p.home, ok: !p.owner })) : ((P(x) || {}).planets || []).map((p, i) => ({ n: p.n, i, home: p.st === "home", ok: p.st === "home" || p.st === "colony" })));
-  const pdef = (owner, i) => { if (isAI(owner)) { if (isRift(owner)) return 0; const p = ((A(owner) || {}).planets || [])[i] || {}; return p.def ?? (p.home ? 3 : 1); } return (((P(owner) || {}).planets || [])[i] || {}).def || 0; };
+  const pdef = (owner, i) => { if (isAI(owner)) { if (isRift(owner)) return 0; const p = ((A(owner) || {}).planets || [])[i] || {}; return p.def ?? (p.home ? 3 : 1); } const pl = (((P(owner) || {}).planets || [])[i] || {}); return Math.min(3, (pl.def || 0) + (pl.role === "fort" && pl.st === "colony" ? 1 : 0)); }; // a Fortress colony gets one free defense level
   const occupied = (w, owner, i) => w.occ.find((o) => o.owner === owner && o.i === i);
   const isRift = (x) => isAI(x) && !!(A(x) || {}).rift;
   const gone = (x) => !F(x) || (isAI(x) && !!A(x).annexedBy);
@@ -396,7 +405,7 @@ async function galaxy(body, srv, trusted) {
     const mult = (ids, foes) => ids.map((x) => (1 + (site === x ? HOLD_BONUS + (((F(x) || {}).fleet || {}).buff || {}).home || 0 : 0)) * (foes.some(isRift) ? 1 + LANCE * techOf(x, "lance") : 1));
     const mA = mult(sideA, sideB), mB = mult(sideB, sideA);
     for (let r = 0; r < 6; r++) {
-      const pa = (fa.reduce((s, f, j) => s + power(f) * mA[j], 0) + gA) * luck(), pb = (fb.reduce((s, f, j) => s + power(f) * mB[j], 0) + gB) * luck();
+      const pa = (fa.reduce((s, f, j) => s + powerVs(f, fb) * mA[j], 0) + gA) * luck(), pb = (fb.reduce((s, f, j) => s + powerVs(f, fa) * mB[j], 0) + gB) * luck();
       for (const f of fb) hurt(f, (pa * hull(f)) / Math.max(1, fb.reduce((s, g) => s + hull(g), 0)));
       for (const f of fa) hurt(f, (pb * hull(f)) / Math.max(1, fa.reduce((s, g) => s + hull(g), 0)));
       const ra = fa.reduce((s, f) => s + hull(f), 0) / Math.max(1, startA), rb = fb.reduce((s, f) => s + hull(f), 0) / Math.max(1, startB);
@@ -638,6 +647,20 @@ async function galaxy(body, srv, trusted) {
   if (players.length && crisisOn()) crisisStep();
 
   // ---------- AI peacetime behavior: hourly steps ----------
+  // ---- galactic council: settle yesterday's vote when the day turns, then put today's law to the vote ----
+  const voters = () => ai.list.filter((a) => !a.annexedBy && !a.rift && !players.some((p) => p.pid === a.overlord));
+  { const day = dayOf(); let c = season.council;
+    if (!c) c = season.council = { day, motion: LAW_KEYS[(day + season.n) % LAW_KEYS.length], votes: {}, law: null, last: null };
+    if (c.day < day) {
+      const aiv = {}; for (const a of voters()) aiv[a.id] = AI_VOTE[a.temper][c.motion];
+      const all = [...Object.values(c.votes), ...Object.values(aiv)], yes = all.filter((v) => v === "yes").length, no = all.filter((v) => v === "no").length, passed = yes > no;
+      const from = season.start + (day - 1) * DAY;
+      c.law = passed ? { k: c.motion, from, until: from + DAY } : null;
+      c.last = { k: c.motion, yes, no, passed, ai: aiv };
+      for (const pl of players) tell(pl.pid, { t: "council", msg: `The galactic council voted on ${LAWS[c.motion]}: ${yes} yes, ${no} no. ${passed ? "It is law for the next 24 hours." : "It failed."}` });
+      c.day = day; c.motion = LAW_KEYS[(LAW_KEYS.indexOf(c.motion) + 1) % LAW_KEYS.length]; c.votes = {};
+    } }
+  const lawAt = (t) => { const l = (season.council || {}).law; return l && t >= l.from && t < l.until ? l.k : null; };
   const steps = Math.min(48, Math.floor((now - ai.last) / HOUR));
   for (let s = 0; s < steps; s++) {
     const t = ai.last + HOUR, ht = Math.max(0, Math.min(1, (t - season.start) / CRISIS_AT)), dy = 1 + Math.floor((t - season.start) / DAY);
@@ -646,14 +669,14 @@ async function galaxy(body, srv, trusted) {
       for (const p of a.planets) if (!p.owner) a.res[p.r] = Math.min(400, (a.res[p.r] || 0) + 3);
       for (const pl of players) if (pl.vassalOf === a.id) for (const r of ["food", "ore", "fuel"]) a.res[r] = Math.min(400, (a.res[r] || 0) + 1);
       // The AI grows faster every day of the season and in every new season; dreadnoughts appear as the week goes on.
-      if (Math.random() < AI_GROW[a.temper] * (1 + ht) * Math.sqrt(aiScale(season.n, season.bonus || 0))) a.fleet.ships[Math.random() < 0.12 * ht ? "d" : Math.random() < 0.7 - 0.2 * ht ? "c" : "f"]++;
+      if (Math.random() < AI_GROW[a.temper] * (1 + ht) * Math.sqrt(aiScale(season.n, season.bonus || 0)) * (lawAt(t) === "tithe" ? 2 : 1)) a.fleet.ships[Math.random() < 0.12 * ht ? "d" : Math.random() < 0.7 - 0.2 * ht ? "c" : "f"]++;
       // and it refits its fleet on day 3 and day 5
       { const up = Math.min(3, Math.max(0, season.n - 2)) + (dy >= 3 ? 1 : 0) + (dy >= 5 ? 1 : 0); for (const k of ["c", "f"]) a.fleet.up[k] = Math.max(a.fleet.up[k] || 0, Math.min(3, k === "c" ? up : up - 1)); }
       for (const pl of players) { const o = a.opinion[pl.pid] ?? a.base; a.opinion[pl.pid] = o + Math.sign(a.base - o); }
       if (a.overlord || ai.endedAt || t >= season.start + CRISIS_AT || crisisOn()) continue;
       // Hostile empires wait. Once a player's fleet gets close to theirs, they threaten; if the player keeps it up, they strike first.
       for (const pl of players) {
-        if (pl.vassalOf || mutual(a.id, pl.pid) || warOf(a.id, pl.pid) || (a.opinion[pl.pid] ?? a.base) > -20 || t - ((a.struck || {})[pl.pid] || 0) < THREAT_REST * HOUR) { delete a.threat[pl.pid]; continue; }
+        if (lawAt(t) === "ceasefire" || pl.vassalOf || mutual(a.id, pl.pid) || warOf(a.id, pl.pid) || (a.opinion[pl.pid] ?? a.base) > -20 || t - ((a.struck || {})[pl.pid] || 0) < THREAT_REST * HOUR) { delete a.threat[pl.pid]; continue; }
         const ratio = power(pl.fleet) / Math.max(1, power(a.fleet));
         if (ratio < THREAT_AT * 0.75) { delete a.threat[pl.pid]; continue; }
         if (ratio < THREAT_AT) continue;
@@ -686,7 +709,7 @@ async function galaxy(body, srv, trusted) {
           // the first invasion of a season is one empire; later ones bring the others along
           const first = ai.invDone === 0 || players.length === 1;
           const w = startWar(lead.id, target.pid, first); w.invasion = true;
-          tellAll(`${w.sides[0].length > 1 ? "The AI empires move together! " : "An AI empire attacks! "}${w.sides[0].map(nameOf).join(", ")} ${w.sides[0].length > 1 ? "invade" : "invades"} ${nameOf(target.pid)}. Any player can join the defense from the Wars panel.`);
+          tellAll(`${w.sides[0].length > 1 ? "The AI empires move together! " : "An AI empire attacks! "}${w.sides[0].map(nameOf).join(", ")} ${w.sides[0].length > 1 ? "invade" : "invades"} ${nameOf(target.pid)}. Any player can join the defense from the War tab.`);
         }
         ai.invDone++; ai.invadeAt = INVASIONS[ai.invDone] != null ? season.start + INVASIONS[ai.invDone] : 0; ai.warned = false;
       }
@@ -700,8 +723,10 @@ async function galaxy(body, srv, trusted) {
   // AI makes peace: it enforces a demand when it can, or accepts white peace after losing its fleet.
   for (const w of live()) for (const x of w.sides.flat()) if (isAI(x) && !w.crisis && !w.ended) {
     const s = sideOf(w, x), mine = w.score[x] || 0, foe = w.sides[1 - s][0]; w.ex ||= [0, 0];
-    // invasions are out for conquest: they don't settle for reparations
-    if (!w.invasion && mine >= termCost(w, "reparations", 1 - s) && foe && !isAI(foe)) await makePeace(w, x, "reparations", foe, 0, ["ore", "fuel", "food"]);
+    // An AI that is winning presses on: it lands on the outer worlds and besieges the home world, and taking the home world
+    // makes the player its vassal. It only settles once its own side is tired (50% exhaustion): for reparations if its
+    // war score covers them (never in an invasion), otherwise it accepts a white peace. A beaten AI with no fleet also accepts white peace.
+    if (w.ex[s] >= 50 && !w.invasion && mine >= termCost(w, "reparations", 1 - s) && foe && !isAI(foe)) await makePeace(w, x, "reparations", foe, 0, ["ore", "fuel", "food"]);
     else if ((w.beaten[x] && !alive(A(x).fleet) && (w.score[foe] || 0) > mine) || w.ex[s] >= 50) w.aiWhite = true;
   }
 
@@ -776,10 +801,17 @@ async function galaxy(body, srv, trusted) {
     out.joined = (P(me) || {}).joined || 0;
     out.srv = sid;
   } else if (!self) fail("Open Systems first to claim a system.");
+  else if (op === "vote") {
+    const c = season.council;
+    if (!self || !c) fail("Join the galaxy to vote.");
+    else if (!["yes", "no"].includes(body.v)) fail("Vote yes or no.");
+    else { c.votes[me] = body.v; out.voted = body.v; }
+  }
   else if (op === "war") {
     const t = ref(body.target);
     if (!F(t) || t === me || (isAI(t) && A(t).annexedBy)) fail("No such system.");
     else if (isRift(t)) fail("You are already at war with the Reflection.");
+    else if (lawAt(now) === "ceasefire") fail("The council's ceasefire holds until tomorrow. No new wars today.");
     else if (crisisOn() && !season.crisis?.won) fail("The rifts are open. Every war waits until they close.");
     else if (mutual(me, t)) fail("You can't declare war on an ally. End the alliance first.");
     else { const w = startWar(me, t); await tell(t, { t: "war", msg: `${nameOf(me)} has declared war on you! ${self.fleet.admiral} is coming.` }); out.war = w.id; }
@@ -861,7 +893,9 @@ async function galaxy(body, srv, trusted) {
   for (const p of players) { const j = JSON.stringify(p); if (j !== orig.get(p.pid)) await store.setJSON(p.pid, p); }
   for (const pid in inboxes) if (players.some((p) => p.pid === pid) && JSON.stringify(inboxes[pid]) !== (origIn[pid] || "[]")) await store.setJSON("in-" + pid, inboxes[pid]);
   const view = (a) => ({ ...a, opinion: a.opinion[me] ?? a.base, envoyAt: undefined, threat: undefined, threatens: !!(a.threat || {})[me], strikeAt: (a.threat || {})[me] ? Math.max(a.threat[me] + THREAT_WAIT * HOUR, (a.warAt || 0) + 12 * HOUR) : 0, myAlly: a.allies.includes(me) });
-  const seasonView = { n: season.n, start: season.start, day: dayOf(), heat: Math.round(heat() * 100) / 100, ends: season.start + SEASON_DAYS * DAY, crisisAt: season.start + CRISIS_AT,
+  const cc = season.council, councilView = cc && { motion: cc.motion, mine: cc.votes[me] || null, yes: Object.values(cc.votes).filter((v) => v === "yes").length, no: Object.values(cc.votes).filter((v) => v === "no").length,
+    ai: Object.fromEntries(voters().map((a) => [a.id, AI_VOTE[a.temper][cc.motion]])), law: cc.law, last: cc.last };
+  const seasonView = { council: councilView, n: season.n, start: season.start, day: dayOf(), heat: Math.round(heat() * 100) / 100, ends: season.start + SEASON_DAYS * DAY, crisisAt: season.start + CRISIS_AT,
     crisis: season.crisis ? { at: season.crisis.at, won: season.crisis.won || 0, rifts: ai.list.filter((a) => a.rift).length, sealed: ai.list.filter((a) => a.rift && a.annexedBy).length } : null,
     invasions: INVASIONS.map((d) => season.start + d), chronicle: season.chronicle.slice(-3) };
   return Response.json({ ...out, now, server: { id: sid, name: srv.name, main: !!srv.main, yours: srv.owner === me, resetAt: srv.resetAt || 0 }, rulesGen: { GEN_TYPES, GUP, bonus: season.bonus || 0 }, season: seasonView, systems: players, ai: ai.list.map(view), scourge: { invadeAt: ai.invadeAt, endedAt: ai.endedAt, free: freeAI().length, next: !ai.endedAt && freeAI().length ? (nextTarget() || {}).pid || null : null }, rulesAI: { THREAT_AT }, ranks: { RANKS, PROMOTE, DOCTRINE }, wars: wars.filter((w) => !w.ended || now - w.ended < 10 * 60000), max: MAX, rules: { SHIP, UPG, TERMS, STEP, TRAVEL, TECH, REFLECT } }, { status, headers });
