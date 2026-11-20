@@ -422,6 +422,11 @@ button.quantum{border-color:#7d4bd6;background:#21173a}button.quantum small{colo
 .exp{display:flex;align-items:center;justify-content:center;gap:8px;margin:14px 0 4px;font-size:20px;color:var(--dim)}.exp span{opacity:.8}.exp{flex-wrap:wrap}.exp .rs{float:none;margin:0}.exp .rs.on{border-color:#7d4bd6;color:#cdb6ff}
 .voice{font-size:20px;color:#b9a6e8;margin:-4px 0 12px;padding-left:10px;border-left:4px solid #4b3a7a}
 .aside{font-size:20px;color:#8f98b8;margin:-4px 0 12px}
+.drama{margin:10px 0;padding:8px 10px;border-left:3px solid #c9a24a;background:rgba(201,162,74,.07)}.drama p{margin:4px 0}.dvoice,.dlean{display:block;font-size:18px;color:#8f98b8;font-style:italic}.storytag{margin:0 0 10px;color:#c9a24a;font-size:20px}.storytag b{display:block}
+/* Home screen: centred in the phone's height, compacted so every menu fits without scrolling */
+.home{position:relative;top:13px;min-height:calc(100vh - 58px);min-height:calc(100dvh - 58px);display:flex;flex-direction:column;justify-content:center}.home .splash{margin-top:0;border-top:4px solid var(--edge)}.home.hasave .introbox{display:none}.home.hasave .sub{display:none}@media (max-height:800px){.home.hasave .splash{}.home.hasave .mplay,.home.hasave .msys{padding:5px 10px 4px}.home.hasave .logo{margin:6px 0 2px}}
+@media (max-height:1000px){.home .splash{aspect-ratio:120/34;height:auto}.home .logo{font-size:34px;margin:10px 0 4px}.home .sub{font-size:16px;margin:0 0 6px}.home .introbox{padding:5px 9px;margin:0 0 8px}.home .intro{font-size:16px;line-height:1.25;margin:0}.home .mplay,.home .msys{padding:7px 10px 6px;margin:5px 0}.home .mplay small,.home .msys small{font-size:13px;margin-top:2px}.home .mgrid{gap:6px;margin:0 0 4px}.home .mgrid button{padding:6px}.home .mgrid small{font-size:13px}.home .mhelp{padding:6px;margin:5px 0}.home .note{margin:0 0 4px!important;font-size:17px}}
+@media (max-height:800px){.home .introbox{display:none}.home .splash{}}@media (max-height:680px){.home .sub{display:none}.home .splash{}.home .logo{margin:6px 0 2px}.home .mplay,.home .msys{padding:5px 10px 4px;margin:4px 0}.home .mgrid button{padding:4px}.home .mhelp{padding:4px;margin:4px 0}.home .logo{font-size:28px;margin:4px 0 0}.home .mgrid small,.home .mplay small{display:none}}@media (max-height:760px){.home .logo{font-size:30px}.home .mplay,.home .msys{padding:5px 10px 4px}}.arena.cine{height:auto!important;padding:0;background-image:none!important;background:#05070f!important;position:relative}.arena.cine canvas{display:block;width:100%;height:auto;image-rendering:pixelated}.vox{display:none;position:absolute;left:6px;right:6px;bottom:6px;font-size:17px;line-height:1.25;text-align:left;background:rgba(5,8,18,.8);padding:4px 8px}button.skipanim{position:absolute;right:6px;top:6px;width:auto;display:inline-block;margin:0;padding:2px 10px;font-size:15px;min-height:0;opacity:.85}.castkey{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin:0 0 12px;padding:6px 8px;border:2px solid var(--line);background:rgba(0,0,0,.25);font-size:18px}.ckh{width:100%;color:#8f98b8;font-size:16px}.ck{display:inline-flex;align-items:center;gap:5px}.ck i{width:12px;height:12px;display:inline-block}.ck b{font-weight:normal}.nm{font-weight:normal}.chron ol{padding-left:0;list-style:none;margin:10px 0}.chron li{margin:0 0 8px}.ctn{color:#8f98b8;font-size:16px;margin-right:4px}.cend{border-top:1px solid var(--line);padding-top:8px}
 #sysroot h3{font-size:20px;color:var(--acc);margin:16px 0 6px}.sysmsg{background:#13283a;border-left:4px solid #3f86b8;padding:4px 8px;margin:0 0 8px;font-size:20px}
 .sysrow{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 10px;font-size:20px;margin:0 0 4px}.sysrow i,.resgrid i{font-style:normal;color:#8f98b8}
 .ubar{display:inline-block;width:70px;height:10px;background:#0a1020;border:2px solid var(--edge);vertical-align:middle}.ubar i{display:block;height:100%}
@@ -929,7 +934,7 @@ const DLC_EVENTS=[
 ];
 function startDLC(){dlc=true;prog=0;turn=1;const prevCm=RUNA&&RUNA.cm;RUNA={pc:0,pf:0,reboot:false};addDlcCameo(prevCm);news=Math.random()<.5&&DLC_NEWS_START_EMP[EK()]?DLC_NEWS_START_EMP[EK()]:DLC_NEWS_START;deck=buildDLCDeck();log=[];qStartRun(DLC_TURNS);
  const fx=apply({energy:4,stability:3});saveGame(1);
- app.innerHTML=header()+`<div class="card"><div class="turn">The Thal Reckoning</div><h2>The Swarm is gone. The Thal are not.</h2><p>Your victory buys you goodwill at home. The Thal Hegemony, which spent the war filing complaints, now wants your stars. You have 10 turns to settle this, using your ${LABELS[route]}.</p><div class="delta">${fmt(fx)||''}</div><p class="note">Victory celebrations: +4 Energy, +3 Stability (up to the cap of 15).</p><button onclick="showEvent()">Begin</button></div>`}
+ app.innerHTML=header()+`<div class="card"><div class="turn">The Thal Reckoning</div><h2>The Swarm is gone. The Thal are not.</h2>${(()=>{const t=STORY[storyKey()];return t?`<div class="storytag"><b>${t.name}</b> ${t.tag}</div>${castKey()}`:''})()}<p>Your victory buys you goodwill at home. The Thal Hegemony, which spent the war filing complaints, now wants your stars. You have 10 turns to settle this, using your ${LABELS[route]}.</p><div class="delta">${fmt(fx)||''}</div><p class="note">Victory celebrations: +4 Energy, +3 Stability (up to the cap of 15).</p><button onclick="showEvent()">Begin</button></div>`}
 function showDLCFinal(){LAST_SCREEN=showDLCFinal;
  const b=basePower(route);const t=b.stat+b.stab+b.en+b.ren+b.prog-b.pen;
  const goal={science:'Prove technological supremacy',influence:'Bring the Thal into your federation',military:'Break the Thal navy'}[route];
@@ -2529,12 +2534,12 @@ async function showSystems(quick){
 function guideWhenClear(){if(guideSeen()||!document.getElementById('sysroot'))return;if(document.querySelector('.achban'))return setTimeout(guideWhenClear,600);guideStart()}
 function start(){TUT=null;
  if(!ARCADE)return showName();
- app.innerHTML=`${splash()?`<img class="splash" src="${splash()}" alt="">`:''}<h1 class="logo"><span class="l1">STAR SOVEREIGN</span> <span class="l2">II</span></h1><p class="note" style="margin:0 0 10px">3rd Edition</p><p class="sub">Twelve turns. Then it arrives.</p><div class="introbox"><p class="intro">Build your empire, then defend it. Choose ⚔ to go in person: bigger rewards, real danger. Keep your people loyal and the Thal in check.</p></div>${loadSave()?`<button class="mplay" onclick="resume()">▶ Resume your game<small>Pick up where you left off</small></button>`:''}
+ app.innerHTML=`<div class="home${loadSave()?' hasave':''}">${splashW()?`<img class="splash" src="${splashW()}" alt="">`:''}<h1 class="logo"><span class="l1">STAR SOVEREIGN</span> <span class="l2">II</span></h1><p class="note" style="margin:0 0 10px">3rd Edition</p><p class="sub">Twelve turns. Then it arrives.</p><div class="introbox"><p class="intro">Build your empire, then defend it. Choose ⚔ to go in person: bigger rewards, real danger. Keep your people loyal and the Thal in check.</p></div>${loadSave()?`<button class="mplay" onclick="resume()">▶ Resume your game<small>Pick up where you left off</small></button>`:''}
  <button class="mplay" onclick="showEmpires()">▶ Play<small>Choose your empire</small></button>
  <button class="msys" onclick="mpGate()">Systems multiplayer <span class="alpha">ALPHA</span><small>The shared galaxy</small></button>
  <div class="mgrid"><button onclick="showShop()">Shop<small>${credits()} credits</small></button><button onclick="showBoard()">Scoreboard<small>Latest 20 runs</small></button>
  <button onclick="showAch()">Achievements<small>${ACHS.filter(a=>achGot()[a.id]).length} / ${ACHS.length}</small></button><button onclick="showTutorial()">Tutorial<small>Learn the basics</small></button></div>
- <button class="mhelp" onclick="openHelp(RULES)">Rules</button><button class="rs adminbtn" onclick="showAdmin()">Admin</button>${qPending()?`<p class="note down" style="margin:0 0 10px">Quantum debt: your next run has a 1 in 3 chance of ending in sudden quantum death.</p>`:''}<p class="note" style="margin:0 0 10px">Playing as <b>${escH(ARCADE.name)}</b></p>`;
+ <button class="mhelp" onclick="openHelp(RULES)">Rules</button><button class="rs adminbtn" onclick="showAdmin()">Admin</button>${qPending()?`<p class="note down" style="margin:0 0 10px">Quantum debt: your next run has a 1 in 3 chance of ending in sudden quantum death.</p>`:''}<p class="note" style="margin:0 0 10px">Playing as <b>${escH(ARCADE.name)}</b></p></div>`;
 }
 // Play: choose your empire (win stats, Reset win stats and Timed live here).
 function showEmpires(){TUT=null;
@@ -2657,7 +2662,7 @@ function itemPower(){const t=(RUNA.it||{}).reinf;if(t==null)return {p:0,n:''};co
 
 // ---- Timed mode (on by default): 30 seconds per choice, 20 for the last decision (rear or front, or the DLC's final move); never in the tutorial.
 // When time runs out a choice is made at random: the chosen button flashes, and the next screen says what was picked.
-function timedOn(){try{return localStorage.getItem('ss2timed')!=='0'}catch(e){return true}}
+function timedOn(){try{return localStorage.getItem('ss2timed')==='1'}catch(e){return false}}
 function timedToggle(){try{localStorage.setItem('ss2timed',timedOn()?'0':'1')}catch(e){}showEmpires()}
 let TIMER=null,TIME_LIMIT=30,TIME_FINAL=20,TIME_FIRST=0;
 function stopTimer(){if(TIMER){clearInterval(TIMER.iv);TIMER=null}}
@@ -2681,7 +2686,7 @@ function choiceBtn(c,i){
 }
 function vignette(t){let sd=[...t].reduce((a,c)=>a*31+c.charCodeAt(0)>>>0,7)||7;const rn=()=>(sd=(sd*16807)%2147483647)/2147483647;
  return spriteFn('vig:'+t,80,28,(()=>{const pal=[['#c9845a','#6e3a2c'],['#7fb069','#3d5a30'],['#9d84cc','#4c3a72'],['#6fb7c4','#2f5f6a'],['#d9c27a','#7a6a30']][rn()*5|0];
-  const pr=6+(rn()*10|0),px=10+(rn()*60|0),py=rn()<.5?pr+2:28+pr*.4,kind=rn();const stars=new Set();for(let k=0;k<26;k++)stars.add((rn()*80|0)+','+(rn()*28|0));
+  const pr=6+(rn()*10|0),px=10+(rn()*60|0),py=rn()<.5?pr+2:28+pr*.4,kind=rn();const stars=new Set();for(let k=0;k<26;k++)stars.add((rn()*80|0)+','+(rn()*34|0));
   const sx=20+(rn()*40|0),sy=6+(rn()*16|0);const T=t.toLowerCase();const spr=/swarm|bio/.test(T)?'bug':/thal|ledger|wager|census|embassy|audit|bill|ultimatum|election|envoy|spy/.test(T)?'thal':/fleet|pirate|desert|border|skirmish|refugee|smuggl/.test(T)?'ship':null;
   return (x,y)=>{const d=Math.hypot(x-px,y-py);if(d<=pr){const sh=(x-px+(y-py)*.5)/pr;return sh>.35?pal[1]:(sh>.15&&(x+y)%2?pal[1]:pal[0])}
    if(spr){const R={ship:['aa.........','.aab.......','.abbbb.....','aabbbbbbcc.','.abbbb.....','.aab.......','aa.........'],bug:['.r.....r.','..rdddr..','.ddddddd.','rddoyoddr','.ddddddd.','..rdddr..','.r.....r.'],thal:['...gggggggg','..glllllllg','.glllldlllg','glllllllllg','.gllllllllg','..ggggggggg']}[spr],P={a:'#2f5a96',b:'#9fd8ff',c:'#fff',r:'#a01a2c',d:'#3c0814',o:'#ff3d33',y:'#ffcf9e',g:'#3d5750',l:'#bcd0c6'};for(const [ox,oy] of [[0,0],[13,6],[-12,8]]){const r=R[y-sy-oy];if(r&&x>=sx+ox&&x<sx+ox+r.length){const c=P[r[x-sx-ox]];if(c)return c}}}
@@ -2694,6 +2699,15 @@ function splash(){return spriteFn('splash',120,52,(()=>{let sd=11;const rn=()=>(
  const EY=new Set();for(let k=0;k<7;k++){const ex=80+(rn()*30|0),ey=6+(rn()*30|0);EY.add(ex+','+ey);EY.add((ex+3)+','+ey)}
  return (x,y)=>{for(const [sx,sy,rows,pal] of SP){const r=rows[y-sy];if(r&&x>=sx&&x<sx+r.length){const c=pal[r[x-sx]];if(c)return c}}
   const d=Math.hypot(x-104,y-58);if(d<26){const sh=(x-104+(y-58)*.3)/26;return sh>-.05?'#3c2025':(sh>-.25&&(x+y)%2)?'#6e3a2c':'#b8704a'}
+  if(EY.has(x+','+y))return '#ff3d33';
+  if(st.has(x+','+y))return (x+y)%4?'#5a6796':'#ffffff';
+  const v=Math.sin(x*.07)+Math.cos(y*.11);if(v>1.3&&(x+y)%2)return '#1c2350';return '#0c1228'}})())}
+function splashW(){return spriteFn('splashw',120,34,(()=>{let sd=11;const rn=()=>(sd=(sd*16807)%2147483647)/2147483647;const st=new Set();for(let k=0;k<70;k++)st.add((rn()*120|0)+','+(rn()*34|0));
+ const ship=["aa.........",".aab.......",".abbbb.....","aabbbbbbcc.",".abbbb.....",".aab.......","aa........."],bug=[".r.....r.","..rdddr..",".ddddddd.","rddoyoddr",".ddddddd.","..rdddr..",".r.....r."];
+ const SP=[];[[16,19],[26,9],[28,25],[40,16]].forEach(([x,y])=>SP.push([x,y,ship,{a:'#2f5a96',b:'#9fd8ff',c:'#ffffff'}]));
+ const EY=new Set();for(let k=0;k<7;k++){const ex=80+(rn()*30|0),ey=4+(rn()*22|0);EY.add(ex+','+ey);EY.add((ex+3)+','+ey)}
+ return (x,y)=>{for(const [sx,sy,rows,pal] of SP){const r=rows[y-sy];if(r&&x>=sx&&x<sx+r.length){const c=pal[r[x-sx]];if(c)return c}}
+  const d=Math.hypot(x-100,y-52);if(d<26){const sh=(x-100+(y-52)*.3)/26;return sh>-.05?'#3c2025':(sh>-.25&&(x+y)%2)?'#6e3a2c':'#b8704a'}
   if(EY.has(x+','+y))return '#ff3d33';
   if(st.has(x+','+y))return (x+y)%4?'#5a6796':'#ffffff';
   const v=Math.sin(x*.07)+Math.cos(y*.11);if(v>1.3&&(x+y)%2)return '#1c2350';return '#0c1228'}})())}
@@ -2737,6 +2751,40 @@ function dlcHeadline(e,i,c,failed){const pick=a=>a[Math.floor(Math.random()*a.le
  const E=DLC_NEWS_EMP[EK()];if(E&&!failed&&Math.random()<1/3){const k=Object.keys((c.fx&&c.fx.p)||{}).sort((a,b)=>c.fx.p[b]-c.fx.p[a])[0]||'none';return pick(E[k]||E.none)}
  return opts.length?pick(opts):''}
 const DLC_NEWS_START='Swarm gone. Galactic markets rally. So do Thal lawyers.';
+// ---- DLC drama layer: a storyline per empire (its best stat), an aftermath after every decision, a voice that follows your leaning ----
+// STORY[k]: k = the empire's best stat. DRAMA[k][event title] = [per choice: {s: aftermath on success, f: aftermath on a failed risk}]. Missing entries show nothing (old behaviour).
+const STORY={
+ military:{name:'The Long Cold War',tag:'Two armed empires. Every move forces the other\'s.'},
+ influence:{name:'The Split Throne',tag:'The Thal are two factions. One leader will deal. One wants a coup.'},
+ science:{name:'The Last Edge',tag:'A weapon to end the war first, or an edge so large no one dares.'}};
+const DRAMA={military:{"The Bill": [{"s": "Broodmother Ysk signs the transfer herself and keeps the stylus. \"They will send another,\" she says. Across the border, two Thal squadrons stand down. Grand Admiral Serek Mor files the receipt under one word, weakness, and waits."}, {"s": "Your analysts send back 212 errors and one charge for \"ambient menace.\" Hegemon Vael reads that line aloud to her admirals. No one dares laugh. That night the Thal yards double their shifts, and Marshal Dreth asks for the same. You have no answer for him."}, {"s": "Footage of you on the Thal capital steps plays on every Vorrani world, and the brood-halls roar your name. Broodmother Ysk counts the hatchlings who volunteer that night and keeps the number to herself. In Vael's palace, Grand Admiral Mor asks leave to answer the insult. Vael, watching her own crowd applaud you, tells him to wait.", "f": "You leave their capital with a bruise, and both empires watch it on loop. Marshal Dreth moves the Third Swarm-Fleet to the line without asking. You let him. It is the first order he has given in your name."}], "The Border Buildup": [{"s": "Thal pickets count every hull you launch by nightfall and answer it by dawn. Broodmother Ysk lays the cost on your table in fuel and hatchlings. \"They will stop when we stop,\" Dreth says. Then he pushes her slate aside to make room for the map."}, {"s": "For three weeks Vorrani and Thal crews share a bridge, a border and, once, a meal. Then the Thal captain is recalled without explanation. His replacement keeps one hand near his sidearm. Spymaster Tav starts a list of who in Vael's court signed the recall."}, {"s": "Spymaster Tav spreads your scans across the war table: two hundred Thal ships, and one gap in their line at Kessar Reach. Dreth sets a single claw on it and leaves it there. \"If war comes,\" he says, \"it comes through here.\"", "f": "Your shuttle limps home scorched. Admiral Mor files a protest and moves fifty more ships to the border, citing provocation. He is not wrong. Those fifty ships will not be going home."}], "The Defector": [{"s": "Dr. Imra Sohl works through the night under guard and fills nine slates. By morning her family's names are on a Thal list of enemies of the Hegemony. She asks you to promise they will be safe. You hand her a tenth slate instead."}, {"s": "Sohl is escorted back across the border in silence. In public, Vael's thanks are warm. In private, Spymaster Tav reports that Sohl has not been seen since her shuttle landed. Dreth calls it the price of good relations. Ysk asks him who paid it."}, {"s": "The Sohl family steps off your shuttle into the floodlights, and Imra holds her daughter and cannot speak. In Vael's war room the rescue is called an act of war. In yours, it is called a promise kept. Both rooms are right.", "f": "Two of Sohl's family make it out. Her brother does not. Imra keeps working, but she no longer looks at you when she reports. The Thal give him a state funeral. Imra asks for the broadcast and watches it alone."}], "Fuel Embargo": [{"s": "The plants rise on three moons, black and roaring. Broodmother Ysk calls them ugly. Dreth calls them freedom. Vael's best lever on you has snapped, and a ruler who loses one lever reaches for a heavier one."}, {"s": "The quota is signed by two men who despise each other: your trade envoy and Admiral Mor's own brother. Neither offers a hand. Fuel flows again, rationed and watched. Now each side knows to the barrel how long the other could fight."}, {"s": "Thal freighters drift at the edge of your blockade, unable to go home, unwilling to fire. On the fourth day a Thal escort locks weapons on a Vorrani picket. Neither fires. Both captains are decorated."}], "The Embassy Fire": [{"s": "Ambassador Rell Tamar stands in the ash and thanks your fire crews one by one, by name. His cable home is generous. Spymaster Tav intercepts the reply from Vael's office. It is one word long: \"Noted.\" Tav decides Tamar does not need to see it."}, {"s": "The candle was real. So was a fuel cell hidden under the archive, and a Thal security officer who left the capital the night before. Someone in Tamar's own government wanted him dead and the fire to look like an accident. Tav doubles the guard on Tamar's rooms and tells the Thal nothing."}, {"s": "Thal screens show you carrying Tamar out of the smoke for a full day before Vael's censors pull it. For one day, the Thal watched their enemy save their ambassador. Admiral Mor calls it propaganda. Tamar asks for a copy and keeps it in his desk.", "f": "Tamar lives. You spend nine days coughing in a sealed ward. Vael sends nothing. Mor sends flowers. Dreth reads them as a threat and has them burned outside your door, where you can smell the smoke."}], "Stolen Shield Codes": [{"s": "Your shields come back stronger, and the stolen codes are worthless by dawn. Tav is not pleased. \"They left their fingerprints where we would look,\" he says. \"So what did they hide where we would not?\""}, {"s": "Admiral Mor's strike group rehearses against a shield that does not exist, and your listening posts record every order. Dreth now knows how Mor would attack. One day Mor will learn that he knows. After that, every plan he writes will be written to deceive."}, {"s": "The thief is Thal, but his payment came from inside your own court. Dreth wants him executed. Tav wants him turned. You decide alone, and neither of them is told which you chose.", "f": "The thief escapes across the border with a wound and a story. Vael's broadcasts call it an attempt on a Thal citizen's life. Dreth puts the border forts on second readiness. It is an easy order to give and a hard one to take back."}], "The Thal Election": [{"s": "Dasa Corrin wins by a handful of votes, and her first call is to you. But Vael will not leave the palace, and Grand Admiral Mor's fleet still answers to her. The Thal now have two Hegemons. Only one of them has warships."}, {"s": "Nine weeks of counting, and Vael keeps her throne by a margin nobody believes. Your people are proud you kept your hands clean. Dreth is not. \"She won anyway,\" he says. \"Now nobody in her Assembly can tell her no.\""}, {"s": "Vael's victory speech names your empire four times. By the fourth, the crowd is chanting. Dreth has his pretext, and you paid for it. Broodmother Ysk asks, quietly, whether this is the war you meant to buy."}], "The Prototype": [{"s": "Months of careful tests, and the weapon works. Dreth asks how many you can build. Ysk asks what they will cost. Tav asks the only question that matters: how long until the Thal have one too?"}, {"s": "Thal engineers study the device for days and learn exactly what it can do. Vael calls it a bribe. Mor calls it an insult. Three Thal shipyards quietly cancel the warship it would have beaten, and their crews are sent to build something else."}, {"s": "You bring the prototype home faster than any Thal sensor can follow. The recording is on Vael's desk by morning. Mor asks for double his budget and gets it. The race has a new pace now, and it is yours.", "f": "The explosion is visible from the Thal border. Mor's pickets log it as a weapons test. Vael answers with a test of her own, closer than the last. Ysk quietly empties the brood-halls nearest the line."}], "The Ultimatum": [{"s": "Every Vorrani fleet lights its engines at once. Across the line, Mor's fleets do the same. For six hours a billion lives rest on the nerves of two admirals. Then Vael sends a single word: \"Talk.\""}, {"s": "Every empire watches Vael take her seat across from you. She smiles for the cameras and pours your water herself. Under the table, Tav's sensors show her fleet still moving. The summit is real. So is the knife."}, {"s": "The Thal delegation leaves the demonstration without a word. That night, Mor rewrites his battle plan for the first time in ten years. You have bought months, maybe a year. Dreth is already drafting how to spend them."}], "The Last Ledger": [{"s": "Your signature dries beside Vael's: peace, on paper. Dreth reads the terms once and keeps the fleet at readiness anyway. \"Paper burns,\" he says. Ysk files the treaty with the hatchling rolls, where she keeps what she means to protect."}, {"s": "Three days of edits, line by line. On the last night, Mor walks out of the talks, and Vael lets the door close behind him. Your envoys win a better treaty from a Hegemon whose admiral is no longer listening. Tav wants to know who Mor listens to now."}, {"s": "Vael meets you on her bridge with Mor at her shoulder. For an hour, three people weigh two empires. As you leave, Mor salutes you, one soldier to another, and you understand he is saying goodbye to the peace.", "f": "Her guards leave bruises. Then Vael makes her offer: a ceasefire, if your fleets stand down first. Mor leaves the room rather than hear it. You come home hurt, carrying the first honest words the Thal have spoken in years."}], "The Mothball Fleet": [{"s": "Three hundred Thal ships now fly Vorrani colors. Admiral Mor is summoned to the palace and gone for two days. He returns with one order: take the fleet back, whatever it costs. Dreth leaves the old Thal names on the hulls, so Mor will know them."}, {"s": "The plans are eleven years old, but Mor wrote them, and men like Mor rarely change. Dreth studies them for days and comes out smiling. \"Now I know how he thinks,\" he says. Tav, who read them too, does not smile.", "f": "The officer who wakes is Commander Ivek, and she fights until your guards drag you clear. Her report reaches Mor within the hour. The cold fleet is not cold any more."}, {"s": "The ghost fleet sleeps on. But someone in Vael's admiralty notices your pickets. The fleet nobody checked in eleven years is now checked every day, and by spring it has crews."}], "Old Comrades": [{"s": "By dawn, a Thal colonel named Harro is telling you which of his generals would refuse an order to fire on you. It is a short list. Spymaster Tav writes down every name, and then adds Harro's.", "f": "The artillery \"salute\" kills two of Harro's soldiers. The general who ordered it is promoted within days. Harro sends you one line: \"Now you know who rules us.\""}, {"s": "The medals hang in a hundred Thal barracks. Vael orders them taken down. Half the garrisons comply. The other half hide them under their bunks, and Tav starts counting which half is larger."}, {"s": "The Thal veterans walk your war room and point at the map. \"Mor will come here,\" one says. \"He always does.\" Dreth argues with them for a day. On the second, he moves his own flag to that system."}], "The Assassin's Apprentice": [{"s": "Her name is Sei, and the Thal trained her from the age of nine. Her list names the ministers who hired her, all of them Vael's, and all three resign by morning. Admiral Mor is not on it. Tav finds that the most interesting part.", "f": "The poison takes weeks to leave your blood. Sei is found dead in her cell, and Tav swears no one entered. Across the border, Vael declares a day of mourning for \"a loyal daughter.\""}, {"s": "Your analysts trace every Thal paymaster, and the web leads to one office in Vael's palace. Dreth calls it proof. Ysk calls it grounds for care. You are no longer sure those are different things."}, {"s": "Sei goes home carrying your note. Within the month, Tav learns she has been made an instructor. Vael did not punish her for failing. She is training more like her, though none has yet been sent your way."}], "The Nebula Race": [{"s": "Admiral Kaya Venn, the Thal challenger, crosses the line half a hull behind you and laughs on an open channel. It is the first time in a generation a Thal officer has laughed with a Vorrani. Vael has her reprimanded. Venn keeps the recording.", "f": "It is Admiral Kaya Venn, the Thal challenger, who pulls you from the wreck, and her superiors punish her for it. On the border, her squadron starts flying a little further from yours, as if to give you room."}, {"s": "Admiral Kaya Venn, the Thal challenger, wants a rematch against you, not your pilot. Mor wants to know why his admirals are racing the enemy. The rematch is cancelled, and Venn is posted somewhere colder."}, {"s": "The probe maps every current in the Vel Nebula. Admiral Kaya Venn, who dared you to the race, never mentions what the survey shows: the perfect place to hide a fleet. Dreth notices. He marks it on the war table in ink, not chalk."}], "Song for the Hegemon": [{"s": "Ten thousand voices fill Vael's court with a hymn older than her empire. For four hours she does not move. When it ends, she turns to Mor and says only: \"That is what we would be fighting.\""}, {"s": "You sing the last verse alone, and Vael's guards lower their rifles. Mor keeps his eyes on you the whole time. For one moment, the Hegemon looks at you as a person instead of a border.", "f": "The choir keeps singing as the shots ring out, and two Vorrani fall. Vael has the shooter arrested in public. That night Mor visits his cell, and by morning the man is free. Tav writes down who ordered it."}, {"s": "Vael watches every turn of your fleets without a word. By nightfall the Thal border watch has doubled. The message was received, and answered."}], "The Census": [{"s": "Your census arrives with a photograph of every family on the disputed worlds. Vael's office corrects its count without comment. The colonists pin the photographs to their doors. Thal patrols begin knocking on those doors first."}, {"s": "Your warships hang over the disputed worlds, and Mor's arrive a day later. The colonists keep their children indoors. For days they look up at two fleets and wonder which flag they will die under."}, {"s": "The Thal census now calls the border worlds \"definitely not ours.\" Vael's technicians fix it within the hour. Mor remembers longer: if your hackers reached a census, they could reach his fleet orders, so he starts sending them by courier, on paper."}]},influence:{},science:{}}; // Fleet storyline (Vorrani) done; influence and science still to write
+// LEAN[empire voice][stat]: short line added when your leading stat (Fleet / Influence / Science right now) differs from your empire's native one.
+const LEAN={"Vorrani": {"influence": "The hive notices its Sovereign reaching for words instead of blades. So does Marshal Dreth.", "science": "The forges now outshine the war-halls. Dreth wonders aloud what the Sovereign is building."}, "Celest": {"military": "The Concord dims. Its Sovereign has begun to speak of fleets.", "science": "The Concord's light turns cold and bright, toward the labs."}, "Kethari": {"military": "The Collective reallocates. Processing shifts from research to targeting.", "influence": "The Collective begins to model hearts instead of weapons."}};
+// VOICE_D[empire][stat]: optional framing line before the aftermath (the empire's own voice, in the tone of the stat leading right now).
+const VOICE_D={"Vorrani": {"military": "From the war-chronicle of the hive", "influence": "From the hive's envoy-scrolls, written uneasily", "science": "From the forge-records of the hive"}, "Celest": {"military": "From the Concord's grief-ledger", "influence": "From the Concord's evening record", "science": "From the Concord's lightwork journals"}, "Kethari": {"military": "Collective log: threat assessment", "influence": "Collective log: social model", "science": "Collective log: research thread"}};
+// ---- DLC chronicle data ----
+const CHRON={military:{"title": "The Long Cold War", "voice": "As set down in the war-chronicle of the hive", "ev": {"The Bill": [{"s": "The Thal sent their bill, and the Sovereign paid it in full. The border quieted, and Mor filed the payment under weakness."}, {"s": "The Sovereign's analysts picked the Thal invoice apart line by line, and Hegemon Vael never forgave the joke."}, {"s": "The Sovereign refused the Thal bill on the steps of their own capital, and the brood-halls roared.", "f": "The Sovereign went to refuse the Thal bill in person and came home bruised, with Dreth's fleet already moving."}], "The Border Buildup": [{"s": "When the Thal massed on the border, the Sovereign matched them hull for hull and paid in hatchlings."}, {"s": "The Sovereign offered the Thal a joint patrol. It held for three weeks, until someone in Vael's court recalled their captain."}, {"s": "The Sovereign flew the border alone and found the gap at Kessar Reach.", "f": "Thal pickets shot up the Sovereign's recon run, and fifty more of Mor's ships came to the line."}], "The Defector": [{"s": "The Sovereign gave asylum to Dr. Imra Sohl, and the Thal branded her family enemies of the Hegemony."}, {"s": "The Sovereign sent Imra Sohl home. She was not seen again."}, {"s": "The Sovereign brought Imra Sohl's family out of Thal space alive.", "f": "The Sovereign tried to rescue Imra Sohl's family, and her brother died in the attempt."}], "Fuel Embargo": [{"s": "When the Thal cut off fuel, the Sovereign built plants on three moons and broke Vael's lever for good."}, {"s": "The Sovereign signed a fuel quota, and from then on each side knew how long the other could fight."}, {"s": "The Sovereign answered the embargo with a blockade. Two captains locked weapons, held fire, and were both decorated."}], "The Embassy Fire": [{"s": "When the Thal embassy burned, the Sovereign's crews brought every soul out alive."}, {"s": "The Sovereign investigated the embassy fire and found a fuel cell where a candle should have been."}, {"s": "The Sovereign carried Ambassador Tamar out of the burning embassy with their own hands.", "f": "The Sovereign carried Ambassador Tamar from the fire and spent nine days in a sealed ward for it."}], "Stolen Shield Codes": [{"s": "When the shield codes were stolen, the Sovereign had every one rewritten by dawn."}, {"s": "The Sovereign fed the Thal false shield codes and learned how Mor would attack."}, {"s": "The Sovereign caught the code thief and found the hand that paid him inside their own court.", "f": "The code thief escaped the Sovereign, and Vael called the chase an attempt on a Thal life."}], "The Thal Election": [{"s": "The Sovereign quietly funded Dasa Corrin, who won the election, and Vael refused to leave the palace."}, {"s": "The Sovereign stayed out of the Thal election, and Vael won it with no one left to tell her no."}, {"s": "The Sovereign funded Vael's hardliners and paid for the pretext Marshal Dreth had asked for."}], "The Prototype": [{"s": "The Sovereign tested the new weapon slowly, and it worked."}, {"s": "The Sovereign shared the prototype with the Thal, and three of their warships were never built."}, {"s": "The Sovereign flew the prototype in person and set the pace of the arms race.", "f": "The prototype exploded under the Sovereign, and Vael answered with a test closer to the border."}], "The Ultimatum": [{"s": "When Vael issued her ultimatum, every Vorrani fleet lit its engines, and for six hours no one on either side breathed."}, {"s": "The Sovereign answered the ultimatum with a summit and shared a table with Vael while her fleets kept moving."}, {"s": "The Sovereign answered the ultimatum with a demonstration, and Mor rewrote a war plan ten years old."}], "The Last Ledger": [{"s": "At the last, the Sovereign signed the peace the Thal had written, and Dreth kept the fleet ready anyway."}, {"s": "At the last, the Sovereign's envoys rewrote the treaty line by line, and Mor walked out of the talks."}, {"s": "At the last, the Sovereign boarded Vael's flagship alone, and Mor saluted them goodbye.", "f": "At the last, the Sovereign boarded Vael's flagship alone and came home bruised, carrying her offer of a ceasefire."}], "The Mothball Fleet": [{"s": "The Sovereign seized three hundred sleeping Thal ships, and Mor was ordered to take them back."}, {"s": "The Sovereign walked the bridge of a sleeping Thal flagship and stole Mor's old war plans.", "f": "The Sovereign boarded the sleeping Thal fleet, and Commander Ivek woke it."}, {"s": "The Sovereign let the Thal ghost fleet sleep and watched it, until the Thal began to watch it too."}], "Old Comrades": [{"s": "The Sovereign drank with old Thal comrades and learned which generals would refuse to fire.", "f": "The Sovereign's reunion with old Thal comrades ended under artillery, and two of Harro's soldiers died."}, {"s": "The Sovereign sent medals to old Thal comrades, and half the garrisons hid them from Vael."}, {"s": "The Sovereign took in Thal veterans who knew where Mor would strike, and Dreth moved his flag to meet him."}], "The Assassin's Apprentice": [{"s": "The Sovereign questioned the assassin Sei, and three of Vael's ministers fell.", "f": "The Sovereign questioned the assassin Sei, was poisoned, and never learned who silenced her."}, {"s": "The Sovereign traced every Thal paymaster back to one office in Vael's palace."}, {"s": "The Sovereign sent the assassin Sei home, and Vael made her a teacher."}], "The Nebula Race": [{"s": "The Sovereign raced Admiral Venn through the Vel Nebula, won by half a hull, and heard a Thal officer laugh.", "f": "The Sovereign crashed racing Admiral Venn, and she pulled them from the wreck at the cost of her standing."}, {"s": "The Sovereign's pilot beat Admiral Venn through the Vel Nebula, and Venn was posted away."}, {"s": "The Sovereign declined Venn's race and charted a place to hide a fleet."}], "Song for the Hegemon": [{"s": "The Sovereign sent the war-choir to Vael's court, and the Hegemon heard what a war would cost."}, {"s": "The Sovereign sang before the Hegemon, and her guards lowered their rifles.", "f": "The Sovereign sang before the Hegemon, Thal hardliners opened fire, and Mor set the shooter free."}, {"s": "The Sovereign showed the Thal court fleet drills instead of a song, and the border watch doubled by nightfall."}], "The Census": [{"s": "The Sovereign answered the Thal census with a photograph of every family it had left out."}, {"s": "The Sovereign parked warships over the disputed worlds, and Mor's fleet came to stare back."}, {"s": "The Sovereign's hackers rewrote the Thal census, and Mor took his fleet orders off the network."}]}, "end": {"win": {"military": "The long cold war ended the way the hive had always said it would: in fire, at the border Marshal Dreth had watched for half his life. Grand Admiral Mor went down with his flagship. Hegemon Vael signed the surrender herself and did not look up from the page. The brood-halls sang for forty days. The chroniclers note that the Sovereign did not sing. Some victories are only the end of being afraid.", "influence": "The war both empires had built for never came. Pressed by her own Assembly and outlasted by the Sovereign's patience, Hegemon Vael signed the Thal into the Federation. Grand Admiral Mor resigned his commission that afternoon and left the palace on foot. Marshal Dreth called it surrender. Broodmother Ysk closed her ledger of hatchlings sent to the line and did not open a new one.", "science": "In the end, no shot was fired. The Sovereign built what the Thal could not answer, and Mor, who knew fleets better than anyone alive, was the one who told Vael there was no war left to win. One by one the Thal border yards went dark. The hive remembers it as the year the war-choirs had nothing to sing about, and were glad."}, "loss": {"military": "The fleets met at last, and neither broke. For eleven days Dreth and Mor bled each other across the border, and when it was over the line had not moved. Broodmother Ysk read the names of the dead aloud until her voice gave out. Both empires began rebuilding their navies the next morning. The cold war did not end. It only learned its price.", "influence": "The talks failed. Hegemon Vael's Assembly voted for war, and Mor's fleets crossed the border while the Sovereign's envoys were still packing. The hive held, barely. The chronicle leaves its last page blank, because the war that began that day is not over.", "science": "The Thal answered the Sovereign's edge with one of their own. Neither weapon was ever fired, and neither empire trusted the other again. Spymaster Tav counted Thal shipyards every night until the night he died. The race the Sovereign started has no finish line."}, "dead": "The Sovereign died in the act of choosing, as the hive's rulers have always hoped to. Without them, the court split between Dreth's war and Ysk's caution, and the throne room stood empty while they argued. Hegemon Vael did not wait for the argument to end. The chronicle stops here, mid-page, as the reign did.", "coup": "The Sovereign fell to the hive, not to the Thal. Worn thin by a war that never came, the guards opened the throne room doors and stood aside. Across the border, Vael watched the broadcast without a word, then sent Mor's fleets forward. Some say she was sorry. The chroniclers do not."}, "lean": {"influence": "The chronicle records, too, that this warrior Sovereign learned late to reach for words before blades. The hive still argues whether that was weakness or the hardest kind of strength.", "science": "The chronicle records, too, that the forges burned hotter than the war-halls that year, and that the Sovereign came to trust what could be measured over what could be sworn."}}};
+const CAST={military:{"mine": ["Marshal Dreth", "Broodmother Ysk", "Spymaster Tav", "Dreth", "Ysk", "Tav"], "thal": ["Grand Admiral Serek Mor", "Grand Admiral Mor", "Admiral Mor", "Hegemon Vael", "Ambassador Rell Tamar", "Ambassador Tamar", "Admiral Kaya Venn", "Admiral Venn", "Commander Ivek", "Dasa Corrin", "Mor", "Vael", "Tamar", "Venn", "Ivek", "Harro", "Corrin"], "neutral": ["Dr. Imra Sohl", "Imra Sohl", "Imra", "Sohl", "Sei"]}};
+const EMPCOL={Vorrani:'#ff6b5e',Celest:'#ffe9a8',Kethari:'#9fd8ff'},THALCOL='#8fd07a',NEUTCOL='#c9b6ff';
+let CAST_RX=null,CAST_FOR=null;
+function colorNames(t){const k=storyKey(),c=CAST[k];if(!c||!t)return t||'';
+ if(CAST_FOR!==k){const all=[];for(const g of ['mine','thal','neutral'])for(const n of c[g])all.push([n,g]);all.sort((a,b)=>b[0].length-a[0].length);CAST_RX={rx:new RegExp('\\b('+all.map(x=>x[0].replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')\\b','g'),g:Object.fromEntries(all)};CAST_FOR=k}
+ const col={mine:EMPCOL[EK()]||'#ffb35c',thal:THALCOL,neutral:NEUTCOL};
+ return t.replace(CAST_RX.rx,m=>`<b class="nm" style="color:${col[CAST_RX.g[m]]}">${m}</b>`)}
+function castKey(){if(!CAST[storyKey()])return '';const sw=(c,t)=>`<span class="ck"><i style="background:${c}"></i><b style="color:${c}">${t}</b></span>`;return `<div class="castkey"><span class="ckh">Name colors</span>${sw(EMPCOL[EK()],'Your court')}${sw(THALCOL,'The Thal')}${sw(NEUTCOL,'Others')}</div>`}
+let CHRON_HTML='';
+function chronBtn(win,title){const k=storyKey(),C=CHRON[k];if(!C)return '';const R=RUNA||{},rows=(R.chron||[]).map(([t,i,f],n)=>{const d=((C.ev[t]||[])[i])||null;if(!d)return '';return `<li><span class="ctn">Turn ${n+1}</span> ${colorNames(f&&d.f?d.f:d.s)}</li>`}).join('');
+ const close=title==='The Line Ends'||title==='Quantum Death'?C.end.dead:title==='Coup'?C.end.coup:(win?C.end.win:C.end.loss)[route]||'';
+ const lk=leanKey(),lean=lk!==k?(C.lean[lk]||''):'';
+ CHRON_HTML=`<div class="chron"><h2>Chronicle of ${C.title}</h2><p class="note">${C.voice}</p>${castKey()}${rows?`<ol>${rows}</ol>`:''}<p class="cend">${colorNames(close)}</p>${lean?`<p class="cend">${colorNames(lean)}</p>`:''}<button style="text-align:center" onclick="closeHelp()">Close</button></div>`;
+ return `<button class="personal" style="text-align:center" onclick="openHelp(CHRON_HTML)">Read the chronicle<small>${C.title}, as your choices wrote it.</small></button>`}
+function storyKey(){return BEST[EK()]}
+function leanKey(){const ks=['military','influence','science'],nat=storyKey();let b=nat;for(const k of ks)if(S[k]>S[b])b=k;return b} // ties keep the native stat
+function dramaFor(e,i,failed){if(!dlc||TUT)return '';const d=((DRAMA[storyKey()]||{})[e.t]||[])[i];if(!d)return '';
+ const body=failed&&d.f?d.f:d.s;if(!body)return '';const lk=leanKey(),nat=storyKey();
+ const v=(VOICE_D[EK()]||{})[lk],ln=lk!==nat&&RUNA.lean!==lk?((LEAN[EK()]||{})[lk]||''):'';RUNA.lean=lk;
+ return `<div class="drama">${v?`<span class="dvoice">${v}</span>`:''}${ln?`<span class="dlean">${colorNames(ln)}</span>`:''}<p>${colorNames(body)}</p></div>`}
+
 let news='';
 function choose(i){narrBranch(deck[turn-1].c[i]);
  const e=deck[turn-1],c=e.c[i];let txt=c.txt,fx={...c.fx},tag='';if(c.heal&&hp==='Injured')ach('heal');if(e.mk)RUNA[e.mk]='abc'[i];if(c.cameo&&RUNA.cm){if(c.first)RUNA.cm.took=1;else RUNA.cm.took2=1}
@@ -2750,7 +2798,7 @@ function choose(i){narrBranch(deck[turn-1].c[i]);
    else{RUNA.hc=(RUNA.hc||0)+1;tag='<b class="down">Injured!</b> (−1 Stability) ';S.stability=clamp(S.stability-1)}}
  }
  if(c.heal){hp='Healthy';injT=0}
- if(dlc){const failed=c.r&&!tag.includes('Success');news=dlcHeadline(e,i,c,failed)}
+ if(dlc){const failed=c.r&&!tag.includes('Success');news=dlcHeadline(e,i,c,failed);if(!TUT)RUNA.chron=[...(RUNA.chron||[]),[e.t,i,failed?1:0]]}
  if(!dlc&&MEMO[e.t]){const failed=c.r&&!tag.includes('Success');mem.push({tag:ETAG[e.t],from:e.t,text:failed?`You still carry a reminder of the ${e.t.replace(/^The /,'')}.`:MEMO[e.t][i]})}
  let pg=0;if(fx.p){if(dlc)pg=fx.p[route]||0;delete fx.p}prog+=pg;
  fx=apply(fx);
@@ -2764,7 +2812,7 @@ function choose(i){narrBranch(deck[turn-1].c[i]);
  if(S.stability<=0)return end(false,'Coup','Your own guards turn on you in the throne room. By evening, your portraits are being repainted.'+VOICE[EK()][2]);
  saveGame(turn+1);
  const mood=c.r&&look?(tag.includes('Success')?'good':'bad'):null; // reactions only for ⚔ outcomes
- app.innerHTML=header()+`<div class="card result"><div class="turn">Turn ${turn}</div>${mood?`<div class="react ${mood}"><img src="${portraitURL(look)}" alt="">${mood==='good'?'<i></i><i></i><i></i>':''}</div>`:''}<p>${tag}${txt}</p><div class="delta">${[fmt(fx),pg?`<span class="up">+${pg} ${PROGN[route]}</span>`:''].filter(x=>x).join(', ')||'<span class="note">No change.</span>'}</div><div class="delta note">${up.join(', ')}</div><button onclick="next()">Continue</button></div>`;
+ app.innerHTML=header()+`<div class="card result"><div class="turn">Turn ${turn}</div>${mood?`<div class="react ${mood}"><img src="${portraitURL(look)}" alt="">${mood==='good'?'<i></i><i></i><i></i>':''}</div>`:''}<p>${tag}${txt}</p>${dramaFor(e,i,!!(c.r&&!tag.includes('Success')))}<div class="delta">${[fmt(fx),pg?`<span class="up">+${pg} ${PROGN[route]}</span>`:''].filter(x=>x).join(', ')||'<span class="note">No change.</span>'}</div><div class="delta note">${up.join(', ')}</div><button onclick="next()">Continue</button></div>`;
  if(TUT)tutAdd({h:'What happened',x:tutAfter(fx,up,tag,c.heal)});
 }
 function next(){turn++;showEvent()}
@@ -2863,7 +2911,216 @@ function arena(win,route){
 }
 
 // DLC ending animations: your forces vs. the Thal
-function arenaDLC(win,R){
+/*ANIM-BEGIN*/
+// Star Sovereign animation toolkit (AN). Deterministic: every frame is a pure function of t, so scenes can be scrubbed and exported frame-exact.
+// A scene = {W,H,dur,voices,setup(params)->{draw(g,t)}}. Pixel art is drawn on a small canvas (180x100) and scaled up with nearest-neighbour.
+const AN=(()=>{
+const clamp=(x,a=0,b=1)=>x<a?a:x>b?b:x,seg=(t,a,b)=>clamp((t-a)/(b-a)),ease=x=>x*x*(3-2*x),lerp=(a,b,x)=>a+(b-a)*x;
+function rng(seed){let s=(seed>>>0)||1;return()=>(s=(Math.imul(s,1664525)+1013904223)>>>0)/4294967296}
+const mk=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};
+const hx=c=>[parseInt(c.slice(1,3),16),parseInt(c.slice(3,5),16),parseInt(c.slice(5,7),16)];
+const BAY=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5],bay=(x,y)=>(BAY[(y&3)*4+(x&3)]+.5)/16;
+// ---- drawing primitives (all on whole pixels) ----
+function rect(g,x,y,w,h,c,a){g.globalAlpha=a==null?1:a;g.fillStyle=c;g.fillRect(Math.round(x),Math.round(y),w,h);g.globalAlpha=1}
+function px(g,x,y,c,a){rect(g,x,y,1,1,c,a)}
+function line(g,x0,y0,x1,y1,c,a,th){x0=Math.round(x0);y0=Math.round(y0);x1=Math.round(x1);y1=Math.round(y1);const dx=Math.abs(x1-x0),dy=-Math.abs(y1-y0),sx=x0<x1?1:-1,sy=y0<y1?1:-1;let e=dx+dy,n=0;g.globalAlpha=a==null?1:a;g.fillStyle=c;th=th||1;for(;n++<400;){g.fillRect(x0,y0-(th>>1),1,th);if(x0===x1&&y0===y1)break;const e2=2*e;if(e2>=dy){e+=dy;x0+=sx}if(e2<=dx){e+=dx;y0+=sy}}g.globalAlpha=1}
+function ring(g,cx,cy,rx,ry,c,a){const n=Math.max(12,Math.round((rx+ry)*3));g.globalAlpha=a;g.fillStyle=c;for(let i=0;i<n;i++){const t=i/n*6.2832;g.fillRect(Math.round(cx+Math.cos(t)*rx),Math.round(cy+Math.sin(t)*ry),1,1)}g.globalAlpha=1}
+function disc(g,cx,cy,r,c,a){g.globalAlpha=a;g.fillStyle=c;r=Math.max(0,r);for(let y=-r;y<=r;y++){const w=Math.round(Math.sqrt(r*r-y*y));g.fillRect(Math.round(cx-w),Math.round(cy+y),w*2+1,1)}g.globalAlpha=1}
+// layered pixel fireball: white core, expanding ember cloud that cools orange -> red -> ash
+function boom(g,x,y,u,sz,k){if(u<0||u>=1)return;const cols=['#fff4d0','#ffd36b','#ff9a3c','#e8521f','#8a2a18','#4a4038'],ci=Math.min(5,Math.floor(u*6));
+ if(u<.16)disc(g,x,y,Math.round(sz*.55*(1-u/.16)+1),'#ffffff',1);
+ for(let i=0;i<11;i++){const a=i*.571+k*1.3,rd=sz*(.15+u*.95)*(.55+.45*((i*7+k)%5)/4),r2=Math.max(0,Math.round(sz*(.42-.3*u)*(.6+.4*((i*3+k)%4)/3)));disc(g,x+Math.cos(a)*rd,y+Math.sin(a)*rd*.85,r2,cols[Math.min(5,ci+(i%3===0?1:0))],(1-u*u)*.95)}
+ if(u<.6)ring(g,x,y,sz*(.5+u*1.5),sz*(.5+u*1.5)*.8,'#ffd9a0',(1-u/.6)*.55)}
+function noise2(seed){const h=(x,y)=>{let n=(Math.imul(x,374761393)+Math.imul(y,668265263)+Math.imul(seed,1013904223))|0;n=Math.imul(n^(n>>>13),1274126177);return((n^(n>>>16))>>>0)/4294967296};
+ return(x,y)=>{const xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi,u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf);return lerp(lerp(h(xi,yi),h(xi+1,yi),u),lerp(h(xi,yi+1),h(xi+1,yi+1),u),v)}}
+// ---- ships: procedural hull, faces right, engine at the left ----
+function ship(style,L,H,seed,P){
+ const r=rng(seed),W=L+3,HH=H+8,c=mk(W,HH),g=c.getContext('2d'),cy=HH>>1,half=[];
+ for(let x=0;x<L;x++){const u=x/(L-1);let h;
+  if(style==='thal')h=u<.18?H*.22:u<.6?H*.5:u<.84?H*.34:Math.max(.8,H*.18*(1-(u-.84)/.16)+.6);
+  else if(style==='vorrani')h=H*.46*Math.pow(Math.sin(Math.PI*Math.min(1,u*.92+.05)),.55)*(1-Math.pow(u,6)*.85);
+  else if(style==='celest')h=H*.5*Math.pow(Math.sin(Math.PI*Math.min(1,u*.98+.01)),.8);
+  else h=u<.72?H*.46:Math.max(.8,H*.46*(1-(u-.72)/.28)+.5);
+  half.push(Math.max(1,Math.round(h)))}
+ const fill=(x,y,col)=>{g.fillStyle=col;g.fillRect(x,y,1,1)};
+ for(let x=0;x<L;x++){const h=half[x];for(let dy=-h;dy<h;dy++){const k=(dy+h)/(2*h);fill(x+1,cy+dy,k<.3?P.hi:k<.72?P.mid:P.dk)}}
+ // panel seams and windows
+ for(let x=3;x<L-3;x+=style==='thal'?6:5){const h=half[x];if(h>2)for(let dy=-h+1;dy<h-1;dy++)if((dy+x)%3)fill(x+1,cy+dy,P.dk)}
+ const nw=Math.max(3,L>>2);for(let i=0;i<nw;i++){const x=2+Math.floor(r()*(L*.7)),h=half[x];if(h>2){const dy=Math.floor((r()-.5)*(h*1.2));fill(x+1,cy+dy,P.w)}}
+ if(style==='thal'){for(const u of[.3,.52]){const x=Math.floor(L*u);g.fillStyle=P.mid;g.fillRect(x,cy-half[x]-2,4,2);g.fillStyle=P.hi;g.fillRect(x,cy-half[x]-2,4,1);g.fillStyle=P.mid;g.fillRect(x,cy+half[x],4,2);g.fillStyle=P.dk;g.fillRect(x,cy+half[x]+1,4,1);fill(x+4,cy-half[x]-1,P.acc)}
+  g.fillStyle=P.acc;g.fillRect(Math.floor(L*.2),cy-1,Math.floor(L*.5),1)}
+ if(style==='vorrani'){for(const u of[.22,.36,.5,.64]){const x=Math.floor(L*u),h=half[x],n=u<.4?3:2;for(let k=1;k<=n;k++){fill(x+1,cy-h-k,k===n?P.acc:P.mid);fill(x+1,cy+h+k-1,k===n?P.acc:P.dk)}}
+  g.fillStyle=P.acc;for(let x=Math.floor(L*.55);x<L-2;x+=2)fill(x+1,cy-1,P.acc)}
+ if(style==='celest'){g.fillStyle=P.acc;g.fillRect(Math.floor(L*.15),cy,Math.floor(L*.7),1)}
+ if(style==='kethari'){for(const u of[.25,.5]){const x=Math.floor(L*u);g.fillStyle=P.hi;g.fillRect(x,cy-half[x]-2,5,2);g.fillStyle=P.acc;g.fillRect(x+1,cy-half[x]-2,3,1)}}
+ // outline: opaque pixel with a transparent 4-neighbour
+ const d=g.getImageData(0,0,W,HH),dd=d.data,o=hx(P.o),op=(x,y)=>x>=0&&y>=0&&x<W&&y<HH&&dd[(y*W+x)*4+3]>0,edge=[];
+ for(let y=0;y<HH;y++)for(let x=0;x<W;x++)if(op(x,y)&&!(op(x-1,y)&&op(x+1,y)&&op(x,y-1)&&op(x,y+1)))edge.push([x,y]);
+ for(const[x,y]of edge){g.fillStyle=y<cy?P.hi:P.o;if(y<cy&&op(x,y+1)&&!op(x,y-1))g.fillStyle=P.hi;else g.fillStyle=P.o;g.fillRect(x,y,1,1)}
+ for(let x=2;x<L-2;x++){const h=half[x];if(!op(x+1,cy-h-1))continue}
+ const f=mk(W,HH),fg=f.getContext('2d');fg.translate(W,0);fg.scale(-1,1);fg.drawImage(c,0,0);
+ return{c,f,w:W,h:HH,L,cy,tail:1,nose:L}}
+function put(g,sp,x,y,o){o=o||{};g.globalAlpha=o.a==null?1:o.a;g.drawImage(o.flip?sp.f:sp.c,Math.round(x-sp.w/2),Math.round(y-sp.h/2));g.globalAlpha=1}
+// ---- planets: dithered sphere lit from behind (thin bright crescent), dark side with city lights ----
+function planetBody(pal,R,seed,Ld,rr){
+ const M=5,D=R*2+M*2,c=mk(D,D),g=c.getContext('2d'),im=g.createImageData(D,D),d=im.data,n1=noise2(seed),n2=noise2(seed+7),rp=pal.ramp.map(hx),at=hx(pal.atm),mask=new Uint8Array(D*D);
+ for(let y=0;y<D;y++)for(let x=0;x<D;x++){const nx=(x-D/2+.5)/R,ny=(y-D/2+.5)/R,r2=nx*nx+ny*ny,o=(y*D+x)*4;
+  if(r2<=1){const nz=Math.sqrt(1-r2),lon=Math.atan2(nx,nz),lat=Math.asin(ny),f=n1(lon*2.4+3,lat*2.8+3)*.6+n1(lon*5,lat*6)*.3+n2(lon*11,lat*12)*.1,land=f>.5,lit=nx*Ld[0]+ny*Ld[1]+nz*Ld[2];
+   let s=lit>0?Math.pow(lit,.65)*.95:0;s+=(land?.09:0)+(f-.5)*.22;if(lit<=0)s=Math.max(0,s*.28+(land?.1:.02));s+=Math.pow(r2,7)*(lit>-.15?.45:.07);
+   const lv=Math.min(4,Math.floor(clamp(s)*4+bay(x,y)));d[o]=rp[lv][0];d[o+1]=rp[lv][1];d[o+2]=rp[lv][2];d[o+3]=255;if(lit<-.06&&r2<.86&&(land||f>.46))mask[y*D+x]=1}
+  else if(r2<=1.15){const rr2=Math.sqrt(r2),lt=clamp((nx/rr2*Ld[0]+ny/rr2*Ld[1])*1.8),a=(1.15-r2)/.15*lt*.9;if(a>bay(x,y)){d[o]=at[0];d[o+1]=at[1];d[o+2]=at[2];d[o+3]=255}}}
+ g.putImageData(im,0,0);
+ // city lights: hubs with gaussian scatter, plus a few thin roads
+ const lights=[],cands=[];for(let i=0;i<D*D;i++)if(mask[i])cands.push(i);
+ const gs=()=>(rr()+rr()+rr()-1.5)*2;
+ for(let h=0;h<20&&cands.length;h++){const k=cands[Math.floor(rr()*cands.length)],hx0=k%D,hy0=Math.floor(k/D),n=14+Math.floor(rr()*30),sp=2.2+rr()*4.5;
+  lights.push({x:hx0-D/2,y:hy0-D/2,b:2});for(let i=0;i<n;i++){const x=Math.round(hx0+gs()*sp),y=Math.round(hy0+gs()*sp*.8);if(x>=0&&y>=0&&x<D&&y<D&&mask[y*D+x])lights.push({x:x-D/2,y:y-D/2,b:0})}}
+ for(let i=0;i<60&&cands.length;i++){const k=cands[Math.floor(rr()*cands.length)];lights.push({x:k%D-D/2,y:Math.floor(k/D)-D/2,b:0})}
+ const seen=new Set();const L2=lights.filter(l=>{const key=Math.round(l.x)+','+Math.round(l.y);if(seen.has(key))return false;seen.add(key);return true});
+ return{c,D,R,lights:L2.map(l=>({...l,ph:rr()*6.28,w:rr()<.28}))}}
+// ---- palettes ----
+const STY={
+ Vorrani:{style:'vorrani',P:{hi:'#c9553f',mid:'#8e2f2c',dk:'#4d1a1f',o:'#240b0f',w:'#ffb35c',acc:'#d9cfae'},trail:'#ff9a3c',shot:'#ffb35c',deb:['#8e2f2c','#4d1a1f','#d9cfae']},
+ Celest:{style:'celest',P:{hi:'#f4ecd0',mid:'#c8b98a',dk:'#7d7258',o:'#38331f',w:'#fff6c8',acc:'#ffe9a8'},trail:'#ffe9a8',shot:'#fff2b8',deb:['#c8b98a','#7d7258','#fff6c8']},
+ Kethari:{style:'kethari',P:{hi:'#9fd8ff',mid:'#4f8fbf',dk:'#27476b',o:'#0e1d35',w:'#e9f7ff',acc:'#6fe0ff'},trail:'#7fe9ff',shot:'#9fe8ff',deb:['#4f8fbf','#27476b','#9fd8ff']},
+ Thal:{style:'thal',P:{hi:'#a6b8ae',mid:'#6f8a80',dk:'#3a5048',o:'#17231f',w:'#ffb347',acc:'#7fd0a0'},trail:'#8fe0c0',shot:'#b8f0d0',deb:['#6f8a80','#3a5048','#a6b8ae']}};
+const PL={
+ Thal:{ramp:['#070c0c','#13201d','#2a4a40','#5b8a78','#b4d8c4'],atm:'#8fe0c0',light:'#d8f0e4'},
+ Vorrani:{ramp:['#0e0608','#2a1013','#5a2321','#9a4234','#e8a088'],atm:'#ff9a6c',light:'#ffb35c'},
+ Celest:{ramp:['#09090f','#1c1a2a','#4a4568','#9a93bd','#f0e8ff'],atm:'#d8d0ff',light:'#fff0b8'},
+ Kethari:{ramp:['#060a12','#0e1c34','#22507f','#4f9ad0','#c0e8ff'],atm:'#7fc8ff',light:'#8fefff'}};
+const SCENES={};
+// ---- Fleet ending: forces drive forward (win) or are pushed back (loss), then the losing homeworld is bombarded ----
+SCENES.fleet={W:180,H:100,dur:15,
+ // voice slots: the writing pass fills these (who: mine/thal/neutral). Empty slots show nothing.
+ voices:[{id:'v1',t0:1.0,t1:4.6},{id:'v2',t0:4.8,t1:7.7},{id:'v3',t0:7.9,t1:11},{id:'v4',t0:11.2,t1:14.8}],
+ setup(p){
+  const W=180,H=100,win=p.win!==false,emp=p.emp||'Vorrani',nl=p.neutrals==null?2:Math.min(2,p.neutrals),mirror=!win;
+  const SA=STY[win?emp:'Thal'],SD=STY[win?'Thal':emp],PN=PL[win?'Thal':emp],r=rng(p.seed||4242);
+  const K={flag:[46,17],cap:[32,12],esc:[18,7]},SPA={},SPD={};
+  for(const k in K){SPA[k]=ship(SA.style,K[k][0],K[k][1],k.length*7+1,SA.P);SPD[k]=ship(SD.style,K[k][0],K[k][1],k.length*9+3,SD.P)}
+  const FA=[['flag',50,50],['cap',38,32],['cap',38,68],['esc',26,17],['esc',24,42],['esc',24,59],['esc',26,84]].map(a=>({k:a[0],x:a[1],y:a[2]}));
+  const FD=[['flag',132,50],['cap',144,31],['cap',144,69],['esc',156,17],['esc',158,43],['esc',158,58],['esc',156,84]].map(a=>({k:a[0],x:a[1],y:a[2]}));
+  const dieA=[null,null,null,3.4,null,4.3,null],dieD=[4.9,3.1,3.8,null,2.3,null,2.8],fleeD={3:{t:4.0,dy:-1},5:{t:4.5,dy:1}};
+  const adv=t=>ease(seg(t,.2,13))*20,bob=(i,t,a)=>Math.sin(t*1.3+i*1.7)*a,push=t=>ease(seg(t,1,7))*22;
+  const pA=(i,t)=>[FA[i].x+adv(t)*(FA[i].k==='esc'?.8:1)+bob(i,t,.6),FA[i].y+bob(i+3,t,1.1)];
+  const pD=(i,t)=>{let x=FD[i].x+push(t)+bob(i,t,.6),y=FD[i].y+bob(i+3,t,1.1);const f=fleeD[i];if(f){const u=ease(seg(t,f.t,f.t+3));x+=u*60;y+=f.dy*u*40}return[x,y]};
+  const live=(S,i,t)=>{const d=(S==='A'?dieA:dieD)[i];return d==null||t<d};
+  const pos=(S,i,t)=>S==='A'?pA(i,t):pD(i,t),F=S=>S==='A'?FA:FD;
+  // planet
+  const R=46,PX=t=>lerp(280,138,ease(seg(t,2.6,7.4))),PY=52,Ld=(()=>{const v=[.88,-.22,-.4],m=Math.hypot(...v);return v.map(a=>a/m)})();
+  const pl=planetBody(PN,R,p.seed||77,Ld,rng(99));
+  // bombardment: [local x,y, radius, time]
+  const SK=[[-26,-4,10,7.3],[-34,12,11,7.9],[-20,-22,9,8.4],[-10,10,12,8.9],[-32,-14,11,9.3],[-4,-10,10,9.7],[-22,26,11,10.1],[2,22,10,10.5],[-14,-32,9,10.8],[-38,-28,8,11.2]];
+  const neutralsAt=[[-10,10,3],[2,22,7]].slice(0,nl); // lavender safehouse lights, put out by strikes 3 and 7
+  const lights=pl.lights.map(l=>{let ext=null;for(const s of SK){const d=Math.hypot(l.x-s[0],l.y-s[1]);if(d<s[2]*1.2){const e=s[3]+.08+d*.04+r()*.25;if(ext==null||e<ext)ext=e}else if(d<s[2]*2&&r()<.5){const e=s[3]+.5+d*.05+r()*.6;if(ext==null||e<ext)ext=e}}
+   if(ext==null&&r()<.3)ext=11.6+r()*2.2;return{...l,ext}});
+  const fire=SK.map(s=>{const dots=[],rad=Math.round(s[2]*1.15);for(let y=-rad;y<=rad;y++)for(let x=-rad;x<=rad;x++){const d=Math.hypot(x,y*1.15)/s[2];if(d<=1.1&&Math.hypot(s[0]+x,s[1]+y)<R-1)dots.push({x:Math.round(s[0])+x,y:Math.round(s[1])+y,d:d+(r()-.5)*.45,ph:r()*6.28})}return dots});
+  // particles: {t0,x,y,vx,vy,g,life,c,a,sz}
+  const P=[],sparks=(t,x,y,n,cols,sp,life)=>{for(let i=0;i<n;i++){const a=r()*6.28,v=sp*(.3+r()*.7);P.push({t0:t,x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,g:0,life:life*(.5+r()*.5),c:cols[Math.floor(r()*cols.length)],a:1,sz:1})}};
+  const blast=[],shakes=[];
+  // volleys: shooter fires at a target ship; tracers travel .4s
+  const vols=[],TR=.4;
+  const kill=(S,i,t)=>{const O=S==='A'?'D':'A',al=[];F(O).forEach((_,j)=>{if(live(O,j,t))al.push(j)});vols.push({sh:O,si:al[Math.floor(r()*al.length)],tg:S,ti:i,t:t-TR,hit:true})};
+  dieA.forEach((d,i)=>d!=null&&kill('A',i,d));dieD.forEach((d,i)=>d!=null&&kill('D',i,d));
+  for(let k=0;k<44;k++){const t=.6+k*.115+r()*.05,S=r()<.52?'A':'D',O=S==='A'?'D':'A',sa=[],ta=[];F(S).forEach((_,j)=>live(S,j,t)&&sa.push(j));F(O).forEach((_,j)=>live(O,j,t+TR+.05)&&ta.push(j));if(!sa.length||!ta.length||t>6.4)continue;vols.push({sh:S,si:sa[Math.floor(r()*sa.length)],tg:O,ti:ta[Math.floor(r()*ta.length)],t,hit:true})}
+  vols.forEach(v=>{const[x,y]=pos(v.tg,v.ti,v.t+TR);sparks(v.t+TR,x,y,4,['#fff4c8','#ffb347',SD.shot],38,.5)});
+  // deaths: fireball, split, debris, slow-burning wreck
+  const deaths=[];[['A',dieA],['D',dieD]].forEach(([S,arr])=>arr.forEach((d,i)=>{if(d==null)return;const[x,y]=pos(S,i,d),big=F(S)[i].k==='flag',st=S==='A'?SA:SD,sz=F(S)[i].k==='esc'?5:big?12:8;deaths.push({t:d,x,y,sz,S,i,big});
+   sparks(d,x,y,big?28:16,['#fff4c8','#ffb347','#ff6a3c'],55,1.1);sparks(d,x,y,big?24:12,st.deb,28,2.6);shakes.push({t:d,a:big?3:1.5});
+   for(let k=0;k<(big?10:5);k++)P.push({t0:d+.1+k*.12,x:x+(r()-.5)*sz,y:y+(r()-.5)*sz*.6,vx:(r()-.5)*6,vy:-2-r()*4,g:0,life:3,c:'#4a4440',a:.7,sz:2})}));
+  // damaged ships trail smoke
+  const hitN={};vols.forEach(v=>{const k=v.tg+v.ti;hitN[k]=(hitN[k]||0)+1});
+  for(const S of['A','D'])F(S).forEach((_,i)=>{if((hitN[S+i]||0)<2)return;const d=(S==='A'?dieA:dieD)[i],end=d==null?(fleeD[i]?fleeD[i].t+3.5:7):d;for(let t=2;t<end;t+=.16){const[x,y]=pos(S,i,t);P.push({t0:t,x,y,vx:(S==='A'?-1:1)*4,vy:-1,g:0,life:1.2,c:'#55504b',a:.6,sz:1})}});
+  // evacuation: small craft lift off the dark side and run for orbit; some are caught by the strikes
+  const ev=[];for(let i=0;i<16;i++){const a=Math.PI*(.6+r()*.8),d=8+r()*30,sx=Math.cos(a)*d*.9-14,sy=Math.sin(a)*d*.7,dir=Math.atan2(sy,sx)+(r()-.5)*.5,t0=5.6+r()*3.4,sp=7+r()*5;let die=null;
+   for(const s of SK){if(s[3]<t0)continue;const tt=s[3],age=tt-t0,x=sx+Math.cos(dir)*sp*age,y=sy+Math.sin(dir)*sp*age;if(Math.hypot(x-s[0],y-s[1])<s[2]+6){die=tt;break}}
+   ev.push({sx,sy,dir,t0,sp,die})}
+  // planetary defence platforms
+  const DEF=[[-50,-16,5.5],[-54,12,6.1],[-46,34,6.6],[-50,-36,6.9]].map(a=>({x:a[0],y:a[1],die:a[2]}));
+  // bg
+  const bg=mk(W,H),bgg=bg.getContext('2d');{const a=hx('#05070f'),b=hx('#0c1024'),c=hx('#1a1230'),im=bgg.createImageData(W,H),dd=im.data;for(let y=0;y<H;y++)for(let x=0;x<W;x++){const o=(y*W+x)*4,u=y/H,band=Math.max(0,1-Math.abs((x/W-.3)+(u-.5)*.6)*3.2)*.6,s=u*.5+band;const q=s*3+bay(x,y)-.5,k=q>2?c:q>1?b:a;dd[o]=k[0];dd[o+1]=k[1];dd[o+2]=k[2];dd[o+3]=255}bgg.putImageData(im,0,0)}
+  const stars=[0,1,2].map(l=>Array.from({length:[40,26,14][l]},()=>({x:r()*W,y:r()*H,b:r()})));
+  const shipSp=(S,i)=>(S==='A'?SPA:SPD)[F(S)[i].k];
+  return{draw(g,t){
+   g.imageSmoothingEnabled=false;
+   let sx=0,sy=0;for(const s of shakes){const a=t-s.t;if(a>=0&&a<.5){const m=s.a*(1-a/.5);sx+=Math.round(Math.sin(a*83)*m);sy+=Math.round(Math.cos(a*71)*m)}}
+   for(const b of SK){const a=t-b[3];if(a>=0&&a<.45){const m=1.6*(1-a/.45);sx+=Math.round(Math.sin(a*91)*m);sy+=Math.round(Math.cos(a*77)*m)}}
+   g.save();if(mirror){g.translate(W,0);g.scale(-1,1)}g.translate(sx*(mirror?-1:1),sy);
+   g.drawImage(bg,0,0);
+   const pan=ease(seg(t,0,13))*40;
+   stars.forEach((L,l)=>L.forEach(s=>{const x=((s.x-pan*[.12,.3,.6][l])%W+W)%W;px(g,x,s.y,s.b>.8?'#cfd8f0':s.b>.4?'#8f9bc0':'#59648c',l===2?1:.8)}));
+   // planet
+   const cx=PX(t),cy=PY,show=cx<W+R+8;
+   if(show){const D=pl.D,ox=Math.round(cx-D/2),oy=Math.round(cy-D/2);g.drawImage(pl.c,ox,oy);
+    const pc=(lx,ly)=>[cx+lx,cy+ly];
+    // firestorm glow
+    SK.forEach((s,i)=>{const a=t-s[3];if(a<0)return;const k=clamp(a*2.2),grow=.45+.55*clamp(a/2.5);disc(g,cx+s[0],cy+s[1],Math.round(s[2]*.95),'#0a0605',.32*clamp(a/1.2));fire[i].forEach(d=>{if(d.d>grow*1.1)return;const f=.78+.22*Math.sin(t*8+d.ph),v=k*(1.08-d.d)*f*(1-.3*seg(t,12.5,15));if(v>.08+bay(d.x+99,d.y+99)*.55)px(g,cx+d.x,cy+d.y,v>.9?'#ffd98a':v>.66?'#e8852f':v>.42?'#b8381a':v>.22?'#6e1c10':'#33100c',Math.min(.9,.4+v*.8))})});
+    // city lights
+    const lc=PN.light;lights.forEach(l=>{let a=.8+.2*Math.sin(t*2.2+l.ph),on=true;if(l.ext!=null){if(t>l.ext)on=false;else if(t>l.ext-.3&&Math.sin(t*60+l.ph)<0)on=false}if(!on){if(l.ext!=null&&t>l.ext&&t<l.ext+4&&l.b===0&&((l.ph*13)|0)%5===0)px(g,cx+l.x,cy+l.y,'#5a1a10',.8);return}
+     const c2=l.w?'#ffd98a':lc;if(l.b){rect(g,cx+l.x-1,cy+l.y,4,1,c2,a*.35);rect(g,cx+l.x,cy+l.y-1,2,3,c2,a*.35);rect(g,cx+l.x,cy+l.y,2,1,'#fff',a)}else px(g,cx+l.x,cy+l.y,c2,a)});
+    // lavender: people the player did not save
+    neutralsAt.forEach(([lx,ly,si])=>{const e=SK[si][3]-.1;let on=t<e;if(t>e-.7&&t<e&&Math.sin(t*22)<-.2)on=false;if(on){const a=.75+.25*Math.sin(t*3+lx),h=t>5?1:seg(t,3,5);rect(g,cx+lx-3,cy+ly-2,7,5,'#c9b6ff',.14*a*h);rect(g,cx+lx-2,cy+ly,5,1,'#c9b6ff',a*h);px(g,cx+lx,cy+ly-1,'#f2eaff',a*h);px(g,cx+lx,cy+ly+1,'#c9b6ff',a*h);px(g,cx+lx-3,cy+ly,'#8f7ad0',a*h);px(g,cx+lx+3,cy+ly,'#8f7ad0',a*h)}});
+    // impacts: flash, ring, smoke column
+    SK.forEach(s=>{const a=t-s[3];if(a<0)return;const[x,y]=pc(s[0],s[1]);boom(g,x,y,a/.9,s[2]*.9,Math.round(s[3]*10));
+     if(a<1.3){const u=a/1.3;ring(g,x,y,s[2]*(.7+1.6*u),s[2]*(.7+1.6*u)*.6,'#ffd9a0',(1-u)*.8)}
+     if(a<7){for(let k=0;k<6;k++){const age=a-k*.35;if(age<0||age>4.5)continue;const ang=-Math.PI/2+(((k*37)%11)/11-.5)*1.2,sp=5+((k*53)%7);const u=age/4.5;px(g,x+Math.cos(ang)*sp*age+(k%2?1:-1)*age*.8,y+Math.sin(ang)*sp*age*.9,k%2?'#5a5550':'#3c3835',(1-u)*.7);if(age>.6)px(g,x+Math.cos(ang)*sp*age+(k%2?2:-2)*age*.8+1,y+Math.sin(ang)*sp*age*.9,'#4a4642',(1-u)*.45)}}});
+    // defence platforms
+    DEF.forEach(d=>{if(t>d.die+.4)return;const[x,y]=pc(d.x,d.y);if(t<d.die){rect(g,x-3,y-1,7,3,'#6f8a80');rect(g,x-2,y-2,5,1,'#a6b8ae');px(g,x,y,'#ffb347');px(g,x+3,y,'#17231f')}else{disc(g,x,y,Math.round(4*(1-(t-d.die)/.4))+1,'#ffe9a8',.9)}});
+    // evacuation craft
+    ev.forEach(e=>{if(t<e.t0)return;const age=t-e.t0;if(e.die!=null&&t>e.die){const a=t-e.die;if(a<.3){const x=cx+e.sx+Math.cos(e.dir)*e.sp*(e.die-e.t0),y=cy+e.sy+Math.sin(e.dir)*e.sp*(e.die-e.t0);rect(g,x,y,2,2,'#fff',1-a/.3)}return}
+     const x=cx+e.sx+Math.cos(e.dir)*e.sp*age,y=cy+e.sy+Math.sin(e.dir)*e.sp*age;if(x<-4||x>W+4||y<-4||y>H+4)return;rect(g,x,y,2,1,'#ffffff',1);px(g,x,y-1,'#cfe0ee',.9);for(let k=1;k<=4;k++)px(g,x-Math.cos(e.dir)*k*1.4,y-Math.sin(e.dir)*k*1.4,'#9fb4cc',.7-k*.14)})}
+   // ships
+   const drawS=(S,i)=>{if(!live(S,i,t))return;const[x,y]=pos(S,i,t),sp=shipSp(S,i),st=S==='A'?SA:SD;
+    // engine trail
+    const tl=(S==='A'?-1:1),n=3+((Math.sin(t*40+i)>0)?1:0)+(sp.L>30?2:0);for(let k=1;k<=n+2;k++)px(g,x+tl*(sp.L/2+k),y,st.trail,1-k/(n+3));
+    put(g,sp,x+(S==='A'?0:0),y,{flip:S==='D'});
+    // hull flash when hit
+    vols.forEach(v=>{if(v.tg===S&&v.ti===i){const a=t-(v.t+TR);if(a>=0&&a<.09)rect(g,x-sp.L/4+((v.t*97)%7),y-1,3,2,'#fff4d8',.9)}})};
+   for(let i=0;i<7;i++)drawS('D',i);for(let i=0;i<7;i++)drawS('A',i);
+   // tracers
+   vols.forEach(v=>{const a=t-v.t;if(a<0||a>TR)return;const u=a/TR,[x0,y0]=pos(v.sh,v.si,v.t),[x1,y1]=pos(v.tg,v.ti,v.t+TR),sp=shipSp(v.sh,v.si),dir=v.sh==='A'?1:-1,sxp=x0+dir*sp.L/2,col=(v.sh==='A'?SA:SD).shot,hx1=lerp(sxp,x1,u),hy1=lerp(y0,y1,u),tx=lerp(sxp,x1,Math.max(0,u-.18)),ty=lerp(y0,y1,Math.max(0,u-.18));
+    line(g,tx,ty,hx1,hy1,col,.55);px(g,hx1,hy1,'#ffffff',1);if(a<.06)px(g,sxp,y0,'#ffffff',1)});
+   // planetary-defence fire
+   DEF.forEach((d,k)=>{if(t>d.die||t<4.8)return;const ph=(t*1.7+k*.37)%1;if(ph<.35){const u=ph/.35,[tx,ty]=pA(k%3,t),x0=PX(t)+d.x,y0=PY+d.y;line(g,lerp(x0,tx,Math.max(0,u-.2)),lerp(y0,ty,Math.max(0,u-.2)),lerp(x0,tx,u),lerp(y0,ty,u),PN.light,.5)}});
+   // orbital lances
+   SK.forEach((s,i)=>{const a=t-s[3];if(a<-.45||a>.12)return;const si=i%3,[bx,by]=pA(si,t),sp=SPA[FA[si].k],mx=bx+sp.L/2,my=by,tx=PX(t)+s[0],ty=PY+s[1];
+    if(a<-.2){px(g,mx,my,'#ffffff',.5+.5*seg(a,-.45,-.2));ring(g,mx,my,2+3*seg(a,-.45,-.2),2+3*seg(a,-.45,-.2),SA.shot,.5)}
+    else{line(g,mx,my,tx,ty,SA.shot,.35,3);line(g,mx,my,tx,ty,'#ffffff',1,1)}});
+   // particles
+   P.forEach(q=>{const a=t-q.t0;if(a<0||a>q.life)return;const u=a/q.life,x=q.x+q.vx*a,y=q.y+q.vy*a+.5*q.g*a*a;rect(g,x,y,q.sz,q.sz,q.c,q.a*(1-u*u))});
+   // fireballs
+   deaths.forEach((d,k)=>{boom(g,d.x,d.y,(t-d.t)/(d.big?1.3:.9),d.sz*1.4,k);if(d.big&&t>d.t+.35)boom(g,d.x+7,d.y-3,(t-d.t-.35)/1,d.sz,k+9)});
+   g.restore();
+   const haze=seg(t,8,14)*.22;if(haze>0)rect(g,0,0,W,H,'#2a0e08',haze);
+   // grade: stepped vignette, fade in, slow dim at the end
+   for(let i=0;i<6;i++){g.globalAlpha=.1;g.fillStyle='#000';g.fillRect(0,i,W,1);g.fillRect(0,H-1-i,W,1);g.fillRect(i,0,1,H);g.fillRect(W-1-i,0,1,H)}g.globalAlpha=1;
+   const fade=1-seg(t,0,.9)+seg(t,13.8,15)*.35;if(fade>0)rect(g,0,0,W,H,'#000',Math.min(1,fade))}}}};
+// ---- player ----
+function player(canvas,scene,params,opts){opts=opts||{};const g=canvas.getContext('2d');canvas.width=scene.W;canvas.height=scene.H;const S=scene.setup(params||{});let t=0,t0=0,playing=false,raf=0;
+ const api={dur:scene.dur,get t(){return t},get playing(){return playing},
+  seek(x){t=clamp(x,0,scene.dur);S.draw(g,t);opts.onTick&&opts.onTick(t)},
+  play(from){if(from!=null)t=from;playing=true;t0=performance.now()-t*1000;const loop=()=>{if(!playing)return;if(opts.alive&&!opts.alive()){playing=false;return}t=(performance.now()-t0)/1000;if(t>=scene.dur){api.seek(scene.dur);playing=false;opts.onEnd&&opts.onEnd();return}api.seek(t);raf=requestAnimationFrame(loop)};loop()},
+  pause(){playing=false;cancelAnimationFrame(raf)},
+  end(){playing=false;cancelAnimationFrame(raf);api.seek(scene.dur);opts.onEnd&&opts.onEnd()}};
+ api.seek(0);return api}
+return{clamp,seg,ease,lerp,rng,mk,SCENES,STY,PL,player,ship,planetBody,put,bay,hx,rect,px,line,ring,disc,boom,noise2}})();
+/*ANIM-END*/
+// ---- Fleet-route ending: cinematic scene (anim.js) + optional voice captions + Skip ----
+let CINE=null,REVEAL_T=0,REVEAL_FN=null,cineN=0;
+const ENDVOX={}; // filled by the writing pass: ENDVOX['fleet.win.Vorrani']={v1:{who:'mine',t:'...'},v2:...}; empty slots show nothing
+// Provisional rule (OPEN QUESTION in handoff): Sohl is saved by taking her in or rescuing her family, Sei by interrogating her successfully. A win shows the ones you failed to save on the bombed Thal world; a loss shows the ones you had saved on your own bombed world.
+function neutralsFor(win){const c=(RUNA&&RUNA.chron)||[],d=c.find(x=>x[0]==='The Defector'),a=c.find(x=>x[0]==="The Assassin's Apprentice");let lost=0,saved=0;
+ if(d){if(d[1]===0||d[1]===2)saved++;else lost++}if(a){if(a[1]===0&&!a[2])saved++;else lost++}return win?lost:saved}
+function voxTick(n,t,win){const el=document.getElementById('vx'+n);if(!el)return;const sc=AN.SCENES.fleet,v=sc.voices.find(x=>t>=x.t0&&t<x.t1),tab=ENDVOX['fleet.'+(win?'win':'loss')+'.'+EK()],line=v&&tab&&tab[v.id];
+ if(line){const k=line.who==='thal'?THALCOL:line.who==='neutral'?NEUTCOL:EMPCOL[EK()];el.style.display='block';el.innerHTML=`<b style="color:${k}">${line.n?line.n+': ':''}</b>${colorNames(line.t)}`}else el.style.display='none'}
+function mountCine(n,win){const cv=document.getElementById('cv'+n);if(!cv)return;if(CINE)CINE.pause();
+ CINE=AN.player(cv,AN.SCENES.fleet,{win,emp:EK(),neutrals:neutralsFor(win),seed:4242},{alive:()=>document.contains(cv),onTick:t=>voxTick(n,t,win)});
+ if(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)CINE.end();else CINE.play(0)}
+function skipEnd(){if(CINE)CINE.end();if(REVEAL_FN){clearTimeout(REVEAL_T);const f=REVEAL_FN;REVEAL_FN=null;f()}}
+function cineArena(win){const n=++cineN;setTimeout(()=>mountCine(n,win),0);
+ return `<div class="arena cine"><canvas id="cv${n}" aria-label="${win?'Your fleet drives the Thal back and bombards their homeworld':'The Thal drive your fleet back and bombard your homeworld'}"></canvas><div class="vox" id="vx${n}"></div><button class="skipanim" onclick="skipEnd()">Skip</button></div>`}
+function arenaDLC(win,R){if(R==='military')return cineArena(win);
  const TP=[[76,6],[86,26],[76,48],[86,70],[78,88]]; // Thal ship positions (left %, top px)
  const thal=(st='')=>TP.map(([l,t],i)=>`<div class="thal" style="left:${l}%;top:${t}px;${typeof st==='function'?st(i):st}"></div>`).join('');
  const quip=(txt,pos,col,d)=>`<div class="quip" style="${pos};color:${col};animation-delay:${d}s">${txt}</div>`;
@@ -2945,18 +3202,19 @@ function end(win,title,msg,fight){
  const unlock=win&&!wasDlc&&title==='Victory'&&!TUT;dlc=false;
  achEnd(win,wasDlc,CR,title);
  const dlcThreat=wasDlc?(win?0:10):null; // the campaign settles the Thal for good: 0/10 on a win, 10/10 on a loss
- const result=`<div class="stampban ${win?'sw':'sl'}">${title}</div><p>${msg}</p>${CR&&CR.n?`<p class="credline">+${CR.n} credits${CR.bonus?` and a +${CR.bonus} back-to-back bonus`:''} ${CR.r?` and +${CR.r} renown for your general`:''} for Systems. You now have ${credits()} credits${CR.r?` and ${renownPts()} renown`:''}.</p>`:''}${unlock?`<button class="personal" style="text-align:center" onclick="startDLC()">DLC: The Thal Reckoning<small>10 more turns to deal with the Thal for good, using your ${LABELS[route]}. Your empire carries over.</small>${dlcCredLine(emp.diff)}</button>`:''}${TUT?`<p class="note">Tutorial complete. Real runs are saved, count on the scoreboard and, after a victory, unlock the DLC.</p>`:''}<button style="text-align:center" onclick="start()">${TUT?'Play for real':'Play again'}</button>`;
+ const result=`<div class="stampban ${win?'sw':'sl'}">${title}</div><p>${msg}</p>${wasDlc&&!TUT?chronBtn(win,title):''}${CR&&CR.n?`<p class="credline">+${CR.n} credits${CR.bonus?` and a +${CR.bonus} back-to-back bonus`:''} ${CR.r?` and +${CR.r} renown for your general`:''} for Systems. You now have ${credits()} credits${CR.r?` and ${renownPts()} renown`:''}.</p>`:''}${unlock?`<button class="personal" style="text-align:center" onclick="startDLC()">DLC: The Thal Reckoning<small>10 more turns to deal with the Thal for good, using your ${LABELS[route]}. Your empire carries over.</small>${dlcCredLine(emp.diff)}</button>`:''}${TUT?`<p class="note">Tutorial complete. Real runs are saved, count on the scoreboard and, after a victory, unlock the DLC.</p>`:''}<button style="text-align:center" onclick="start()">${TUT?'Play for real':'Play again'}</button>`;
  if(!fight){if(dlcThreat!==null)threat=dlcThreat;app.innerHTML=header()+(wasDlc||TUT?'':recBox(emp.diff))+`<div class="card" style="text-align:center">${result}</div>`+logBox();return}
  const tok=++endToken;
  app.innerHTML=`<div id="hdr">${before}</div><div class="card" style="text-align:center"><div id="arenaBox">${(lastDlc=wasDlc)?arenaDLC(win,route):arena(win,route)}</div><div id="resSlot"><p class="note suspense">The battle rages.</p></div></div><div id="recSlot"></div>`;
- setTimeout(()=>{if(tok!==endToken||!document.getElementById('resSlot'))return;
+ const reveal=()=>{document.querySelectorAll('.skipanim').forEach(b=>b.remove());if(tok!==endToken||!document.getElementById('resSlot'))return;
   if(dlcThreat!==null)threat=dlcThreat;
   document.getElementById('hdr').innerHTML=header();
   if(dlcThreat!==null){const pl=[...document.querySelectorAll('#hdr .pill')].find(x=>x.textContent.includes('Thal Threat'));if(pl)pl.classList.add('pillflash')}
   document.getElementById('recSlot').innerHTML=wasDlc||TUT?'':recBox(emp.diff);
   document.getElementById('resSlot').innerHTML=`<div class="reveal">${result}</div><button class="rs" style="float:none;margin:10px auto 0;display:block" onclick="replay(${win})">Replay battle</button>`;
   document.getElementById('recSlot').insertAdjacentHTML('afterend',logBox());
- },wasDlc?(win&&route==='influence'?7400:4800):(win&&route==='influence'?6800:(REVEAL[route]||2500)));
+ };
+ REVEAL_FN=reveal;clearTimeout(REVEAL_T);REVEAL_T=setTimeout(()=>{REVEAL_FN=null;reveal()},wasDlc?(route==='military'?15400:(win&&route==='influence'?7400:4800)):(win&&route==='influence'?6800:(REVEAL[route]||2500)));
 }
 
 // hand-drawn sky + boiling outlines
