@@ -181,6 +181,7 @@ export default async (req) => {
     servers = { list: [{ id: "main", name: "Main Galaxy", main: true, owner: "admin", by: "Admin", created: now }], removed: {} };
     await reg.setJSON("servers", servers); }
   servers.removed ||= {};
+  if (op !== "admin") { const del = (await reg.get("deleted", { type: "json" })) || {}; if (del[me]) return json({ ok: false, deleted: true, msg: "This account was deleted by the admin." }); }
   const list = async (msg, extra) => json({ ok: true, msg, servers: await summaries(servers, me), canCreate: !servers.list.some((s) => s.owner === me) && servers.list.length < MAX_SERVERS, now, ...(extra || {}) });
   // removing a server wipes its galaxy; its players find out on their next call (and get their week's spending back)
   const removeServer = async (sid) => { servers.list = servers.list.filter((s) => s.id !== sid); servers.removed[sid] = now;
@@ -221,6 +222,21 @@ export default async (req) => {
       s.resetAt = now; await reg.setJSON("servers", servers); await wipeStore(st);
       await st.setJSON("season", { n: old.n || 1, start: now, chronicle: [...(old.chronicle || []), { n: old.n || 1, text: `Week ${old.n || 1}: the admin reset the galaxy.` }].slice(-8), bonus: old.bonus || 0 });
       msg = `${s.name} was reset to day 1 of week ${old.n || 1}. Its players get back the credits and renown they spent there this week.`; }
+    else if (body.act === "accounts") { // every player account: scoreboard records and systems on any server, by public pid
+      const acc = {}, add = (pid, o) => { acc[pid] = { pid, name: "", runs: 0, seen: 0, servers: [], ...acc[pid] }; const a = acc[pid];
+        if (o.name && !a.name) a.name = o.name; if (o.runs) a.runs = o.runs; if (o.seen > a.seen) a.seen = o.seen; if (o.srv) a.servers.push(o.srv); };
+      const sb = getStore("scoreboard");
+      for (const b of (await sb.list()).blobs) { if (b.key === "_meta") continue; const r = await sb.get(b.key, { type: "json" }); if (r) add(pidOf(b.key), { name: r.name, runs: (r.runs || []).length, seen: r.updated || 0 }); }
+      for (const v of await summaries(servers, me, true)) for (const p of v.list || []) add(p.pid, { name: p.name, seen: p.seen, srv: v.name });
+      return json({ ok: true, accounts: Object.values(acc).sort((a, b) => b.seen - a.seen), now }); }
+    else if (body.act === "delacct") { // remove an account everywhere; its device wipes itself on its next call
+      const pid = String(body.target || "").replace(/[^a-f0-9]/g, "").slice(0, 12); if (pid.length !== 12) return json({ ok: false, msg: "No such account." });
+      const sb = getStore("scoreboard"); let name = "";
+      for (const b of (await sb.list()).blobs) if (b.key !== "_meta" && pidOf(b.key) === pid) { const r = await sb.get(b.key, { type: "json" }); name ||= (r && r.name) || ""; await sb.delete(b.key); }
+      for (const s of servers.list) { const st = galaxyStore(s.id), rec = await st.get(pid, { type: "json" });
+        if (rec) { name ||= rec.name || ""; await galaxy({ ...body, op: "adminkick", target: pid, srv: s.id }, s, true); } }
+      const del = (await reg.get("deleted", { type: "json" })) || {}; del[pid] = now; await reg.setJSON("deleted", del);
+      msg = `${name || "That account"} was deleted. Their device starts over as a new player next time they open the game.`; }
     else if (body.act === "kick") { const s = servers.list.find((x) => x.id === body.srv); if (!s) return json({ ok: false, msg: "That server is gone." });
       const r = await (await galaxy({ ...body, op: "adminkick" }, s, true)).json(); if (r.ok === false) return json(r); msg = r.msg; }
     return json({ ok: true, msg, servers: await summaries(servers, me, true), now });

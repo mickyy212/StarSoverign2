@@ -988,8 +988,21 @@ async function showAdmin(msg){if(!ADMIN_PASS){app.innerHTML=`<div class="card"><
  <h3>Create a Main server</h3><input id="admsrv" class="arcin" maxlength="24" placeholder="Server name" autocomplete="off"><button onclick="adminMkServer()">Create server<small>Admin servers are marked (Main) at the top of the list.</small></button>
  <h3>Scoreboard</h3><button onclick="adminClearBoard(this)">Clear the scoreboard<small>Removes every player's runs from the shared scoreboard. It can't be undone.</small></button>
  <h3>Testing</h3><button onclick="adminTestCredits()">Give me 1000 test credits<small>Added to this device only, to try out buying. They don't count as earned or spent this week.</small></button><button onclick="adminTestGoods()">Fill my goods<small>200 of every good in your Systems multiplayer system on this device, to try out upgrades.</small></button>
+ <h3>Player accounts</h3><button onclick="showAccounts()">Show all player accounts<small>Everyone on the scoreboard or in Systems multiplayer, with a Delete button for each.</small></button>
+ <h3>This device</h3><button class="lethal" onclick="adminDeleteMe(this)">Delete my account<small>Removes ${escH(ARCADE.name)} from the scoreboard and from Systems multiplayer, and wipes every stat, credit, item, achievement and leader on this device. Then you start again as a new player. It can't be undone.</small></button>
  <h3>Change password</h3><input id="admnew" class="arcin" type="password" maxlength="40" autocomplete="off"><button onclick="adminSetPass()">Save new password</button>
  <button class="rs" style="float:none;margin-top:10px" onclick="ADMIN_PASS='';start()">Sign out</button> <button class="rs" style="float:none;margin-top:10px" onclick="start()">Back</button></div>`}
+// Delete my account: leave Systems, leave the scoreboard, wipe this device's game data (not the preview's galaxy), start as a new player.
+async function adminDeleteMe(b){if(!b.dataset.armed){b.dataset.armed=1;b.firstChild.textContent='Tap again: delete everything';return}
+ b.disabled=true;try{if(!SYS)SYS=loadSys();if(SYS&&SYS.srv)await sysCall('leave')}catch(e){}
+ try{await fetch('/api/scores',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:ARCADE.id})})}catch(e){}
+ try{Object.keys(localStorage).filter(k=>k.startsWith('ss2')&&!k.startsWith('ss2preview')).forEach(k=>localStorage.removeItem(k))}catch(e){}
+ location.reload()}
+async function showAccounts(msg){const j=await adminCall('accounts');if(j.ok===false){return showAdmin(j.msg)}
+ const me=SYS_PID,row=a=>`<div class="nbr"><b>${escH(a.name||'(no name)')}</b> <small class="note">${a.runs} run${a.runs===1?'':'s'} on the scoreboard${a.servers.length?' · in '+a.servers.map(escH).join(', '):''} · last seen ${a.seen?dur(Date.now()-a.seen)+' ago':'never'}</small><button class="rs" onclick="adminDelAcct('${a.pid}',this)">Delete</button></div>`;
+ app.innerHTML=`<div class="card"><h2>Player accounts</h2>${msg?`<p class="sysmsg">${escH(msg)}</p>`:''}<p class="note">${(j.accounts||[]).length} account${(j.accounts||[]).length===1?'':'s'}. Delete removes a player from the scoreboard and every server for good. Their device wipes its stats and starts as a new player the next time it opens the game.</p>
+ ${(j.accounts||[]).map(row).join('')||'<p class="note">No accounts yet.</p>'}<button style="text-align:center" onclick="showAdmin()">Back</button></div>`;window.scrollTo(0,0)}
+async function adminDelAcct(pid,b){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again to delete';return}b.disabled=true;const j=await adminCall('delacct',{target:pid});showAccounts(j.msg)}
 async function adminSignIn(){ADMIN_PASS=document.getElementById('admpass').value;showAdmin()}
 async function adminKick(srv,pid,b){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again to kick';return}const j=await adminCall('kick',{srv,target:pid});showAdmin(j.msg)}
 async function adminRmServer(srv,b){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again: wipe this galaxy';return}const j=await adminCall('rmserver',{srv});showAdmin(j.msg)}
@@ -1009,11 +1022,14 @@ function lifeOfRuns(runs){const o=blankLife();for(const r of runs||[])if(o[r.m]&
 function saveArcade(){try{localStorage.setItem(ARC,JSON.stringify(ARCADE))}catch(e){}}
 function escH(t){return String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 // sends your latest runs; the server adds any it doesn't have yet (so a run finished offline still counts later)
-function pushScore(){if(!ARCADE||ARCADE.hidden)return;try{fetch('/api/scores',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:ARCADE.id,name:ARCADE.name,runs:ARCADE.runs||[]})}).catch(()=>{})}catch(e){}}
+// The admin deleted this account: wipe this device's game data (not the preview's galaxy) and start as a new player.
+function wipeDevice(){try{Object.keys(localStorage).filter(k=>k.startsWith('ss2')&&!k.startsWith('ss2preview')).forEach(k=>localStorage.removeItem(k));sessionStorage.setItem('ss2wiped','1')}catch(e){}location.reload()}
+function checkDeleted(){if(!ARCADE)return;try{fetch('/api/scores?me='+encodeURIComponent(ARCADE.id),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.deleted)wipeDevice()}).catch(()=>{})}catch(e){}}
+function pushScore(){if(!ARCADE||ARCADE.hidden)return;try{fetch('/api/scores',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:ARCADE.id,name:ARCADE.name,runs:ARCADE.runs||[]})}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.deleted)wipeDevice()}).catch(()=>{})}catch(e){}}
 function lifeRecord(isDlc,d,win){if(!ARCADE||!d)return;const r=ARCADE.life[isDlc?'dlc':'main'][d];r.n++;if(win)r.w++;
  ARCADE.runs=[...(ARCADE.runs||[]),{m:isDlc?'dlc':'main',d,w:win?1:0,t:Date.now()}].slice(-BOARD_KEEP);saveArcade();pushScore()}
 function showName(again){
- app.innerHTML=`<h1 class="logo"><span class="l1">STAR SOVEREIGN</span> <span class="l2">II</span></h1><div class="card"><h2>${again?'Change your arcade name':'Enter your arcade name'}</h2><p class="note" style="margin:0 0 10px">It goes on the scoreboard with your win rates over your latest 20 runs.</p><input id="arcname" class="arcin" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${again?escH(ARCADE.name):''}" placeholder="ACE-7"><p id="namerr" class="down" style="min-height:30px;margin:6px 0"></p><button class="personal" style="text-align:center" onclick="setName()">${again?'Save name':'Start'}</button>${again?'<button style="text-align:center" onclick="showBoard()">Back</button>':''}</div>`;
+ app.innerHTML=`<h1 class="logo"><span class="l1">STAR SOVEREIGN</span> <span class="l2">II</span></h1><div class="card"><h2>${again?'Change your arcade name':'Enter your arcade name'}</h2>${(()=>{try{if(sessionStorage.getItem('ss2wiped')){sessionStorage.removeItem('ss2wiped');return '<p class="sysmsg">Your account was deleted. Start again as a new player.</p>'}}catch(e){}return ''})()}<p class="note" style="margin:0 0 10px">It goes on the scoreboard with your win rates over your latest 20 runs.</p><input id="arcname" class="arcin" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${again?escH(ARCADE.name):''}" placeholder="ACE-7"><p id="namerr" class="down" style="min-height:30px;margin:6px 0"></p><button class="personal" style="text-align:center" onclick="setName()">${again?'Save name':'Start'}</button>${again?'<button style="text-align:center" onclick="showBoard()">Back</button>':''}</div>`;
  const i=document.getElementById('arcname');i.onkeydown=e=>{if(e.key==='Enter')setName()};try{i.focus()}catch(e){}}
 function setName(){const v=document.getElementById('arcname').value.replace(/[^A-Za-z0-9 _.-]/g,'').trim().slice(0,12).toUpperCase();
  if(v.length<2){document.getElementById('namerr').textContent='Use 2 to 12 letters or numbers.';return}
@@ -1372,7 +1388,7 @@ function catchUp(s){const n=Math.min(SYS_CATCHUP,Math.floor((Date.now()-s.last)/
 // ---- server ----
 async function sysCall(op,extra){if(!ARCADE)return null;try{const r=await fetch('/api/systems',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',
   body:JSON.stringify({id:ARCADE.id,op,...(SYS&&SYS.srv?{srv:SYS.srv}:{}),...(op==='sync'?{sys:{...SYS,name:ARCADE.name,credits:credits()}}:{}),...(extra||{})})});
- if(!(r.ok||r.status===409))return null;const j=await r.json();SYS_ONLINE=true;if(j.now)SRV_OFF=j.now-Date.now();
+ if(!(r.ok||r.status===409))return null;const j=await r.json();if(j&&j.deleted){wipeDevice();return null}SYS_ONLINE=true;if(j.now)SRV_OFF=j.now-Date.now();
  if(j.gone&&SYS){if(typeof lostServer==='function')lostServer(j.msg);return j}
  if(j.server)SERVER=j.server;if(j.rules)SRV_RULES=j.rules;if(j.rulesGen)SRV_BONUS=j.rulesGen.bonus||0;
  if(j.reset&&SYS){const keep={leader:SYS.leader,general:SYS.general,srv:SYS.srv},rf=refundWeek();SYS=newSystem(0);Object.assign(SYS,keep);saveSys();SYS_PID=null;
@@ -2304,15 +2320,9 @@ function leaderBlock(ld,who){if(!ld||!ld.look)return '';return `<div style="over
 function setSysNames(){const clean=v=>v.replace(/[^A-Za-z0-9 '-]/g,'').trim().slice(0,16);const a=clean(document.getElementById('sysname').value),b=clean(document.getElementById('homename').value);
  if(a.length<2||b.length<2){document.getElementById('nerr').textContent='Use 2 to 16 letters or numbers for each.';return}
  SYS.sysName=a;SYS.planets[0].n=b;FOUND=null;sysLook();saveSys();ach('claim');leaderScreen(true)}
-// Temporary: Systems multiplayer is behind a password while it's tested. Remembered on this device once entered.
-const MP_PASS='1234',MP_OK='ss2mpok'
-function mpGate(msg){let ok=false;try{ok=localStorage.getItem(MP_OK)==='1'}catch(e){}
- if(ok)return showSystems()
- app.innerHTML=`<div class="card"><h2>Systems multiplayer <span class="alpha">ALPHA</span></h2><p>Systems multiplayer is closed for testing. Enter the password to play.</p><input id="mppass" class="arcin" type="password" inputmode="numeric" maxlength="20" autocomplete="off"><p class="down" style="min-height:24px">${msg||''}</p><button class="personal" style="text-align:center" onclick="mpTry()">Enter</button><button style="text-align:center" onclick="start()">Back</button></div>`
- const i=document.getElementById('mppass');i.onkeydown=e=>{if(e.key==='Enter')mpTry()};try{i.focus()}catch(e){}window.scrollTo(0,0)}
-function mpTry(){const v=(document.getElementById('mppass').value||'').trim()
- if(v!==MP_PASS)return mpGate('Wrong password. Try again.')
- try{localStorage.setItem(MP_OK,'1')}catch(e){}showSystems()}
+// Systems multiplayer is under construction: only a signed-in admin (Admin button) gets in, with no extra password.
+function mpGate(){if(ADMIN_PASS)return showSystems()
+ app.innerHTML=`<div class="card"><h2>Systems multiplayer <span class="alpha">ALPHA</span></h2><p>Under construction. Systems multiplayer isn't open yet. Check back soon!</p><button style="text-align:center" onclick="start()">Back</button></div>`;window.scrollTo(0,0)}
 async function showSystems(quick){
  if(!SYS){SYS=loadSys();if(!SYS){SYS=await restoreSys();if(SYS)SYS_MSG='Your system was restored from the galaxy server.'}if(!SYS)SYS=newSystem(0);saveSys()}
  // Systems from before servers existed (or with no server) start over on a server of the player's choice.
@@ -2763,6 +2773,7 @@ function end(win,title,msg,fight){
  draw();let t;addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(draw,200)})})();
 })();
 loadSave()?resume():start();
+checkDeleted();
 </script>
 </body>
 </html>

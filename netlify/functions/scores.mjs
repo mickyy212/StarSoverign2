@@ -22,8 +22,11 @@ export default async (req) => {
   const headers = { "Cache-Control": "no-store" };
   const meta = (await store.get("_meta", { type: "json" })) || { clearedAt: 0 };
 
+  // accounts the admin deleted (kept by the Systems admin, by public pid): their runs are refused and their device wipes itself
+  const deleted = (await getStore("systems").get("deleted", { type: "json" })) || {};
   if (req.method === "GET") {
     const me = new URL(req.url).searchParams.get("me") || "";
+    if (me && deleted[pidOf(cleanId(me))]) return Response.json({ rows: [], deleted: true, clearedAt: meta.clearedAt || 0, keep: KEEP }, { headers });
     const { blobs } = await store.list();
     const rows = await Promise.all(blobs.filter((b) => b.key !== "_meta").map(async (b) => {
       const r = await store.get(b.key, { type: "json" }); if (!r) return null;
@@ -46,6 +49,7 @@ export default async (req) => {
       await store.setJSON("_meta", { clearedAt: now });
       return Response.json({ ok: true, msg: "The scoreboard was cleared.", clearedAt: now }, { headers });
     }
+    if (deleted[pidOf(cleanId(body.id))]) return Response.json({ ok: false, deleted: true }, { headers });
     const id = cleanId(body.id), name = String(body.name || "").replace(/[^A-Za-z0-9 _.-]/g, "").trim().slice(0, 12);
     if (id.length < 8 || name.length < 2) return new Response("Bad request", { status: 400 });
     const rec = (await store.get(id, { type: "json" })) || { name, runs: [] };
