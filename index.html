@@ -2026,6 +2026,15 @@ function leaderBlock(ld,who){if(!ld||!ld.look)return '';return `<div style="over
 function setSysNames(){const clean=v=>v.replace(/[^A-Za-z0-9 '-]/g,'').trim().slice(0,16);const a=clean(document.getElementById('sysname').value),b=clean(document.getElementById('homename').value);
  if(a.length<2||b.length<2){document.getElementById('nerr').textContent='Use 2 to 16 letters or numbers for each.';return}
  SYS.sysName=a;SYS.planets[0].n=b;FOUND=null;sysLook();saveSys();ach('claim');leaderScreen(true)}
+// Temporary: Systems multiplayer is behind a password while it's tested. Remembered on this device once entered.
+const MP_PASS='1234',MP_OK='ss2mpok'
+function mpGate(msg){let ok=false;try{ok=localStorage.getItem(MP_OK)==='1'}catch(e){}
+ if(ok)return showSystems()
+ app.innerHTML=`<div class="card"><h2>Systems multiplayer <span class="alpha">ALPHA</span></h2><p>Systems multiplayer is closed for testing. Enter the password to play.</p><input id="mppass" class="arcin" type="password" inputmode="numeric" maxlength="20" autocomplete="off"><p class="down" style="min-height:24px">${msg||''}</p><button class="personal" style="text-align:center" onclick="mpTry()">Enter</button><button style="text-align:center" onclick="start()">Back</button></div>`
+ const i=document.getElementById('mppass');i.onkeydown=e=>{if(e.key==='Enter')mpTry()};try{i.focus()}catch(e){}window.scrollTo(0,0)}
+function mpTry(){const v=(document.getElementById('mppass').value||'').trim()
+ if(v!==MP_PASS)return mpGate('Wrong password. Try again.')
+ try{localStorage.setItem(MP_OK,'1')}catch(e){}showSystems()}
 async function showSystems(quick){
  if(!SYS){SYS=loadSys();if(!SYS){SYS=await restoreSys();if(SYS)SYS_MSG='Your system was restored from the galaxy server.'}if(!SYS)SYS=newSystem(0);saveSys()}
  // Systems from before servers existed (or with no server) start over on a server of the player's choice.
@@ -2040,7 +2049,7 @@ function start(){TUT=null;
  if(!ARCADE)return showName();
  app.innerHTML=`${splash()?`<img class="splash" src="${splash()}" alt="">`:''}<h1 class="logo"><span class="l1">STAR SOVEREIGN</span> <span class="l2">II</span></h1><p class="note" style="margin:0 0 10px">3rd Edition</p><p class="sub">Twelve turns. Then it arrives.</p><div class="introbox"><p class="intro">Build your empire, then defend it. Choose ⚔ to go in person: bigger rewards, real danger. Keep your people loyal and the Thal in check.</p></div>${loadSave()?`<button class="mplay" onclick="resume()">▶ Resume your game<small>Pick up where you left off</small></button>`:''}
  <button class="mplay" onclick="showEmpires()">▶ Play<small>Choose your empire</small></button>
- <button class="msys" onclick="showSystems()">Systems multiplayer <span class="alpha">ALPHA</span><small>The shared galaxy</small></button>
+ <button class="msys" onclick="mpGate()">Systems multiplayer <span class="alpha">ALPHA</span><small>The shared galaxy</small></button>
  <div class="mgrid"><button onclick="showShop()">Shop<small>${credits()} credits</small></button><button onclick="showBoard()">Scoreboard<small>Latest 20 runs</small></button>
  <button onclick="showAch()">Achievements<small>${ACHS.filter(a=>achGot()[a.id]).length} / ${ACHS.length}</small></button><button onclick="showTutorial()">Tutorial<small>Learn the basics</small></button></div>
  <button class="mhelp" onclick="openHelp()">? Help: How to play · <span onclick="event.stopPropagation();openHelp(RULES)">Rules</span></button><button class="rs adminbtn" onclick="showAdmin()">Admin</button>${qPending()?`<p class="note down" style="margin:0 0 10px">Quantum debt: your next run has a 1 in 3 chance of ending in sudden quantum death.</p>`:''}<p class="note" style="margin:0 0 10px">Playing as <b>${escH(ARCADE.name)}</b></p>`;
