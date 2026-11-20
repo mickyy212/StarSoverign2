@@ -31,6 +31,12 @@ const BAST = 0.25, LANCE = 0.2, HOLD_BONUS = 0.1;
 // Sieges and landings run live (a round every 30 seconds) while anyone on the defending side is online.
 // While the whole defending side is away, the garrison digs in: a siege round every 90 minutes, landings take an hour.
 const SIEGE_AWAY = 90 * 60000, LAND = 60000, LAND_AWAY = 60 * 60000;
+// Colony landings come in turns: 10 seconds each while a defender is online (10 minutes while all are away).
+// An undefended colony falls after one turn; each defense level adds two turns, and its guns fire on the fleet every turn.
+const LAND_TURN = 10000, LAND_TURN_AWAY = 10 * 60000;
+// The Reflection never occupies: its mirrors hover over a player's worlds and strike every siege turn.
+// Chances per turn, divided by (1 + 0.5 x the world's defense level): kill one of the player's people, wreck a building.
+const RIFT_HIT = { pop: 0.5, bld: 0.25 }, POP_FLOOR = 2;
 // The Reflection: each player's mirror fleet. Its strength grows with the season, not with your fleet,
 // so the galaxy wins it by standing together. Destroying a mirror fleet collapses its rift.
 const REFLECT = { atk: 11, season: 0.45, regen: 0.5 }; // tuned 11-19 with skilled and unskilled sim players (3 players, week 1)
@@ -130,7 +136,7 @@ function newAI(n = 1, bonus = 0) {
   return { last: Date.now(), list: AI_DEF.map((a) => { const sc = aiScale(n, bonus), fl = newFleet(a.admiral, Object.fromEntries(Object.entries(a.ships).map(([k, v]) => [k, Math.round(v * sc)])));
     fl.up = { c: Math.min(3, Math.max(0, n - 2)), f: Math.min(3, Math.max(0, n - 3)), d: Math.min(3, Math.max(0, n - 4)) };
     return { id: a.id, name: a.name, temper: a.temper, base: a.base,
-    planets: a.planets.map(([n, r], i) => ({ n, r, owner: null, home: i === 0 })), res: { food: 20, water: 20, ore: 20, fuel: 20 },
+    planets: a.planets.map(([n, r], i) => ({ n, r, owner: null, home: i === 0, def: i === 0 ? 3 : 1 })), /* AI home systems start fully fortified, outposts with Orbital guns */ res: { food: 20, water: 20, ore: 20, fuel: 20 },
     fleet: fl, opinion: {}, allies: [], overlord: null, envoyAt: {}, threat: {}, warAt: 0, buildAt: 0, annexedBy: null }; }), invadeAt: 0, warned: false, endedAt: 0 };
 }
 
@@ -282,7 +288,7 @@ async function galaxy(body, srv, trusted) {
   const opinion = (a, pid, d) => { a.opinion[pid] = Math.max(-100, Math.min(100, (a.opinion[pid] ?? a.base) + d)); };
   const ev = (w, e) => { w.events.push({ ...e, t: e.t || now }); w.events = w.events.slice(-30); };
   const planetsOf = (x) => (isAI(x) ? ((A(x) || {}).planets || []).map((p, i) => ({ n: p.n, i, home: !!p.home, ok: !p.owner })) : ((P(x) || {}).planets || []).map((p, i) => ({ n: p.n, i, home: p.st === "home", ok: p.st === "home" || p.st === "colony" })));
-  const pdef = (owner, i) => (isAI(owner) ? 0 : (((P(owner) || {}).planets || [])[i] || {}).def || 0);
+  const pdef = (owner, i) => { if (isAI(owner)) { if (isRift(owner)) return 0; const p = ((A(owner) || {}).planets || [])[i] || {}; return p.def ?? (p.home ? 3 : 1); } return (((P(owner) || {}).planets || [])[i] || {}).def || 0; };
   const occupied = (w, owner, i) => w.occ.find((o) => o.owner === owner && o.i === i);
   const isRift = (x) => isAI(x) && !!(A(x) || {}).rift;
   const gone = (x) => !F(x) || (isAI(x) && !!A(x).annexedBy);
@@ -306,7 +312,7 @@ async function galaxy(body, srv, trusted) {
   const standGuard = (w, x) => { const fl = F(x).fleet; if (outmatched(w, x)) { fl.loc = { s: "dock", at: x, until: 0, post: true }; return; }
     const nw = nextWorld(w, x); fl.loc = { s: "guard", at: x, i: nw ? nw.i : 0 }; if (online(x)) (w.ask ||= {})[x] = true; };
   // Planetary guns join any battle fought over their world: the home world's batteries, or a colony's defenses.
-  const guns = (owner, i) => { if (isRift(owner)) return 0; const home = isAI(owner) ? true : (((P(owner) || {}).planets || [])[i] || {}).st === "home";
+  const guns = (owner, i) => { if (isRift(owner)) return 0; const home = isAI(owner) ? !!(((A(owner) || {}).planets || [])[i] || {}).home : (((P(owner) || {}).planets || [])[i] || {}).st === "home";
     const dl = pdef(owner, i), g = home ? (isAI(owner) ? HOME_FIRE.ai : HOME_FIRE.player) * 0.6 + 3 * dl : 1.5 * dl; return g * (1 + BAST * techOf(owner, "bast")); };
   const watched = (w, owner) => isAI(owner) || (sideOf(w, owner) < 0 ? online(owner) : w.sides[sideOf(w, owner)].some(online));
   const guardSpot = (x) => { const l = F(x).fleet.loc; return l.s === "guard" ? l.i : 0; };
@@ -472,15 +478,47 @@ async function galaxy(body, srv, trusted) {
           if (def.length) { battle(w, [x], def, fl.loc.to, when); if (fl.loc.s !== "move") continue; }
           fl.loc = { s: "orbit", at: fl.loc.to };
         }
+      } else if (fl.loc.s === "orbit" && f.rift && !isAI(fl.loc.at)) {
+        // The Reflection hovers over the player's worlds and strikes each siege turn, one world after another, until
+        // their people are down to the floor. It never occupies. The world's guns fire back; defenses cut the odds.
+        const owner = fl.loc.at, pl = P(owner), sg = (w.siege[x] ||= { owner, planet: -1, hold: 0, progress: 0 });
+        const tgt = targetOrder(owner); if (!pl || !tgt.length) continue;
+        if (when < (sg.next || 0)) continue; const liveR = watched(w, owner); sg.next = when + (liveR ? SIEGE : SIEGE_AWAY);
+        sg.turn = (sg.turn || 0) + 1; const pk = tgt[(sg.turn - 1) % tgt.length]; sg.owner = owner; sg.planet = pk.i;
+        const dl = pdef(owner, pk.i), cut = 1 / (1 + 0.5 * dl), shipsBefore = { ...fl.ships };
+        const fire = guns(owner, pk.i) * 2 * kOf(pl) * (0.8 + Math.random() * 0.4); if (fire > 0) hurt(fl, fire);
+        let killed = 0, wreck = null, wl = "";
+        if ((pl.pop || 0) > POP_FLOOR && Math.random() < RIFT_HIT.pop * cut) { killed = 1; pl.pop -= 1; }
+        if (Math.random() < RIFT_HIT.bld * cut) { const opts = [];
+          const q = (pl.planets || [])[pk.i]; if (q && (q.def || 0) > 0) opts.push({ def: pk.i, l: "a defense level" });
+          for (const [k, l] of [["food", "farms"], ["water", "a water purifier"], ["ore", "a deep mine"], ["spec", "rare-goods works"]]) if (((pl.boost || {})[k] || 0) > 0) opts.push({ boost: k, l });
+          if (opts.length) { wreck = opts[Math.floor(Math.random() * opts.length)]; wl = wreck.l; if (wreck.def != null) q.def -= 1; else pl.boost[wreck.boost] = Math.max(0, pl.boost[wreck.boost] - (wreck.boost === "spec" ? 2 : 1)); } }
+        const lost = Object.fromEntries(["c", "f", "d"].map((k) => [k, shipsBefore[k] - fl.ships[k]]).filter(([, n]) => n > 0));
+        const exd = { def: exAdd(w, sideOf(w, owner), 1 + 2 * killed + (wreck ? 1 : 0)) };
+        sg.last = `${f.name} strikes ${pk.n}: ${killed ? "one of your people is killed" : "no one is killed"}${wreck ? `, ${wl} wrecked` : ""}${fire > 0 ? `; its guns hit back for ${Math.round(fire)}` : ""}.`;
+        ev(w, { kind: "rift", by: x, owner, i: pk.i, n: pk.n, turn: sg.turn, killed, wreck: wl, fire: Math.round(fire), lost, def: dl, pop: pl.pop, ships: { ...fl.ships }, up: { ...fl.up }, exd });
+        if (killed || wreck) tell(owner, { t: "collateral", pop: killed, boost: wreck && wreck.boost, def: wreck && wreck.def, planet: pk.n, msg: `The Reflection strikes ${pk.n}: ${killed ? "one of your people is killed" : "no one is killed"}${wreck ? `, ${wl} wrecked` : ""}.` });
+        if (pl.pop <= POP_FLOOR && !(season.fallen || {})[owner]) { (season.fallen ||= {})[owner] = true; tellAll(`The Reflection has decimated the people of ${nameOf(owner)}.`, "crisis"); }
+        if (!alive(fl) || hull(fl) < 3) goHome(fl, x);
       } else if (fl.loc.s === "orbit") {
         const owner = fl.loc.at, sg = (w.siege[x] ||= { owner, planet: -1, hold: 0, progress: 0 });
         const pick = nextWorld(w, owner);
         if (!pick) continue; // everything already occupied; the fleet holds orbit
-        if (sg.planet !== pick.i || sg.owner !== owner) Object.assign(sg, { owner, planet: pick.i, hold: 0, progress: 0 });
+        if (sg.planet !== pick.i || sg.owner !== owner) Object.assign(sg, { owner, planet: pick.i, hold: 0, progress: 0, landAt: 0 });
         if (!pick.home) {
-          const live = watched(w, owner);
-          sg.hold += STEP * (live ? 1 : LAND / LAND_AWAY); sg.last = `Holding orbit over ${pick.n}: ${Math.round(sg.hold / 1000)}s of ${LAND * (1 + pdef(owner, pick.i) / 2) / 1000}s${live ? "" : " (slowed: its defenders are away)"}.`;
-          if (sg.hold >= LAND * (1 + pdef(owner, pick.i) / 2)) { w.occ.push({ by: x, owner, i: pick.i, n: pick.n, home: false, t: when }); ev(w, { kind: "occupy", by: x, owner, i: pick.i, n: pick.n, exd: exAdd(w, sideOf(w, owner), EX.colony + popOf(owner, false) / 8) }); renown(x, 8); tell(owner, { t: "occupied", msg: `${fl.admiral} has occupied ${pick.n}!` }); }
+          // a landing turn every 10 s (10 min while all defenders are away); the colony's guns fire each turn
+          const live = watched(w, owner), dl = pdef(owner, pick.i), need = 1 + 2 * dl, turn = live ? LAND_TURN : LAND_TURN_AWAY;
+          if (!sg.landAt) sg.landAt = when + turn;
+          if (when < sg.landAt) continue; sg.landAt = when + turn; sg.hold = (sg.hold || 0) + 1;
+          const fire = guns(owner, pick.i) * (0.8 + Math.random() * 0.4), shipsBefore = { ...fl.ships };
+          if (fire > 0) hurt(fl, fire * (1 - ((fl.buff || {}).guard || 0)));
+          const lost = Object.fromEntries(["c", "f", "d"].map((k) => [k, shipsBefore[k] - fl.ships[k]]).filter(([, n]) => n > 0));
+          const taken = sg.hold >= need && alive(fl), pop = popOf(owner, false);
+          const exd = { def: exAdd(w, sideOf(w, owner), Math.round((0.5 + pop / 16) * 10) / 10), atk: exAdd(w, s, shipVal(shipsBefore, fl.ships)) };
+          sg.last = `Landing on ${pick.n}: turn ${sg.hold} of ${need}${fire > 0 ? `, its guns hit back for ${Math.round(fire)}` : ""}${live ? "" : " (slowed: its defenders are away)"}.`;
+          ev(w, { kind: "land", by: x, owner, i: pick.i, n: pick.n, turn: sg.hold, need, taken, fire: Math.round(fire), lost, def: dl, pop, ships: { ...fl.ships }, up: { ...fl.up }, exd });
+          if (taken) { w.occ.push({ by: x, owner, i: pick.i, n: pick.n, home: false, t: when }); ev(w, { kind: "occupy", by: x, owner, i: pick.i, n: pick.n, exd: exAdd(w, sideOf(w, owner), EX.colony + pop / 8) }); renown(x, 8); tell(owner, { t: "occupied", msg: `${fl.admiral} has occupied ${pick.n}!` }); }
+          else if (!alive(fl) || hull(fl) < 3) { goHome(fl, x); tell(x, { t: "siege", msg: `The guns of ${pick.n} shattered your landing fleet. It falls back to rebuild.` }); }
         } else {
           if (when < (sg.next || 0)) continue; sg.next = when + (watched(w, owner) ? SIEGE : SIEGE_AWAY);
           const dl = pdef(owner, pick.i), fort = FORT.home + dl, fire = ((isAI(owner) ? HOME_FIRE.ai : HOME_FIRE.player) + 3 * dl) * (1 + BAST * techOf(owner, "bast")) * (0.8 + Math.random() * 0.4);

@@ -484,6 +484,7 @@ button.timepick{outline:3px solid #ffd166;outline-offset:2px;animation:tpick .4s
 .gupgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:6px 0}.gupcard{margin:0;padding:6px 5px;text-align:center;font-size:14px}.gupcard b{display:block;font-weight:normal;color:#ffd166;font-size:15px;line-height:1.15;min-height:34px}
 .gupcard .pips{margin:5px auto 2px}.gupcard .pips i{width:12px;height:12px}.gupcard .gl{display:block;font-size:13px;color:#fff}.gupcard small{display:block;font-size:12px;color:#aab3d6;margin:3px 0}.gupcard .gc{display:block;font-size:12px;color:#6fe0cc}
 .pips{display:inline-flex;gap:2px;vertical-align:middle;margin:0 4px}.pips i{display:inline-block;width:7px;height:7px;background:#0a1020;box-shadow:inset 0 0 0 1px #8f98b8}.pips i.on{background:#ffd166}
+.wcitem{padding:6px 0 4px;border-bottom:2px solid #222b4c}.wcitem>b{display:block;color:#ffd166;font-weight:normal}.wcitem.lvl3>b{color:#ff7a6e}.wcitem>small{display:block;color:#aab3d6;font-size:14px;line-height:1.35;margin:2px 0 4px}.wcitem>small b{font-weight:normal}
 .shipcard{border:2px solid #2c355c;background:rgba(10,16,32,.55);padding:6px 8px 8px;margin:8px 0}.shiphead{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px}.shiphead b{color:#e8e8f0}.shiphead .sstat{flex-basis:100%;font-size:13px;color:#8fd3ff}.shipcard .sysbtns{margin-top:4px}.shipcard>button{margin:6px 0 0}
 .upgtrack{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}.upgtrack span{font-size:13px;padding:1px 5px;border:2px solid #2c355c;color:#8f98b8}.upgtrack .done{border-color:#7bd17b;color:#7bd17b}.upgtrack .next{border-color:#ffd166;color:#ffd166}
 .fcomp{display:flex;flex-wrap:wrap;gap:4px 14px;margin:4px 0}.fcomp span{white-space:nowrap}.shipico{width:30px;height:18px;vertical-align:middle;margin-right:4px}.shiprow .rs{float:none;margin:2px 0 0}.fleet{pointer-events:none}
@@ -679,11 +680,12 @@ const SYS_RULES=`<h2>Systems multiplayer: rules</h2><ul>
 <li><b>Your week's bank.</b> The header shows the credits you earned and spent in Systems this week. If you lose your system (New planet, moving to another server, your server being removed, an admin kicking you, or the server losing it), every credit you spent this week comes back. Credits you paid other players by investing don't. The bank starts fresh each week.</li>
 <li><b>Your people</b> eat Food and Water, and later Ore, Fuel and foreign rare goods. They only settle when there is enough to spare. Each good you run short of adds 5 unrest an hour (3 for a rare good). At 60% unrest, riots halve your output.</li>
 <li><b>The AI empires</b> invade at the start of day 3 (one empire) and day 5 (the others usually join), with a 12-hour warning. A player alone in the galaxy only faces the day-5 invasion, from one empire. A hostile empire also threatens you once your fleet reaches 80% of theirs, and strikes 2 hours later. It won't strike the same player again for 36 hours.</li>
-<li><b>War runs in real time, even while everyone is away.</b> Fleets launch and meet halfway. The winner takes the outer worlds first, moving inward, and besieges the home world last. While anyone on the defending side is online, a siege rolls every 30 seconds and a landing takes a minute. While the whole defending side is away, the garrison digs in: a roll every 90 minutes, and a landing takes an hour. Planetary defenses make both slower.</li>
+<li><b>War runs in real time, even while everyone is away.</b> Fleets launch and meet halfway. The winner lands on the outer worlds first, moving inward, and besieges the home world last. Landings come in turns of 10 seconds: an undefended colony falls after one turn, and each defense level adds two more, with its guns firing on the fleet every turn. A home world is besieged with a dice roll every 30 seconds. While the whole defending side is away, the garrison digs in: a landing turn takes 10 minutes and a siege roll 90. Every landing turn and siege roll adds war exhaustion. AI home systems start fully fortified; their other worlds start with Orbital guns. Both sides see every siege, in the Sieges list and on the map.</li>
 <li><b>Defending.</b> If you are attacked while you are away, your fleet never chases the enemy home. After a win it guards the world the enemy would hit next. If badly outmatched, it posts up over your home world instead. A battle over one of your worlds brings in its guns, and your fleet fights 10% harder on home ground. Online, you choose: counterattack or hold.</li>
 <li><b>Vassals.</b> If an AI empire takes your home world, you become its vassal and play on, paying 1 Food, 1 Water and 1 of your rare good each hour. Another player frees you by winning the "Free their vassals" treaty, or by annexing or vassalizing your overlord.</li>
-<li><b>The Reflection.</b> On day 7 every war stops and a rift opens for each player. Out of each comes a mirror of that player's fleet: the same ships and upgrades, at a strength set by the week, not by you. All players fight it together in one war. A mirror regrows every hour while its rift is open. Destroy a mirror's fleet to close its rift. Against the Reflection, your world's guns grow with your civilization: normal strength for a Landfall outpost, twice as strong at Type I, four times at Type II. Close every rift and every player who still holds their home world earns 2 free technology points. Close only your own and you earn 1. Lose your home world to it and you earn none.</li>
+<li><b>The Reflection.</b> On day 7 every war stops and a rift opens for each player. Out of each comes a mirror of that player's fleet: the same ships and upgrades, at a strength set by the week, not by you. All players fight it together in one war. A mirror regrows every hour while its rift is open. Destroy a mirror's fleet to close its rift. Against the Reflection, your world's guns grow with your civilization: normal strength for a Landfall outpost, twice as strong at Type I, four times at Type II. Mirrors never occupy. They hover over your worlds and strike every siege turn, one world after another: a 50% chance to kill one of your people and a 25% chance to wreck a building (a works or a defense level), less over a defended world, until your people are down to 2. Your guns fire back each turn. Close every rift and every player whose people survived earns 2 free technology points. Close only your own and you earn 1. If the Reflection decimates your people, you earn none.</li>
 <li><b>Investing.</b> From another player's panel (when you are not at war), offer to invest: they get a full day of every foreign rare good they need, and they pay you the credits you are still short of today's "credits needed" figure. It costs you no goods. Nothing happens unless they accept, and you can make one offer per player per day.</li>
+<li><b>Rush orders.</b> Short of the Ore or Fuel for a warship? The shipyard builds it anyway, for double the credits and no goods.</li>
 <li><b>Technologies</b> cost credits and goods, and you keep them forever: Closed-loop habitats, Deep-core mining, Hazard wardens, Drone shipyards, Bastion grid and Rift lances.</li>
 <li><b>Your leader</b> rules at home. Leader types: Sovereign (no change), Steward (taxes +25%, each shortage +1 unrest), Industrialist (+1 Ore and +1 Fuel an hour, people need 10% more Food), Diplomat (trade routes with non-allies deliver in full, −1 Ore an hour), Zealot (unrest falls 2 faster when calm, taxes −20%).</li>
 <li><b>Your general</b> leads your fleet. General types: Veteran (no change), Raider (+10% attack, −10% siege), Siegemaster (+20% siege, −5% attack), Warden (+15% attack over your own worlds, −5% attack elsewhere).</li>
@@ -1183,7 +1185,7 @@ function newSystem(slot){const R=sysRand((ARCADE&&ARCADE.id||'solo')+':'+Date.no
 function seasonReset(){const k={leader:SYS.leader,slot:SYS.slot};
  SYS=newSystem(k.slot);Object.assign(SYS,{sysName:'',leader:k.leader,season:SEASON.n});
  const ch=(SEASON.chronicle||[]).slice(-1)[0];SYS_MSG=`Week ${SEASON.n} begins. ${ch?ch.text+' ':''}Everything starts over: name your new system. Your technologies, ship upgrades and general carry over.`;saveSys()}
-let SERVER=null;let SYS=null,GAL=[],AIS=[],WARS=[],SYS_PID=null,SYS_ONLINE=false,SYS_MSG='',SV={tab:'system',who:null,sel:0,anim:null};
+let SERVER=null,SRV_RULES=null,SRV_BONUS=0;let SYS=null,GAL=[],AIS=[],WARS=[],SYS_PID=null,SYS_ONLINE=false,SYS_MSG='',SV={tab:'system',who:null,sel:0,anim:null};
 // Saves are never discarded on an update: unknown or newer fields are kept, missing ones are filled in,
 // and every save also writes a backup copy. The server keeps a full copy too (see restoreSys).
 function fixSys(s){if(!s||typeof s!=='object'||!Array.isArray(s.planets)||!s.planets.length)return null;
@@ -1249,7 +1251,7 @@ async function sysCall(op,extra){if(!ARCADE)return null;try{const r=await fetch(
   body:JSON.stringify({id:ARCADE.id,op,...(SYS&&SYS.srv?{srv:SYS.srv}:{}),...(op==='sync'?{sys:{...SYS,name:ARCADE.name,credits:credits()}}:{}),...(extra||{})})});
  if(!(r.ok||r.status===409))return null;const j=await r.json();SYS_ONLINE=true;if(j.now)SRV_OFF=j.now-Date.now();
  if(j.gone&&SYS){if(typeof lostServer==='function')lostServer(j.msg);return j}
- if(j.server)SERVER=j.server;
+ if(j.server)SERVER=j.server;if(j.rules)SRV_RULES=j.rules;if(j.rulesGen)SRV_BONUS=j.rulesGen.bonus||0;
  if(j.reset&&SYS){const keep={leader:SYS.leader,general:SYS.general,srv:SYS.srv},rf=refundWeek();SYS=newSystem(0);Object.assign(SYS,keep);saveSys();SYS_PID=null;
   SYS_MSG=`The admin reset ${SERVER?SERVER.name:'this server'}: it starts again from day 1, and your old system is gone.${rf} Found a new one.`;if(typeof nameScreen==='function'&&document.getElementById('sysroot')){stopPoll();nameScreen()}return j}if(j.srv&&SYS&&!SYS.srv){SYS.srv=j.srv;saveSys()}
  if(j.kicked&&SYS){const keep=SYS.leader,rf=refundWeek();SYS=newSystem(0);SYS.leader=keep;SYS_MSG=`An admin removed your system from ${SERVER?SERVER.name:'the galaxy'}. You can found a new one.${rf}`;saveSys();if(typeof serverScreen==='function'&&document.getElementById('sysroot')){stopPoll();serverScreen()}return j}
@@ -1269,6 +1271,7 @@ function applyInbox(evs){const msgs=[];for(const e of evs){msgs.push(e.msg);
  for(const r in e.res||{})if(e.t!=='got')SYS.res[r]=Math.max(0,(SYS.res[r]||0)-e.res[r]);
  for(const k in e.fleet||{})SYS.fleet[k]=Math.max(0,(SYS.fleet[k]||0)-e.fleet[k]);
  if(e.planet){const i=SYS.planets.findIndex(p=>p.n===e.planet&&p.st==='colony');if(i>0){SV.anim={kind:'incoming',planet:i,win:false,lose:e.planet};SYS.planets.splice(i,1)}}
+ if(e.t==='collateral'){if(e.pop)SYS.pop=Math.max(2,SYS.pop-e.pop);if(e.boost)SYS.boost[e.boost]=Math.max(0,(SYS.boost[e.boost]||0)-(e.boost==='spec'?2:1));if(e.def!=null&&SYS.planets[e.def])SYS.planets[e.def].def=Math.max(0,(SYS.planets[e.def].def||0)-1)}
  if(['raided','defended'].includes(e.t)&&!SV.anim)SV.anim={kind:'incoming',planet:0,win:e.t==='defended'}}
  SYS_MSG=msgs.join(' ')}
 // ---- actions ----
@@ -1281,8 +1284,10 @@ const SHOP=[
  {k:'mine',cat:'works',l:'Sink a deep mine',d:'+1 Ore every hour.',c:75,go:()=>{SYS.boost.ore=(SYS.boost.ore||0)+1;SYS_MSG='The drills bite into the crust.'}},
  {k:'ext',cat:'works',l:'Upgrade your rare-goods works',d:()=>`+2 ${SRES_NAME[SYS.spec]} every hour. Other players need it.`,c:125,go:()=>{SYS.boost.spec+=2;SYS_MSG='The works roar to life.'}}];
 function buy(k){const it=SHOP.find(x=>x.k===k);sysAct(()=>{if(spend(it.c,it.res))it.go()})}
-async function buildShip(k){const s=SHIPS[k],cost=shipCost(k);if(!spend(cost,s.res))return renderSystems();saveSys();const j=await sysCall('build',{ship:k});
- if(!j||j.ok===false){addCredits(cost,'undo');for(const r in s.res)SYS.res[r]+=s.res[r];SYS_MSG=j?j.msg:'No connection to the galaxy.'}else SYS_MSG=`A new ${s.name} joins ${myFleet().admiral}.`;saveSys();renderSystems()}
+// Rush order (test): short of the goods for a warship? Pay double credits instead.
+function shipPay(k){const s=SHIPS[k],c=shipCost(k);for(const r in s.res)if((SYS.res[r]||0)<s.res[r])return {c:2*c,res:{},rush:true};return {c,res:s.res}}
+async function buildShip(k){const s=SHIPS[k],pay=shipPay(k),cost=pay.c;if(!spend(cost,pay.res))return renderSystems();saveSys();const j=await sysCall('build',{ship:k});
+ if(!j||j.ok===false){addCredits(cost,'undo');for(const r in pay.res)SYS.res[r]+=pay.res[r];SYS_MSG=j?j.msg:'No connection to the galaxy.'}else SYS_MSG=`A new ${s.name} joins ${myFleet().admiral}.`;saveSys();renderSystems()}
 async function upgradeShip(k){const lv=myFleet().up[k]||0;if(lv>=3)return;const ur=upgRes(k,lv);if(!spend(UPG_COST[lv],ur))return renderSystems();saveSys();const j=await sysCall('upgrade',{ship:k});
  if(!j||j.ok===false){addCredits(UPG_COST[lv],'undo');for(const r in ur)SYS.res[r]+=ur[r];saveSys();SYS_MSG=j?j.msg:'No connection to the galaxy.'}else SYS_MSG=`${UPGS[k][lv].n} installed on every ${SHIPS[k].name}.`;renderSystems()}
 function explore(i){sysAct(()=>{if(SYS.ships<1){SYS_MSG='Build a scout ship first.';return false}SYS.ships--;SYS.planets[i].st='explored';SYS_MSG=`Your scouts find ${SRES_NAME[SYS.planets[i].r]} on ${SYS.planets[i].n}.`})}
@@ -1446,12 +1451,13 @@ function occupyAnim(e,x,y,col){const age=(snow()-e.t)/1000;if(age>8||age<-1)retu
 // 1 the fleet bombards the planet, 2 the result and the dice maths, 3 the planet's guns fire back
 // and destroy ships one by one, 4 what the fleet lost. About 12 seconds; rounds come every 30.
 function appear(t,age,d){d=d||.3;return age>t+d?{a:'opacity="1"',m:''}:{a:'opacity="0"',m:`<animate attributeName="opacity" values="0;1" begin="${(t-age).toFixed(2)}s" dur="${d}s" fill="freeze"/>`}}
+const SIEGE_KINDS=['siege','land','rift']; // home-world siege rounds, colony landing turns, Reflection strikes
 function siegeBox(e,mx,my){const age=(snow()-e.t)/1000;if(age>12.5||age<-1)return '';const B=v=>(v-age).toFixed(2);
  const W=300,H=176,x0=Math.max(4,Math.min(360-W-4,mx-W/2)),y0=Math.max(4,Math.min(250-H-4,my-H/2)),col=factionCol(e.by);
  const L=e.lost||{},now=e.ships||{c:0,f:0,d:0},before={c:(now.c||0)+(L.c||0),f:(now.f||0)+(L.f||0),d:(now.d||0)+(L.d||0)};
  const cap={d:3,f:4,c:6},room=H-74,top=y0+44;let o=`<g><animate attributeName="opacity" values="1;0" begin="${B(11.6)}s" dur=".8s" fill="freeze"/>
  <rect x="${x0-3}" y="${y0-3}" width="${W+6}" height="${H+6}" fill="#0a1020"/><rect x="${x0}" y="${y0}" width="${W}" height="${H}" fill="#060914" stroke="#ff9f43" stroke-width="3"/>
- <text x="${x0+W/2}" y="${y0+16}" class="svl" style="fill:#ff9f43">SIEGE OF ${escH((e.n||'').toUpperCase())}</text>`;
+ <text x="${x0+W/2}" y="${y0+16}" class="svl" style="fill:${e.kind==='rift'?'#c77dff':'#ff9f43'}">${e.kind==='land'?'LANDING ON':e.kind==='rift'?'RIFT STRIKE ON':'SIEGE OF'} ${escH((e.n||'').toUpperCase())}</text>`;
  // the planet, its shield and its gun turrets (one more per defense level)
  const px=x0+W-58,py=y0+H/2+4,guns=1+(e.def||0);
  o+=`<circle cx="${px}" cy="${py}" r="30" fill="#b48cff"/><circle cx="${px-8}" cy="${py-9}" r="9" fill="#d6c2ff" opacity=".6"/><circle cx="${px+10}" cy="${py+12}" r="6" fill="#8a64d6"/>
@@ -1476,11 +1482,12 @@ function siegeBox(e,mx,my){const age=(snow()-e.t)/1000;if(age>12.5||age<-1)retur
  // captions: one line at a time along the bottom
  const cap1=`${escH(tag(e.by))} opens fire`,ok={'Status quo.':'The walls hold','Supplies run short inside the walls.':'Supplies run short','The planetary shield is breached!':'Shield breached!','The defenders surrender!':'They surrender!','Disease breaks out in the siege lines.':'Disease in the siege lines'}[e.res]||e.res;
  const lt=['d','f','c'].filter(t=>L[t]).map(t=>`${L[t]} ${{c:'corvette',f:'frigate',d:'dread'}[t]}${L[t]>1?'s':''}`);
- const fell=e.total>=14,caps=[[0.2,3.4,cap1,'#e8e8f0'],[3.6,5.0,fell?'They surrender!':ok,fell?'#7bd17b':'#ffd166'],[5.0,8.0,`Guns hit back: -${e.fire} hull`,'#ff9f43'],[8.0,11.6,fell?`${escH(e.n||'The world')} has fallen!`:lt.length?(lt.join(', ').length+(e.broken?12:0)>24?`Lost ${(L.c||0)+(L.f||0)+(L.d||0)} ships${e.broken?'. Retreats!':''}`:`Lost: ${lt.join(', ')}${e.broken?'. Retreats!':''}`):'No ships lost this round',fell?'#7bd17b':'#ff7a6e']];
+ const WS={'farms':'Farms','a water purifier':'Purifier','a deep mine':'Mine','rare-goods works':'Works','a defense level':'Defenses'},hit=e.kind==='rift'?(e.killed?'One person killed':'No one killed'):'';
+ const fell=e.kind==='land'?!!e.taken:e.kind==='rift'?false:e.total>=14,caps=[[0.2,3.4,e.kind==='rift'?`${escH(tag(e.by))} strikes`:e.kind==='land'?`${escH(tag(e.by))} lands troops`:cap1,'#e8e8f0'],[3.6,5.0,e.kind==='land'?(fell?'They take it!':`Turn ${e.turn} of ${e.need}`):e.kind==='rift'?hit:fell?'They surrender!':ok,fell?(e.owner===SYS_PID?'#ff7a6e':'#7bd17b'):e.kind==='rift'&&(e.killed||e.wreck)?'#ff7a6e':'#ffd166'],[5.0,8.0,e.fire>0?`Guns hit back: -${e.fire} hull`:'No guns to fire back','#ff9f43'],[8.0,11.6,fell?`${escH(e.n||'The world')} has fallen!`:lt.length?(lt.join(', ').length+(e.broken?12:0)>24?`Lost ${(L.c||0)+(L.f||0)+(L.d||0)} ships${e.broken?'. Retreats!':''}`:`Lost: ${lt.join(', ')}${e.broken?'. Retreats!':''}`):'No ships lost this round',fell?(e.owner===SYS_PID?'#ff7a6e':'#7bd17b'):'#ff7a6e']];
  const ex=e.exd||{};if(ex.def)caps.push([3.6,8.0,`${escH(tag(e.owner))} exhaustion +${ex.def}`,'#ff9f43',1]);if(ex.atk)caps.push([8.0,11.6,`${escH(tag(e.by))} exhaustion +${ex.atk}`,'#ff9f43',1]);
  caps.forEach(([a,b,t,c,row])=>{o+=`<text x="${x0+W/2}" y="${y0+H-(row?30:10)}" class="svl" style="fill:${c}" opacity="0">${t}<animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.06;.92;1" begin="${B(a)}s" dur="${(b-a).toFixed(2)}s" fill="freeze"/></text>`});
  // the dice maths, from the result onward
- {const ap=appear(3.6,age);o+=`<text x="${x0+W/2}" y="${y0+34}" class="svl" style="fill:#9aa6d6" ${ap.a}>${e.total>=14?`Siege total ${e.total}: taken!`:`Siege total ${e.total} of 14 needed`}${ap.m}</text>`}
+ {const ap=appear(3.6,age);o+=`<text x="${x0+W/2}" y="${y0+34}" class="svl" style="fill:#9aa6d6" ${ap.a}>${e.kind==='land'?(e.taken?'Landing complete: taken!':`Landing turn ${e.turn} of ${e.need}${e.def?` (defenses ${e.def})`:''}`):e.kind==='rift'?`${e.wreck?`${WS[e.wreck]||'Building'} wrecked · `:''}${e.pop} people left`:e.total>=14?`Siege total ${e.total}: taken!`:`Siege total ${e.total} of 14 needed`}${ap.m}</text>`}
  return o+'</g>'}
 
 function systemSVG(sys,clickable){const W=360,H=300,cx=W/2,cy=H/2;let o=`<svg viewBox="0 0 ${W} ${H}" class="svmap" shape-rendering="crispEdges">${bgStars(W,H,(sys.sysName||sys.name)+'s')}`;
@@ -1490,20 +1497,21 @@ function systemSVG(sys,clickable){const W=360,H=300,cx=W/2,cy=H/2;let o=`<svg vi
  if(!sys.ai){const hf=sys===SYS?myFleet():sys.fleet;if(hf&&hf.ships&&fleetPower(hf)>0&&['dock','guard'].includes((hf.loc||{s:'dock'}).s)){const b=fleetBox(hf);o+=`<g class="fleet homefleet" transform="translate(${Math.round(cx-b.w*HF/2)},${Math.round(cy-24-b.h*HF)}) scale(${HF})">${fleetIcon(hf,0,0,factionCol(sys===SYS?SYS_PID:sys.pid),false)}</g>`}}
  const owner=sys.ai?sys.pid:(sys===SYS?SYS_PID:sys.pid),occ=occOf(owner);
  (sys.planets||[]).forEach((p,i)=>{const[x,y]=planetXY(i,W,H);const R=p.st==='home'?6:p.st==='colony'?5:4,unk=p.st==='unknown',on=SV.sel===i;const ly=y<cy-20?y-R*3-8:y+R*3+20;
-  const ring=p.owner?(p.owner===SYS_PID?'#7bd17b':'#ff6b6b'):p.st==='colony';const oc=occ.find(z=>z.i===i);
+  const ring=p.owner?factionCol(p.owner):p.st==='colony';const oc=occ.find(z=>z.i===i);
   o+=`<g class="svp${on?' on':''}" onclick="SV.sel=${i};renderSystems()">${on?`<rect x="${x-R*3-7}" y="${y-R*3-7}" width="${R*6+14}" height="${R*6+14}" fill="none" stroke="#ffd166" stroke-width="2" stroke-dasharray="6 3"/>`:''}${pxPlanet(x,y,R,p.st==='home'&&!sys.ai?worldOf(sys).col:SRES_COL[p.r],unk,ring)}
-  ${oc?`<rect x="${x+R*3-2}" y="${y-R*3-12}" width="2" height="12" fill="#c3c9de"/><rect x="${x+R*3}" y="${y-R*3-12}" width="9" height="6" fill="${oc.by===SYS_PID||mutualAlly(SYS,oc.by)?'#5fb8ff':'#ff5a5a'}"/>`:''}
-  <rect x="${x-30}" y="${y-30}" width="60" height="60" fill="transparent"/><text x="${x}" y="${ly}" class="svl${on?' me':''}">${escH(p.n)}</text></g>`});
+  ${oc?(c=>`<rect x="${x-R*3-5}" y="${y-R*3-5}" width="${R*6+10}" height="${R*6+10}" fill="${c}" fill-opacity=".22" stroke="${c}" stroke-width="2"/><rect x="${x-R*3-8}" y="${y-R*3-14}" width="2" height="14" fill="#c3c9de"/><rect x="${x-R*3-18}" y="${y-R*3-14}" width="10" height="7" fill="${c}"/>`)(factionCol(oc.by)):''}
+  <rect x="${x-30}" y="${y-30}" width="60" height="60" fill="transparent"/><text x="${x}" y="${ly}" class="svl${on?' me':''}"${oc?` style="fill:${factionCol(oc.by)}"`:''}>${escH(p.n)}${oc?' (held)':''}</text></g>`});
  const boxes=[];
  // fleets in orbit here: troops landing on colonies; bombardment, then the home world's guns firing back
  for(const [fid,fl] of allFleets())if(fl.loc.s==='orbit'&&fl.loc.at===owner){const w=WARS.find(w=>!w.ended&&w.siege&&w.siege[fid]);const sg=w&&w.siege[fid];const i=sg&&sg.planet>=0?sg.planet:0;const[x,y]=planetXY(i,W,H);
   const col=factionCol(fid),left=x<cx,fx=left?x-78:x+34,fy=y-30,pl=(sys.planets||[])[i]||{},home=pl.st==='home'||pl.home,gx=left?fx+30:fx,gy=fy+6;
   o+=fleetIcon(fl,left?fx+28:fx,fy,col,!left);const evs=((w&&w.events)||[]).filter(e=>e.by===fid&&e.owner===owner&&e.i===i);
-  if(home)o+=idleSiege(x,y)
+  if(isRift(fid))o+=idleSiege(x,y).replace('#7fe0ff','#c77dff')
+  else if(home)o+=idleSiege(x,y)
   else if(!occ.some(z=>z.i===i))o+=landingAnim(gx,gy,x,y,col).replace(/<text[^]*<\/text>$/,WARS.some(w=>(w.events||[]).some(e=>e.kind==='occupy'&&e.owner===owner&&snow()-e.t<8000))?'':'$&')}
  // planets just taken: flag goes up
  for(const w of WARS)for(const e of (w.events||[]))if(e.kind==='occupy'&&e.owner===owner){const[x,y]=planetXY(e.i,W,H);o+=occupyAnim(e,x,y,factionCol(e.by))}
- for(const w of WARS){const sEv=(w.events||[]).filter(e=>e.kind==='siege'&&e.owner===owner&&snow()-e.t<12500&&snow()-e.t>-500).pop();if(sEv)boxes.push(siegeBox(sEv,180,125))}
+ for(const w of WARS){const sEv=(w.events||[]).filter(e=>SIEGE_KINDS.includes(e.kind)&&e.owner===owner&&snow()-e.t<12500&&snow()-e.t>-500).pop();if(sEv)boxes.push(siegeBox(sEv,180,125))}
  o+=boxes.join('');
  const A=SV.anim;if(A&&A.kind==='incoming'&&sys===SYS){const[x,y]=planetXY(A.planet,W,H);o+=shipsOn(-10,40,x-4,y-2,'#ff5a5a',5,1.4,false)+boom(x,y,1.4)}
  return o+'</svg>'}
@@ -1604,7 +1612,7 @@ function galaxySVG(){const W=360,H=250;let o=`<svg viewBox="0 0 ${W} ${H}" class
   const flip=l.s==='move'&&nodeXY(l.to)[0]<nodeXY(l.from)[0];
   o+=homeFleet(id,fl)?`<g class="fleet" transform="translate(${xy[0]},${xy[1]}) scale(${HF})">${fleetIcon(fl,0,0,fleetCol(id),false)}</g>`:`<g class="fleet">${mv}${fleetIcon(fl,xy[0],xy[1],fleetCol(id),flip)}</g>`}
  // sieges in your wars: the siege box over the besieged world
- for(const w of WARS){if(!w.sides.flat().includes(SYS_PID))continue;const sEv=(w.events||[]).filter(e=>e.kind==='siege'&&snow()-e.t<12500&&snow()-e.t>-500).pop();if(sEv){const n=nodeXY(sEv.owner);if(n)o+=siegeBox(sEv,n[0],n[1])}}
+ for(const w of WARS){if(!w.sides.flat().includes(SYS_PID))continue;const sEv=(w.events||[]).filter(e=>SIEGE_KINDS.includes(e.kind)&&snow()-e.t<12500&&snow()-e.t>-500).pop();if(sEv){const n=nodeXY(sEv.owner);if(n)o+=siegeBox(sEv,n[0],n[1])}}
  // battles where fleets met: a full battle scene at the meeting point
  for(const w of WARS)for(const e of w.events||[])if(e.kind==='battle'){const parts=String(e.where).split(':');let xy;
   if(parts[0]==='mid'){const a=nodeXY(parts[1]),b=nodeXY(parts[2]);xy=a&&b?[(a[0]+b[0])/2,(a[1]+b[1])/2]:null}else xy=nodeXY(e.where);if(xy)o+=battleOverlay(e,xy[0],xy[1])}
@@ -1680,7 +1688,7 @@ function yardPanel(fl){const sc=SHOP.find(x=>x.k==='ship');
  ${Object.entries(SHIPS).map(([k,s])=>{const lv=(fl.up||{})[k]||0,nx=UPGS[k][lv];
   return `<div class="shipcard"><div class="shiphead">${shipIco(k,fl)}<b>${s.name}</b> <span class="note">× ${fl.ships[k]}</span><span class="sstat">ATK ${shipStat(fl,k,'atk')} · HULL ${shipStat(fl,k,'hull')} · SIEGE ${shipStat(fl,k,'siege')}</span></div>
   <p class="note">${s.d}</p>
-  <div class="sysbtns"><button onclick="buildShip('${k}')">Build<small>${shipCost(k)} credits, ${Object.entries(s.res).map(([r,n])=>n+' '+SRES_NAME[r]).join(', ')}.</small></button>
+  <div class="sysbtns">${(p=>`<button onclick="buildShip('${k}')">${p.rush?'Rush order':'Build'}<small>${p.rush?`${p.c} credits, no goods needed. You are short of ${Object.keys(s.res).filter(r=>(SYS.res[r]||0)<s.res[r]).map(r=>SRES_NAME[r]).join(' and ')}, so it costs double.`:`${p.c} credits, ${Object.entries(s.res).map(([r,n])=>n+' '+SRES_NAME[r]).join(', ')}.`}</small></button>`)(shipPay(k))}
   ${nx?`<button onclick="upgradeShip('${k}')">Upgrade ${lv+1}/3: ${nx.n}<small>${Object.entries(nx.fx).map(([a,b])=>'+'+b+' '+{atk:'attack',hull:'hull',siege:'siege'}[a]).join(', ')} on every ${s.name}. ${costTxt(UPG_COST[lv],upgRes(k,lv))}.</small></button>`:`<p class="note">Fully upgraded.</p>`}</div>
   <div class="upgtrack">${UPGS[k].map((u,i)=>`<span class="${i<lv?'done':i===lv?'next':''}">${i<lv?'✓':i+1} ${u.n}</span>`).join('')}</div></div>`}).join('')}
  <p class="note">Upgrades apply to every ship of that type and stay with you every week.</p>`}
@@ -1709,10 +1717,16 @@ function aiPanel(a,brief){if(a.rift)return riftPanel(a);const s=SYS,al=mutualAll
  ${w?'':`<div class="sysbtns"><button onclick="aiAct('${a.id}','envoy')">Send an envoy<small>25 credits. Opinion +5 (once an hour).</small></button><button onclick="aiAct('${a.id}','gift')">Send a gift ${sel('gift'+a.id,'food')}<small>10 of it. Opinion +8.</small></button></div>
  <p class="note">AI empires never ally with players, but they trade while their opinion of you is 0 or more, and hostile ones (opinion −20 or less) are the ones that threaten you.</p>`}
  ${routesWith(a.id)}${w?'':tradeForm(a.id,s.spec,[...COMMON].sort((x,y)=>(a.res[y]||0)-(a.res[x]||0))[0])}${al?'':warBtn(a.id)}</div>`}
+// Every siege, landing or rift strike in your wars, on either side, with its latest turn. Shown to attacker and defender alike.
+function siegeLines(){const out=[];for(const w of WARS){if(w.ended||!w.sides.flat().includes(SYS_PID))continue;
+ for(const [fid,sg] of Object.entries(w.siege||{})){if(!sg||!sg.last)continue;const fl=fleetOf(fid);if(!fl||!fl.loc||fl.loc.s!=='orbit'||fl.loc.at!==sg.owner)continue;
+  const mineSide=w.sides.find(sd=>sd.includes(SYS_PID)),ours=mineSide.includes(fid),onMe=sg.owner===SYS_PID;
+  out.push(`<p class="note" style="border-left:4px solid ${factionCol(fid)};padding-left:6px;margin:4px 0">${onMe?'<b class="down">Your world under attack.</b> ':ours?'<b class="up">Your side is attacking.</b> ':''}${escH(sg.last)}</p>`)}}
+ return `<div id="sieges">${out.length?`<h3>Sieges</h3>${out.join('')}`:''}</div>`}
 function warsPanel(){const mine=WARS.filter(w=>!w.ended&&w.sides.flat().includes(SYS_PID));
  const vsAI=(w,k)=>w.sides[k].some(x=>!/^ai/.test(x))&&w.sides[1-k].every(x=>/^ai/.test(x));
  const joinable=WARS.filter(w=>!w.ended&&!w.sides.flat().includes(SYS_PID)&&(w.sides.some(sd=>sd.some(x=>mutualAlly(SYS,x)))||vsAI(w,0)||vsAI(w,1)));
- const sc=scourgeBox();
+ const sc=scourgeBox()+siegeLines();
  if(!mine.length&&!joinable.length)return `<div id="livebox">${sc}</div>`;
  return `<div id="livebox">${sc}<h3>Wars</h3>${mine.map(w=>{const s=w.sides[0].includes(SYS_PID)?0:1,foes=w.sides[1-s],sc=w.score[SYS_PID]||0;
   const occ=(w.occ||[]).filter(o=>w.sides[s].includes(o.by)),cols=occ.filter(o=>!o.home);
@@ -1813,14 +1827,14 @@ function renderSystems(){const s=SYS,e=era(s),ne=nextEra(s),hrs=Math.max(1,Math.
   ${pn?(/^ai/.test(pk)?aiPanel(pn,true):playerPanel(pn,true)):pk?`<div class="ppanel"><h3>${escH(SYS.sysName||SYS.name)} (you)</h3>${leaderBlock(SYS.leader,'Your')}<button class="rs" onclick="leaderScreen(false)">Edit leader</button>${fleetLine(SYS_PID,myFleet())}<button onclick="galClick('${pk}')">See your planets</button></div>`:''}${warsPanel()}`}
  else if(nb){const view=isAIv?{...nb,ai:true,pid:nb.id,planets:nb.planets.map(p=>({...p,st:p.home?'home':'colony'}))}:nb;
   body=`<p class="note"><button class="rs" onclick="SV={tab:'galaxy',who:null,pick:'${SV.who}',sel:0};renderSystems()">Back to galaxy</button> The ${escH(nb.sysName||nb.name)} system.</p>${systemSVG(view,true)}${planetPanel(view,SV.sel,false)}${isAIv?aiPanel(nb):playerPanel(nb)}`}
- else body=`${systemSVG(s,true)}<p class="note" style="text-align:center">Tap a planet.</p>${planetPanel(s,SV.sel,true)}`;
+ else body=`${systemSVG(s,true)}${siegeLines()}<p class="note" style="text-align:center">Tap a planet.</p>${planetPanel(s,SV.sel,true)}`;
  const vas=meRec().vassalOf;
  const guide=creditGuide(SEASON.day,SEASON.n),taxDay=Math.round(taxOf(s)*24);
  app.innerHTML=`<div class="card" id="sysroot"><div class="turn">Systems multiplayer ${alphaTag()}</div><h2>The ${escH(s.sysName||s.name)} System</h2>${srvLine()}
  <div class="hrow"><span>Week <b>${SEASON.n}</b> · Day <b>${SEASON.day||1}</b>/7</span><span class="hbtns"><button class="rs" onclick="openHelp(SYS_RULES)">Rules</button><button class="rs" data-g="guidebtn" onclick="guideStart()">Guide</button></span></div>
  <div class="sysgrid">
  <span class="wide" data-g="credits">Credits: <b>${credits()}</b> <i>(${guide} needed today)</i> · Tax +${taxDay}/day</span>
- <span class="wide">${planBox(s,guide)}</span>
+ <span class="wide">${comingBox(s,guide)}</span>
  ${(b=>`<span class="wide" data-g="bank"><i>This week: +${b.earned} earned · ${b.spent} spent (back if you lose your system)</i></span>`)(weekBank())}
  <span data-g="people">People ${s.pop}/${housing(s)}</span><span>Unrest ${s.unrest}% ${bar(s.unrest)}</span>
  <span class="wide">Age: ${e.name}${ne?` <i>(${ne.name} in ${ne.at-s.age}h)</i>`:''} · ${escH(sunOf(s).n)}, ${escH(worldOf(s).n.toLowerCase())} · Leader: ${leaderOf(s).n}</span></div>
@@ -1881,7 +1895,7 @@ function startPoll(){stopPoll();POLL=setInterval(async()=>{if(!document.getEleme
  const tmp=document.createElement('div');if(SV.tab==='galaxy'&&!SV.who)tmp.innerHTML=galaxySVG();
  else if(SV.who){const isAIv=/^ai/.test(SV.who),nb=isAIv?AIx(SV.who):GAL.find(g=>g.pid===SV.who);if(!nb)return;tmp.innerHTML=systemSVG(isAIv?{...nb,ai:true,pid:nb.id,planets:nb.planets.map(p=>({...p,st:p.home?'home':'colony'}))}:nb,true)}
  else tmp.innerHTML=systemSVG(SYS,true);
- map.replaceWith(tmp.firstElementChild);scheduleMeet();{const ob=document.querySelector('.warnban'),nb=warnBanner();if(ob||nb){const d=document.createElement('div');d.innerHTML=nb||'<i></i>';const el=d.firstElementChild;if(ob)nb?ob.replaceWith(el):ob.remove();else{const t=document.querySelector('#sysroot .tabs');if(t&&nb)t.before(el)}}}const lb=document.getElementById('livebox');if(lb&&!lb.contains(document.activeElement)){const t2=document.createElement('div');t2.innerHTML=warsPanel();lb.replaceWith(t2.firstElementChild)}},2000)}
+ map.replaceWith(tmp.firstElementChild);scheduleMeet();{const sl=document.getElementById('sieges');if(sl&&!document.getElementById('livebox')){const d=document.createElement('div');d.innerHTML=siegeLines();sl.replaceWith(d.firstElementChild)}}{const ob=document.querySelector('.warnban'),nb=warnBanner();if(ob||nb){const d=document.createElement('div');d.innerHTML=nb||'<i></i>';const el=d.firstElementChild;if(ob)nb?ob.replaceWith(el):ob.remove();else{const t=document.querySelector('#sysroot .tabs');if(t&&nb)t.before(el)}}}const lb=document.getElementById('livebox');if(lb&&!lb.contains(document.activeElement)){const t2=document.createElement('div');t2.innerHTML=warsPanel();lb.replaceWith(t2.firstElementChild)}},2000)}
 let MEET_T=null;function scheduleMeet(){if(MEET_T)return;let next=Infinity;for(const [id,fl] of allFleets())if(fl.loc.s==='move'){const m=fl.loc.to==='center'?fl.loc.t1+5100:fl.loc.t0+(fl.loc.t1-fl.loc.t0)/2;if(m>snow())next=Math.min(next,m)}
  if(next<Infinity)MEET_T=setTimeout(async()=>{MEET_T=null;await sysSync();if(document.getElementById('galmap')&&SV.tab==='galaxy'&&!SV.who){const t=document.createElement('div');t.innerHTML=galaxySVG();document.getElementById('galmap').replaceWith(t.firstElementChild)}},next-snow()+150)}
 // ---- Servers: each one is its own galaxy (5 players, 3 AI empires, one week per game). You play on one at a time.
@@ -1967,24 +1981,72 @@ let GUP_LOCAL=null;
 function gupNow(){const srv=meRec().gup||{};if(!GUP_LOCAL)return srv;const o={...srv};let behind=false;for(const k in GUP_LOCAL){if((srv[k]||0)<GUP_LOCAL[k]){o[k]=GUP_LOCAL[k];behind=true}}if(!behind&&!GUP_LOCAL.reset)GUP_LOCAL=null;return GUP_LOCAL&&GUP_LOCAL.reset?{}:o}
 // What to spend today's credits on, worked out from your own system right now: shortages first, then growth,
 // then protection when danger is near, then research, and warships with the rest.
-function todayPlan(s,guide){const out=[],add=(t,c,go,why)=>out.push({t,c,go,why});
- const need=needOf(s),prod=prodOf(s),flow=routeFlow(s),works={food:'farm',water:'pure',ore:'mine'};
- for(const r of Object.keys(need)){const net=prod[r]+flow[r]-need[r];if(net>=0)continue;const it=SHOP.find(x=>x.k===works[r]);
-  if(it)add(`${it.l}`,it.c,`buy('${it.k}')`,`${SRES_NAME[r]} is falling ${-net} an hour`);else add(`Get more ${SRES_NAME[r]}`,0,'',`trade for it, invest, or colonize a ${SRES_NAME[r]} world`)}
- const rn=rareNeed(s);for(const r of foreignRares(s).slice(0,rn.k))if((s.res[r]||0)<rn.n*12){add(`Line up ${SRES_NAME[r]}`,0,'',`your people need it: invest with or trade with the player who makes it`);break}
- const cap=(DEV[s.dev||0]||{}).cols||1,exp=s.planets.findIndex(p=>p.st==='explored'),unk=s.planets.findIndex(p=>p.st==='unknown');
- if(colonyCount(s)<cap){if(exp>0)add(`Colonize ${s.planets[exp].n}`,COLONY_CREDITS,`colonize(${exp})`,'more goods and room for more people');
-  else if(unk>0&&s.ships>0)add('Send a scout to explore',0,`explore(${unk})`,'find a world to colonize');
-  else if(unk>0)add('Build a scout ship',SHOP[0].c,`buy('ship')`,'you need one to explore')}
- const x=nextDev(s);if(x&&!s.proj&&s.age>=x.age)add(`Start ${x.n}`,0,'startProject()','paid in goods; raises taxes and colony room');
- const danger=warnings().some(w=>w.lvl>=2)||WARS.some(w=>!w.ended&&w.sides.flat().includes(SYS_PID));const dl=s.planets[0].def||0;
- if(danger&&dl<3)add(`${DEF_NAME[dl]} over your home world`,DEF_COST[dl],'fortify(0)','danger is near');
- let sum=out.reduce((a,o)=>a+o.c,0);const tk=Object.keys(TECHS).find(k=>techLv(k)<TECHS[k].max);
- if(!danger&&tk&&sum+TECH_COST[techLv(tk)]<=guide){add(`Research ${TECHS[tk].n}`,TECH_COST[techLv(tk)],`buyTech('${tk}')`,'kept every week');sum+=TECH_COST[techLv(tk)]}
- const fc=shipCost('f'),nf=Math.max(danger?2:1,Math.floor(Math.max(0,guide-sum)/fc));add(`Warships: ${nf} frigate${nf>1?'s':''}`,nf*fc,`buildShip('f')`,danger?'you will need the fleet soon':'the rest goes to your fleet');
- return out}
-function planBox(s,guide){const pl=todayPlan(s,guide),tot=pl.reduce((a,o)=>a+o.c,0);
- return `<details class="sec plan" data-g="plan"${SV_OPEN.has('plan')?' open':''} ontoggle="this.open?SV_OPEN.add('plan'):SV_OPEN.delete('plan')"><summary>Spend today on · about ${tot} credits</summary>${pl.map(o=>`<div class="planrow"><div><b>${o.t}</b><small>${o.why}</small></div><span>${o.c?o.c+' cr':'free'}</span>${o.go?`<button class="rs" onclick="${o.go}">Do it</button>`:''}</div>`).join('')}<p class="note">Worked out from your system right now. It changes as things change.</p></details>`}
+// What's coming: the problems ahead, soonest first, each with a few ways to deal with it. These are options, not orders:
+// the player picks what fits their plan. Odds come from the game's own battle replay (winOdds); the mirror estimate uses the
+// server's own Reflection numbers (rules.REFLECT, rulesGen.bonus), so the panel can never drift from the real rules.
+// Times in plain words: "40 minutes", "7 hours", "2 days", "1 day and 5 hours".
+function soon(ms){const m=Math.max(1,Math.round(ms/60000));if(m<60)return `${m} minute${m>1?'s':''}`;const h=Math.round(m/60);if(h<24)return `${h} hour${h>1?'s':''}`;const d=Math.floor(h/24),r=h%24;return `${d} day${d>1?'s':''}${r?` and ${r} hour${r>1?'s':''}`:''}`}
+function partnersWith(r,min){const out=[];
+ for(const g of GAL){if(g.pid===SYS_PID||atWar(g.pid))continue;const n=(g.res||{})[r]||0;if(n>=min)out.push({pid:g.pid,name:g.sysName||g.name,n})}
+ for(const a of AIS){if(a.annexedBy||a.rift||atWar(a.id)||a.opinion<0)continue;const n=(a.res||{})[r]||0;if(n>=min)out.push({pid:a.id,name:a.name,n})}
+ return out.sort((x,y)=>y.n-x.n)}
+const pickGo=id=>`SV={tab:'galaxy',who:null,pick:'${id}',sel:0};renderSystems()`;
+function frigateOpt(why){const p=shipPay('f');return {t:p.rush?'Rush a frigate':'Build a frigate',why:p.rush?`${why}. Rush order: you are short of Ore or Fuel, so it costs double`:why,c:p.c,go:"buildShip('f')"}}
+function defenseOpt(why){const dl=SYS.planets[0].def||0;if(dl>=3)return null;return {t:`${DEF_NAME[dl]} over your home world`,why:`${why}. Also needs ${costTxt(0,defRes(0,dl))}`,c:DEF_COST[dl],go:'fortify(0)'}}
+// The mirror the Reflection would send against your fleet as it is now (the server builds it the same way when the rifts open).
+function mirrorEst(){const R=SRV_RULES&&SRV_RULES.REFLECT;if(!R)return null;const fl=myFleet(),s=fl.ships,tot=s.c+s.f+s.d,up={c:0,f:0,d:0,...(fl.up||{})};
+ const mix=tot>=3?{c:s.c/tot,f:s.f/tot,d:s.d/tot}:{c:0.5,f:0.4,d:0.1},per=['c','f','d'].reduce((a,k)=>a+mix[k]*shipStat({up},k,'atk'),0);
+ const n=R.atk*(1+R.season*((SEASON.n||1)-1)+(SRV_BONUS||0))/per,ships={};for(const k of ['c','f','d'])ships[k]=Math.round(mix[k]*n);if(!ships.c&&!ships.f&&!ships.d)ships.f=1;
+ return {ships,up,dmg:{c:0,f:0,d:0}}}
+function oddsTxt(p){return `<b class="${p<0.5?'down':p<0.75?'warn':'up'}">${Math.round(p*100)}%</b>`}
+function comingItems(s){const out=[],now=snow();if(!SYS_PID)return out;
+ const need=needOf(s),prod=prodOf(s),flow=routeFlow(s),works={food:'farm',water:'pure',ore:'mine'},cap=(DEV[s.dev||0]||{}).cols||1;
+ // common goods that run out within a day
+ for(const r of COMMON){const net=prod[r]+flow[r]-(need[r]||0);if(net>=0)continue;const h=Math.floor((s.res[r]||0)/-net);if(h>24)continue;const o=[];
+  const it=SHOP.find(x=>x.k===works[r]);if(it)o.push({t:it.l,why:`+1 ${SRES_NAME[r]} an hour, for the rest of the week`,c:it.c,go:`buy('${it.k}')`});
+  const ci=s.planets.findIndex(p=>p.st==='explored'&&p.r===r);if(ci>0&&colonyCount(s)<cap)o.push({t:`Colonize ${escH(s.planets[ci].n)}`,why:`a ${SRES_NAME[r]} world. ${costTxt(0,colCost(ci))} too`,c:COLONY_CREDITS,go:`colonize(${ci})`});
+  const pt=partnersWith(r,15)[0];if(pt)o.push({t:`Trade with ${escH(pt.name)}`,why:`they have ${pt.n} ${SRES_NAME[r]}. Opens their panel`,c:null,go:pickGo(pt.pid)});
+  out.push({at:h*HOUR_MS,lvl:h<6?3:2,t:h<1?`${SRES_NAME[r]} has run out`:`${SRES_NAME[r]} runs out in about ${soon(h*HOUR_MS)}`,
+   note:`You lose ${-net} an hour. A shortage adds unrest every hour.${r==='ore'||r==='fuel'?' Warships need Ore and Fuel; without them, they cost double.':''}`,o})}
+ // foreign rare goods your people need
+ const rn=rareNeed(s);for(const r of foreignRares(s).slice(0,rn.k)){const h=Math.floor((s.res[r]||0)/rn.n);if(h>24)continue;const o=[];
+  const mk=GAL.find(g=>g.pid!==SYS_PID&&SPEC[g.slot]===r&&!atWar(g.pid));if(mk)o.push({t:`Trade with ${escH(mk.sysName||mk.name)}`,why:`they make ${SRES_NAME[r]}. Opens their panel`,c:null,go:pickGo(mk.pid)});
+  o.push({t:'Buy from smugglers',why:'3 of the foreign rare good you have least of',c:125,go:'smuggle()'});
+  out.push({at:h*HOUR_MS,lvl:h<6?3:2,t:h<1?`${SRES_NAME[r]} has run out`:`${SRES_NAME[r]} runs out in about ${soon(h*HOUR_MS)}`,note:`Your people need ${rn.n} an hour, and only other players make it. Each rare good you lack adds unrest every hour.`,o})}
+ const mine=[myFleet()].filter(f=>fleetPower(f)),allies=GAL.filter(g=>g.pid!==SYS_PID&&mutualAlly(s,g.pid)&&g.fleet&&fleetPower(g.fleet)).map(g=>g.fleet);
+ const allyNote=(foes)=>allies.length?` With your ${allies.length} all${allies.length>1?'ies':'y'} beside you: ${oddsTxt(winOdds([...mine,...allies],foes))}.`:' No allies with a fleet yet: allies can join your defense.';
+ // AI empires that have threatened you
+ for(const a of AIS){if(!a.threatens||a.annexedBy)continue;const foes=[a.fleet];
+  out.push({at:Math.max(0,a.strikeAt-now),lvl:3,t:`${escH(a.name)} strikes in about ${soon(Math.max(0,a.strikeAt-now))}`,
+   note:`Your fleet is close to theirs, so they mean to strike first, and other AI empires usually join. A battle against them alone now: ${oddsTxt(winOdds(mine,foes))}.${allyNote(foes)}`,
+   o:[frigateOpt('more power for the fight'),defenseOpt('their siege gets harder')].filter(Boolean)})}
+ // the next AI invasion
+ const sc=SCOURGE;if(sc&&sc.invadeAt&&!sc.endedAt&&!(SEASON.crisis)){const left=sc.invadeAt-now;if(left>0&&left<=36*HOUR_MS){
+  const free=AIS.filter(a=>!a.annexedBy&&!a.rift&&!a.overlord),first=GAL.length<=1||((SEASON.invasions||[])[0]&&sc.invadeAt<=SEASON.invasions[0]+60000); // a lone player, or the week's first invasion: one empire
+  const foes=(first?free.sort((x,y)=>fleetPower(y.fleet)-fleetPower(x.fleet)).slice(0,1):free).map(a=>a.fleet),me=sc.next===SYS_PID;
+  out.push({at:left,lvl:left<=12*HOUR_MS?(me?3:2):1,t:`AI invasion in about ${soon(left)}${me?': you are the likely target':''}`,
+   note:`${first?'One AI empire attacks':'The AI empires attack together'}. They go for the strongest player${me?'':` (now ${escH(sc.next?nameOf(sc.next):'nobody yet')})`}. Your fleet against ${first?'it':'them'} now: ${oddsTxt(winOdds(mine,foes))}.${allyNote(foes)}`,
+   o:[frigateOpt('more power for the fight'),defenseOpt('their siege gets harder')].filter(Boolean)})}}
+ // the Reflection
+ const cr=SEASON.crisisAt?SEASON.crisisAt-now:null,open=SEASON.crisis&&!SEASON.crisis.won;
+ if(open||(cr!=null&&cr>0&&cr<=48*HOUR_MS)){const m=open?(AIS.find(a=>a.rift&&a.mirror===SYS_PID&&!a.annexedBy)||{}).fleet:mirrorEst();const o=[frigateOpt('more power against your mirror')];
+  const lv=techLv('lance');if(lv<TECHS.lance.max)o.push({t:`Rift lances, level ${lv+1}`,why:`your fleet hits the Reflection 20% harder. Also needs ${costTxt(0,techRes('lance',lv))}`,c:TECH_COST[lv],go:"buyTech('lance')"});
+  const d=defenseOpt('your home guns fire on your mirror too');if(d)o.push(d);
+  const x=nextDev(s);if(x&&!s.proj&&s.age>=x.age&&established(s)>=x.est)o.push({t:`Start ${escH(x.n)}`,why:`home guns hit the Reflection harder as your civilization grows. Paid in goods: ${costTxt(0,x.cost)}`,c:0,go:'startProject()'});
+  out.push({at:open?0:cr,lvl:open||cr<=24*HOUR_MS?3:2,t:open?'The rifts are open':`The rifts open in about ${soon(cr)}`,
+   note:m?`${open?'Your mirror':'Your mirror will be'} about ${fpow(m)} fleet power${open?'':', the same mix of ships as yours. Its size is set by the week, not by how big your fleet is'}. Your fleet is ${fpow(myFleet())}. A battle against it now: ${oddsTxt(winOdds(mine,[m]))}, before your home guns help.${allyNote([m])}`:'A mirror of your fleet comes through. All players fight it together.',o})}
+ return out.sort((a,b)=>a.at-b.at).slice(0,4)}
+function comingBox(s,guide){const items=comingItems(s);
+ const row=o=>`<div class="planrow"><div><b>${o.t}</b><small>${o.why}</small></div><span>${o.c==null?'':o.c?o.c+' cr':'free'}</span>${o.go?`<button class="rs" onclick="${o.go}">${o.c==null?'Go':'Do it'}</button>`:''}</div>`;
+ let body;
+ if(items.length)body=items.map(it=>`<div class="wcitem lvl${it.lvl}"><b>${it.t}</b><small>${it.note}</small>${it.o.map(row).join('')}</div>`).join('');
+ else{const g=[],cap=(DEV[s.dev||0]||{}).cols||1,ci=s.planets.findIndex(p=>p.st==='explored'),ui=s.planets.findIndex(p=>p.st==='unknown');
+  if(colonyCount(s)<cap){if(ci>0)g.push({t:`Colonize ${escH(s.planets[ci].n)}`,why:'more goods and room for more people',c:COLONY_CREDITS,go:`colonize(${ci})`});else if(ui>0&&s.ships>0)g.push({t:'Send a scout',why:'find a world to colonize',c:0,go:`explore(${ui})`})}
+  const x=nextDev(s);if(x&&!s.proj&&s.age>=x.age&&established(s)>=x.est)g.push({t:`Start ${escH(x.n)}`,why:`paid in goods: ${costTxt(0,x.cost)}`,c:0,go:'startProject()'});
+  const tk=Object.keys(TECHS).find(k=>techLv(k)<TECHS[k].max);if(tk)g.push({t:`Research ${TECHS[tk].n}`,why:'kept every week',c:TECH_COST[techLv(tk)],go:`buyTech('${tk}')`});
+  g.push(frigateOpt('a bigger fleet for what comes later'));
+  body=`<p class="note">Nothing urgent in the next day. Some ways to grow:</p>${g.map(row).join('')}`}
+ return `<details class="sec plan" data-g="plan"${SV_OPEN.has('plan')?' open':''} ontoggle="this.open?SV_OPEN.add('plan'):SV_OPEN.delete('plan')"><summary>What's coming${items.length?` · ${items.length}`:''}</summary>${body}<p class="note">You have ${credits()} credits (about ${guide} needed today). These are options, not orders: pick what fits your plan.</p></details>`}
 function generalPanel(){const g=sysGen(),me=meRec(),rn=me.renown||0,docs=me.doctrines||[],tier=PROMOTE.filter(n=>rn>=n).length,next=PROMOTE[tier],gt=GENERALS[g.type]||GENERALS.veteran,gup=gupNow(),pts=renownPts();
  const pend=tier>docs.length,lo=PROMOTE[tier-1]||0,pct=next?Math.round(100*(rn-lo)/(next-lo)):100;
  return `<h3>Your general</h3><div style="overflow:hidden"><img class="sysport" src="${portraitURL(fixLook({...g.look}))}" alt="Your general"><p class="note"><b>${RANKS[docs.length]} ${escH(g.name)}</b> · ${gt.n}<br><small>${gt.d}</small><br>Battle renown <b>${rn}</b>${next?` <span class="ubar" style="width:80px"><i style="width:${pct}%;background:#ffd166"></i></span> next promotion at ${next}`:' (highest rank)'}</p></div>
