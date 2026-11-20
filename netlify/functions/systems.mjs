@@ -237,6 +237,18 @@ export default async (req) => {
         if (rec) { name ||= rec.name || ""; await galaxy({ ...body, op: "adminkick", target: pid, srv: s.id }, s, true); } }
       const del = (await reg.get("deleted", { type: "json" })) || {}; del[pid] = now; await reg.setJSON("deleted", del);
       msg = `${name || "That account"} was deleted. Their device starts over as a new player next time they open the game.`; }
+    else if (body.act === "credreset") { // wipe banked credits: everyone, or one player (by pid). Devices clear themselves on their next visit.
+      const cr = (await reg.get("credreset", { type: "json" })) || { all: 0, p: {} }; cr.p ||= {};
+      const pid = String(body.target || "").replace(/[^a-f0-9]/g, "").slice(0, 12);
+      if (pid) { if (pid.length !== 12) return json({ ok: false, msg: "No such player." }); cr.p[pid] = now; msg = "That player's credits will be reset next time they open the game."; }
+      else { cr.all = now; msg = "Everyone's credits will be reset next time they open the game."; }
+      await reg.setJSON("credreset", cr); }
+    else if (body.act === "achreset") { // wipe achievements: everyone, or one player (by pid). Devices clear themselves on their next visit.
+      const ar = (await reg.get("achreset", { type: "json" })) || { all: 0, p: {} }; ar.p ||= {};
+      const pid = String(body.target || "").replace(/[^a-f0-9]/g, "").slice(0, 12);
+      if (pid) { if (pid.length !== 12) return json({ ok: false, msg: "No such player." }); ar.p[pid] = now; msg = "That player's achievements will be reset next time they open the game."; }
+      else { ar.all = now; msg = "Everyone's achievements will be reset next time they open the game."; }
+      await reg.setJSON("achreset", ar); }
     else if (body.act === "kick") { const s = servers.list.find((x) => x.id === body.srv); if (!s) return json({ ok: false, msg: "That server is gone." });
       const r = await (await galaxy({ ...body, op: "adminkick" }, s, true)).json(); if (r.ok === false) return json(r); msg = r.msg; }
     return json({ ok: true, msg, servers: await summaries(servers, me, true), now });

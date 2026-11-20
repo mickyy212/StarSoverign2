@@ -27,6 +27,9 @@ export default async (req) => {
   if (req.method === "GET") {
     const me = new URL(req.url).searchParams.get("me") || "";
     if (me && deleted[pidOf(cleanId(me))]) return Response.json({ rows: [], deleted: true, clearedAt: meta.clearedAt || 0, keep: KEEP }, { headers });
+    // admin credit resets (everyone, or this player): the newest one that applies to this device
+    let credReset = 0; if (me) { const cr = (await getStore("systems").get("credreset", { type: "json" })) || {}; credReset = Math.max(cr.all || 0, (cr.p || {})[pidOf(cleanId(me))] || 0); }
+    let achReset = 0; if (me) { const ar = (await getStore("systems").get("achreset", { type: "json" })) || {}; achReset = Math.max(ar.all || 0, (ar.p || {})[pidOf(cleanId(me))] || 0); }
     const { blobs } = await store.list();
     const rows = await Promise.all(blobs.filter((b) => b.key !== "_meta").map(async (b) => {
       const r = await store.get(b.key, { type: "json" }); if (!r) return null;
@@ -34,7 +37,7 @@ export default async (req) => {
       // records from before the 20-run board keep their old totals until that device finishes a new run
       return { name: r.name, life: runs ? lifeOf(runs) : r.life, runs: runs ? runs.length : null, me: b.key === me };
     }));
-    return Response.json({ rows: rows.filter(Boolean), clearedAt: meta.clearedAt || 0, keep: KEEP }, { headers });
+    return Response.json({ rows: rows.filter(Boolean), clearedAt: meta.clearedAt || 0, keep: KEEP, credReset, achReset }, { headers });
   }
 
   if (req.method === "POST") {
