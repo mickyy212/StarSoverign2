@@ -316,6 +316,10 @@ button.lethal{background:#3e2228;box-shadow:inset 4px 4px 0 #9a3a32,inset -4px -
 .sky canvas{position:fixed;inset:0;width:100vw;height:100vh;image-rendering:pixelated}
 
 .stat{padding:6px 0 4px}
+/* your empire's best stat, lightly tinted: Science green, Influence blue, Fleet red */
+.stat.best-science{background:linear-gradient(rgba(134,211,143,.16),rgba(134,211,143,.16)),var(--panel2);border-color:#4f8a58;box-shadow:inset 0 4px 0 #86d38f}
+.stat.best-influence{background:linear-gradient(rgba(110,160,240,.16),rgba(110,160,240,.16)),var(--panel2);border-color:#4a6aa8;box-shadow:inset 0 4px 0 #7fb0ff}
+.stat.best-military{background:linear-gradient(rgba(232,102,90,.16),rgba(232,102,90,.16)),var(--panel2);border-color:#9a4a44;box-shadow:inset 0 4px 0 #e8665a}
 .stat .ico{width:21px;height:21px;display:block;margin:0 auto 2px}
 .stat b{font-size:30px;line-height:1.1}
 .stat span{font-size:10px;line-height:1.2;display:block}
@@ -557,7 +561,7 @@ body:has(#sysroot .tabs){padding-bottom:76px}body:not(:has(#sysroot .tabs)) #sys
 <div class="wrap" id="app"></div>
 <script>
 const MAX=15,TURNS=12,NEED=16;
-const LABELS={energy:'Energy',military:'Fleet',science:'Science',influence:'Influence',stability:'Stability'};
+const LABELS={stability:'Stability',energy:'Energy',military:'Fleet',influence:'Influence',science:'Science'}; // display order: most important first, then power stats A-Z
 const CAT={combat:'Combat',hazard:'Hazard',intrigue:'Intrigue'};
 const EMPIRES=[
  {name:'Vorrani Ascendancy',diff:'Hard',leader:'Warlord-Queen',desc:'Hive-born conquerors who sing before battle. Strongest fleet.',perk:'Chitin Carapace: 40% lower injury chance on every ⚔ choice.',s:{energy:7,military:5,science:3,influence:3,stability:7}},
@@ -565,9 +569,9 @@ const EMPIRES=[
  {name:'Kethari Mind-Collective',diff:'Easy',leader:'Prime Node',desc:'A trillion minds, one vote. Best science.',perk:'Backup Core: cheat death once (you wake Injured, −2 Stability). 30% lower Hazard risk.',s:{energy:7,military:4,science:8,influence:2,stability:7}}
 ];
 const TRAITS=[
- {id:'veteran',name:'Veteran',desc:'Combat-type ⚔ risks are halved.'},
+ {id:'veteran',name:'Veteran',desc:'Injury chance is halved on every ⚔ choice. On Combat choices, death chance is halved too.'},
  {id:'survivor',name:'Survivor',desc:'Death chance is halved on every ⚔ choice.'},
- {id:'daring',name:'Daring',desc:'⚔ wins give +1 to each stat gained, but ⚔ risks are 25% higher. Once per game you survive a killing blow (−2 Stability; in the final battle, −1 Stability and no bonus).'}
+ {id:'daring',name:'Daring',desc:'⚔ wins give +1 to each stat gained, but ⚔ risks are 25% higher. Once per game you survive a killing blow (−2 Stability; in the final battle, −1 Stability and you lose the +3 front-line bonus).'}
 ];
 // Choice: {l,txt,fx} or personal: {l,txt,fx,r:[cat,injury%,death%],f:failText,ff:failFx}
 const EVENTS=[
@@ -1063,49 +1067,48 @@ let QHELD=null; // a quantum roll made at trait pick, kept until Begin reign so 
 function qStartRun(turns){if(!TUT&&QHELD!=null){qd=QHELD;return}qd=0;if(TUT||!qPending())return;qSet(false);if(Math.random()<1/3)qd=1+Math.floor(Math.random()*turns);QHELD=qd}
 // ---- Guided tutorial: its own 8 events, always the Kethari (Easy) with the Survivor trait; nothing is saved or counted ----
 const TUT_DECK=[
- {t:'The Grid Flickers',x:'A solar storm has knocked out half of your power relays. The lights in the capital are going dark, one district at a time.',
-  tip:'Welcome! Each turn brings one event, and you pick one of its choices. The five tiles at the top are your stats (below them: your health, Renown and the Thal). This event is about <b>Energy</b>, which keeps your empire running. Every turn costs 1 Energy, and every turn you end at 0 Energy, blackouts cost you 1 Stability. The first choice gives the most Energy.',
-  c:[{l:'Reroute every reactor to the grid',txt:'The lights come back on, brighter than before.',fx:{energy:3}},
-     {l:'Ration power and reassure the people',txt:'The capital dims, but nobody panics.',fx:{energy:1,stability:1}},
-     {l:'Let the labs study the storm instead',txt:'Your scientists learn a lot. The capital sits in the dark.',fx:{science:2,energy:-1}}]},
- {t:'A Breakthrough in the Collective',x:'A trillion Kethari minds have solved the same equation at once. They ask how to use it.',
-  tip:'This is your chance to grow your <b>Best stat</b>. Your empire is best at <b>Science</b>, shown under the turn counter. In the final battle you fight with one stat, so growing your best one every turn is the surest way to win. <b>Fleet</b> and <b>Influence</b> are the other two power stats. No stat can go above 15: once your best one is maxed, spend your turns on Stability or Energy, or on safe ⚔ choices for Renown.',
-  c:[{l:'Build a new generation of research engines',txt:'Your Science leaps ahead.',fx:{science:3}},
-     {l:'Share it with your neighbors as a gift',txt:'Your neighbors are grateful.',fx:{influence:2}},
-     {l:'Turn it into better warship targeting',txt:'Your warships shoot straighter.',fx:{military:2}}]},
  {t:'Unrest in the Hab Rings',x:'Workers in the orbital habitats are striking. They say the Collective has stopped listening to them.',
-  tip:'<b>Stability</b> is how loyal your people are. If it ever reaches 0, they overthrow you and the run ends on the spot, so keep it at 6 or more to be safe. Half of your Stability also counts in the final battle. The first choice raises it most, but costs a little <b>Energy</b>.',
+  tip:'Welcome! Each turn has one event. Pick one choice. The five tiles at the top are your stats, and the tips go left to right. First: <b>Stability</b>, how loyal your people are. At 0, they overthrow you and you lose. Keep it at 6 or more, so one bad turn cannot sink you. Half of it counts in the final battle. The first choice raises it most, but costs some Energy (explained next turn).',hl:'.stat[aria-label^="Stability"]',
   c:[{l:'Meet their demands in full',txt:'The strike ends with cheering in the corridors.',fx:{stability:3,energy:-1}},
      {l:'Send diplomats to talk them down',txt:'A tense deal is struck.',fx:{stability:1,influence:1}},
      {l:'Ignore them and keep the labs running',txt:'The labs hum on. The anger grows.',fx:{science:2,stability:-2}}]},
+ {t:'The Grid Flickers',x:'A solar storm has knocked out half of your power relays. The lights in the capital are going dark, one district at a time.',
+  tip:'Next: <b>Energy</b>. Each turn costs 1 Energy. Each turn you end at 0, blackouts cost 1 Stability. When it gets low, pick choices that add Energy. The first choice gives the most.',hl:'.stat[aria-label^="Energy"]',
+  c:[{l:'Reroute every reactor to the grid',txt:'The lights come back on, brighter than before.',fx:{energy:3}},
+     {l:'Ration power and reassure the people',txt:'The capital dims, but nobody panics.',fx:{energy:1,stability:1}},
+     {l:'Let the labs study the storm instead',txt:'Your scientists learn a lot. The capital sits in the dark.',fx:{science:2,energy:-1}}]},
+ {t:'Raiders at the Edge',x:'Raiders are picking off cargo ships at the edge of your space. The captains want protection.',
+  tip:'Next: <b>Fleet</b>, your military might. The Vorrani win with it. You are Kethari, so you will fight with another stat (turn 5), and Fleet will only help your final battle if you fight with it.',hl:'.stat[aria-label^="Fleet"]',
+  c:[{l:'Build a new squadron of warships',txt:'New warships patrol the lanes.',fx:{military:3}},
+     {l:'Let drone swarms guard the lanes',txt:'The drones learn fast. The raids slow down.',fx:{science:1,stability:1}},
+     {l:'Pay the raiders to go away',txt:'The raids stop, for a price.',fx:{energy:-1,stability:1}}]},
+ {t:'Envoys from the Rim',x:'Three small worlds at the edge of your space offer to join the Collective, if you make it worth their while.',
+  tip:'Next: <b>Influence</b>, your diplomacy. The Celest win with it, not you. A seat here gives Influence +3. Their scientists give Science +2. You fight with Science (next turn), and only one stat fights at the end, so the +2 is worth more.',hl:'.stat[aria-label^="Influence"]',
+  c:[{l:'Promise them a seat in the Collective',txt:'The rim worlds sign on with joy.',fx:{influence:3}},
+     {l:'Ask for their scientists in return',txt:'New minds join your research labs.',fx:{science:2}},
+     {l:'Send them power cells as a welcome gift',txt:'The rim worlds feel welcome, and safe.',fx:{energy:1,stability:1}}]},
+ {t:'A Breakthrough in the Collective',x:'A trillion Kethari minds have solved the same equation at once. They ask how to use it.',
+  tip:'Next: <b>Science</b>. It is your <b>Best stat</b>, shown under the turn counter. The final battle uses one stat, so grow your best one every turn. Stats stop at 15. After that, raise other stats.',hl:'.stat[aria-label^="Science"],.beststat',
+  c:[{l:'Build a new generation of research engines',txt:'Your Science leaps ahead.',fx:{science:3}},
+     {l:'Share it with your neighbors as a gift',txt:'Your neighbors are grateful.',fx:{influence:2}},
+     {l:'Turn it into better warship targeting',txt:'Your warships shoot straighter.',fx:{military:2}}]},
  {t:'A Rogue Mind in the Archives',x:'One Kethari node has gone rogue in the deep archives and is erasing centuries of research.',
-  tip:'See the ⚔ choice? ⚔ choices send you in person: bigger rewards, plus +1 <b>Renown</b> if you succeed, but a risk of injury or death. The button shows the exact odds. An injury costs 1 Stability, and your <b>health</b> (the heart at the top) shows Hurt for 3 turns: ⚔ risks are 50% higher until you recover. Death ends the run, but the Kethari carry one backup core (shown under your name) that saves you once. Plain choices are always safe.',
+  tip:'Now your <b>health</b>, the heart under your stats. See the ⚔ choice? It means you go in person: bigger rewards, but you can be hurt or die. The button shows the odds. Hurt costs 1 Stability and lasts 3 turns. While Hurt, ⚔ risks are 50% higher. The button also names the risk type: Combat, Hazard or Intrigue. Dying ends the run. Only the Kethari have a backup core (under your name): it saves you once, then the next death ends the run. Plain choices are safe.',hl:'.pill[title="Leader"],.card button.personal',
   c:[{l:'Go into the archives yourself',txt:'You talk the rogue node down and save the archives. The Collective is impressed.',fx:{science:3,stability:1},r:['hazard',20,0],f:'The rogue node lashes out. You get out with burns and a few saved files.',ff:{science:1}},
      {l:'Seal the archives and wait it out',txt:'The damage stops. Some research is lost for good.',fx:{stability:1}},
      {l:'Send a security team',txt:'The team pulls the plug. Clean, quick, and a little brutal.',fx:{military:1,science:1}}]},
  {t:'Fever in the Lower Decks',x:'A machine fever is spreading through the maintenance drones under the capital. Nobody knows where it started.',
-  tip:'Another ⚔ choice. Before you take one, check two things: the odds on the button and your <b>health</b> at the top. Your trait, <b>Survivor</b>, halves your chance of death (the odds on the button already include it). A good rule: go in person only when the death chance is about 5% or less, and not while you are Hurt. If you are Hurt, the second choice heals you.',
+  tip:'Next: <b>Renown</b>. Each ⚔ success earns +1, and half your Renown counts in the final battle. Your leader type changes these odds, and the button already includes it. Go only if death is 5% or less, and not while Hurt, even with a backup core. The second choice heals you.',hl:'.pill[title="Renown"],.card button.personal',
   c:[{l:'Lead the quarantine yourself',txt:'You find the source and burn it out. The drones are saved.',fx:{science:2,stability:2},r:['hazard',25,6],f:'The fever reaches your own frame. You pull through, barely.',ff:{stability:1}},
      {l:'Rest in the repair bays and let the medics work',txt:'The medics contain the fever, and you come out fully repaired.',fx:{stability:1},heal:true},
      {l:'Shut down the infected sectors',txt:'The fever stops. So does a lot of work.',fx:{stability:1,energy:-1}}]},
  {t:'A Thal Trade Delegation',x:'The Thal, your oldest rivals, send traders with a smile and a very long contract.',
-  tip:'This is about the <b>Thal Threat</b>, shown at the top right as <b>Thal</b> (10 is the most it can reach). It rises by 1 every turn. If it reaches 5 or more, the Thal stab you in the back during the final battle and take away power (−1 at 5+, −3 at 8+). The first choice calms them down.',
+  tip:'Last: the <b>Thal Threat</b>, in the row under your stats (Thal). It has gone up 1 every turn, to a most of 10. At 5 or more, the Thal betray you in the final battle: −1 power at 5, −3 at 8. The first choice lowers it by 2. In real runs, calm them early: by turn 8 it is already high.',hl:'.pill[title="Thal Threat"]',
   c:[{l:'Sign the contract and keep the peace',txt:'The Thal seem satisfied, for now.',fx:{threat:-2,influence:1}},
      {l:'Copy their technology and send them home',txt:'Useful tech. The Thal noticed.',fx:{science:2,threat:1}},
-     {l:'Buy their fuel at a high price',txt:'Your tanks are full.',fx:{energy:2}}]},
- {t:'Envoys from the Rim',x:'Three small worlds at the edge of your space offer to join the Collective, if you make it worth their while.',
-  tip:'This one tests your plan. Promising them a seat gives <b>Influence</b> +3; asking for their scientists gives <b>Science</b> +2. The +3 looks bigger, but only one stat fights in the final battle, and yours is Science. Points spread across stats are mostly wasted, so keep growing your best stat unless another one is clearly ahead.',
-  c:[{l:'Promise them a seat in the Collective',txt:'The rim worlds sign on with joy.',fx:{influence:3}},
-     {l:'Ask for their scientists in return',txt:'New minds join your research labs.',fx:{science:2}},
-     {l:'Send them power cells as a welcome gift',txt:'The rim worlds feel welcome, and safe.',fx:{energy:1,stability:1}}]},
- {t:'The Eve of Battle',x:'Scouts report a swarm coming out of the galactic core. Tomorrow you fight it. Tonight you prepare.',
-  tip:'Last turn before the final battle. Your power there is the stat you fight with (your <b>Science</b> is best), plus half your <b>Stability</b>, a quarter of your <b>Energy</b> and half your <b>Renown</b>, plus 0 to 3 luck, minus the <b>Thal Threat</b> penalty. You need 16 to win. Overclocking the cannon gives Science +2 (but no stat can go above 15), rallying the people gives Stability +2 (+1 power), and filling the batteries gives Energy +3 (a quarter of it counts). Pick what helps your total most.',
-  c:[{l:'Overclock the star-cannon',txt:'The cannon hums with power.',fx:{science:2}},
-     {l:'Rally the people for tomorrow',txt:'The whole empire stands behind you.',fx:{stability:2}},
-     {l:'Fill every battery',txt:'Every battery is full.',fx:{energy:3}}]}];
-function startTutorial(){TUT='Guided';emp=EMPIRES.find(e=>e.name.startsWith('Kethari'));dlc=false;
- pickTrait(TRAITS.findIndex(t=>t.id==='survivor'));
- deck=TUT_DECK.map(e=>({...e,c:e.c.map(c=>({...c}))}));qd=0;look=randLook();showEvent()}
+     {l:'Buy their fuel at a high price',txt:'Your tanks are full.',fx:{energy:2}}]}];
+function startTutorial(){TUT='Guided';dlc=false;pickEmp(EMPIRES.findIndex(e=>e.name.startsWith('Kethari')))}
+function tutBegin(){deck=TUT_DECK.map(e=>({...e,c:e.c.map(c=>({...c}))}));qd=0;look=randLook();showEvent()}
 function runTurns(){return TUT?TUT_DECK.length:TURNS}
 // After a choice: explain every change on screen, in plain words.
 function tutAfter(fx,up,tag,heal){const why={energy:'Energy keeps your empire running',military:'Fleet is one of your three power stats',science:'Science is your best stat, the one to fight with',influence:'Influence is one of your three power stats',stability:'Stability keeps you in power, and half of it counts in the final battle',threat:'Thal Threat is how ready the Thal are to betray you'};
@@ -1117,7 +1120,7 @@ function tutAfter(fx,up,tag,heal){const why={energy:'Energy keeps your empire ru
  if(!fx[BEST[EK()]]&&['military','influence'].some(k=>fx[k]>0))t+=' Remember: only one stat fights in the final battle. Your best is '+LABELS[BEST[EK()]]+'.';
  if(tag.includes('Injured'))t+=' Your ⚔ choice failed: you are Hurt (see your <b>health</b> at the top), and lost 1 Stability. You recover in 3 turns.';
  if(heal)t+=' That choice also healed you: your <b>health</b> is back to Healthy.';
- t+=' Then the turn ended, as every turn does: −1 <b>Energy</b> for upkeep, and the <b>Thal Threat</b> rises by 1. Tap Continue.';
+ t+=' End of turn: −1 <b>Energy</b>'+(turn>=TUT_DECK.length?', and the <b>Thal Threat</b> goes up 1':'')+'. Tap Continue.';
  return t}
 // ---- Tutorial runs: guided, not saved, not counted ----
 let TUT=null;
@@ -1141,7 +1144,7 @@ const TUT_HL=[[/\bEnergy\b/,'.stat[aria-label^="Energy"]'],[/\bFleet\b/,'.stat[a
  [/\bStability\b/,'.stat[aria-label^="Stability"]'],[/Thal Threat/,'.pill[title="Thal Threat"]'],[/\bRenown\b/,'.pill[title="Renown"]'],[/\bhealth\b|\bHurt\b/,'.pill[title="Leader"]'],[/Best stat/,'.beststat'],[/\bSurvivor\b/,'.ptitle'],[/backup core/,'.ptitle'],[/⚔ choice/,'.card button.personal']];
 function tutAdd(t){if(!TUT||!t)return;const tip=typeof t==='string'?{x:t}:t;app.querySelectorAll('.tut').forEach(x=>x.remove());app.querySelectorAll('.tuthl').forEach(x=>x.classList.remove('tuthl'));
  const c=app.querySelector('.card');if(c)c.insertAdjacentHTML('beforebegin',tutBox(tip.x));
- const plain=tip.x.replace(/<[^>]+>/g,'');for(const [re,sel] of TUT_HL)if(re.test(plain))app.querySelectorAll(sel).forEach(el=>el.classList.add('tuthl'));
+ const plain=tip.x.replace(/<[^>]+>/g,'');if(tip.only)app.querySelectorAll(tip.only).forEach(el=>el.classList.add('tuthl'));else for(const [re,sel] of TUT_HL)if(re.test(plain))app.querySelectorAll(sel).forEach(el=>el.classList.add('tuthl'));
  if(tip.sel){const el=app.querySelector(tip.sel);if(el)el.classList.add('tuthl')}}
 function showTutorial(){TUT=null;app.innerHTML=`<div class="card"><h2>Tutorial</h2><p>A short guided run: 8 turns and a final battle, always as the Kethari Mind-Collective. Tips explain each event as it happens, and after every choice you see exactly what changed and why. Anything a tip mentions glows on screen.</p><p class="note">Tutorial runs are not saved, do not count on the scoreboard and are never timed. Real runs last 12 turns, with 30 seconds per choice while Timed is on.</p><button onclick="startTutorial()"><b>Start the tutorial</b><small>About 4 minutes</small></button><button style="text-align:center" onclick="start()">Back</button></div>`}
 // ================= SYSTEMS: shared galaxy with players, AI empires, trade and war =================
@@ -2336,7 +2339,7 @@ function showEmpires(){TUT=null;
 function pickEmp(i){
  emp=EMPIRES[i];
  app.innerHTML=`<h1>${emp.name}</h1><p class="sub">You are the ${emp.name.startsWith('Vorrani')?'Warlord':emp.leader}.</p><div class="card"><h2>What kind of leader are you?</h2>${TRAITS.map((t,j)=>`<button onclick="pickTrait(${j})"><b>${t.name}</b><small>${t.desc}</small></button>`).join('')}</div>${TUT?'':'<button style="text-align:center" onclick="showEmpires()">Back</button>'}`;
- tutAdd(TUT_INTRO[emp.diff]+' Your leader\'s trait changes how ⚔ risks work for you. Any trait can win.');
+ tutAdd(TUT?'Pick your leader type. It changes how risky ⚔ choices are (you\'ll meet them on turn 6). Veteran: half the injury chance, and Combat deaths halved too. Survivor: half the death chance. Daring: bigger ⚔ wins, 25% more risk, and you survive one killing blow. Any type can win.':'')
 }
 function pickTrait(j){
  trait=TRAITS[j];closeUsed=false;renown=0;RUNA={pc:0,pf:0,reboot:false};mem=[];[...EVENTS,...Object.values(EMP_EVENTS).flat()].forEach(x=>{delete x._echoTurn;delete x._echo});S={...emp.s};turn=1;log=[];threat=3;hp='Healthy';injT=0;aug=false;
@@ -2346,6 +2349,7 @@ function pickTrait(j){
  rollDispatch();news='';
  if(EMP_EVENTS[EK()]){const own=[...EMP_EVENTS[EK()]].sort(()=>Math.random()-.5).slice(0,2);deck=[...deck.slice(0,TURNS-own.length),...own];for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}}
  qStartRun(TURNS);
+ if(TUT)return tutBegin();
  look=savedLook();if(look)showMyLeader();else showCreator();
 }
 function risk(cat,inj,death){
@@ -2353,7 +2357,7 @@ function risk(cat,inj,death){
  if(emp.name.startsWith('Vorrani'))im*=0.6;
  if(emp.name.startsWith('Celest')&&cat==='intrigue')m*=.4;
  if(emp.name.startsWith('Kethari')&&cat==='hazard')m*=.7;
- if(trait.id==='veteran'&&cat==='combat')m*=.5;
+ if(trait.id==='veteran'){im*=.5;if(cat==='combat')dm*=.5} // 11-20: was combat-only m*=.5 (balance open)
  if(trait.id==='survivor')dm*=.5;
  if(trait.id==='daring')m*=1.25;
  if(aug)m*=.8;
@@ -2367,7 +2371,7 @@ const ICONS={heart:['#e8665a',['.##.##.','#######','#######','.#####.','..###..'
  influence:['#f2b134',['...#...','...#...','#######','.#####.','..###..','.##.##.','.#...#.']],
  stability:['#c9d6ff',['#######','#.....#','#.###.#','#.###.#','.#.#.#.','..#.#..','...#...']]};
 function icon(k){const [col,rows]=ICONS[k];let r='';rows.forEach((row,y)=>[...row].forEach((ch,x)=>{if(ch==='#')r+=`<rect x="${x}" y="${y}" width="1" height="1"/>`}));return `<svg class="ico" viewBox="0 0 7 7" fill="${col}" shape-rendering="crispEdges" aria-hidden="true">${r}</svg>`}
-function statBar(){return `<div class="stats">${Object.keys(LABELS).map(k=>`<div class="stat" aria-label="${LABELS[k]} ${S[k]}">${icon(k)}<b>${S[k]}</b><span>${LABELS[k]}</span></div>`).join('')}</div>`}
+function statBar(){return `<div class="stats">${Object.keys(LABELS).map(k=>`<div class="stat${!dlc&&emp&&BEST[EK()]===k?' best-'+k:''}" aria-label="${LABELS[k]} ${S[k]}">${icon(k)}<b>${S[k]}</b><span>${LABELS[k]}</span></div>`).join('')}</div>`}
 function header(){const _h='<button class="rs" onclick="openHelp(RULES)">Rules</button>';
  const hcls=hp==='Healthy'?'up':'down';
  return `<div class="topbar">${_h}${!TUT&&invCount()?`<button class="rs" onclick="openItems()">Items ${invCount()}</button>`:''}${RB}</div><div class="plate">${look?`<img class="hport" src="${portraitURL(look)}" alt="">`:''}<div><div class="pname">${emp.name}</div><div class="ptitle">${leaderTitle()}, ${trait.name}${aug?', Augmented':''}${cores?', 1 backup core':''}${trait.id==='daring'&&!closeUsed?', close call ready':''}</div></div></div>${statBar()}
@@ -2480,7 +2484,7 @@ function showEvent(){LAST_SCREEN=showEvent;
  saveGame(turn);
  if(turn>(dlc?DLC_TURNS:runTurns()))return dlc?showDLCFinal():showFinal();
  if(qd&&turn===qd){qd=0;return end(false,'Quantum Death','The branches you discarded in your last final battle come back to collect. Reality quietly edits you out, mid-sentence. Somewhere, another version of you carries on.')}
- {const tt=turn;setTimeout(()=>{if(!dlc&&turn===tt&&!app.querySelector('.result'))tutAdd(TUT&&deck[tt-1]&&deck[tt-1].tip||'')})}
+ {const tt=turn;setTimeout(()=>{if(!dlc&&turn===tt&&!app.querySelector('.result'))tutAdd(TUT&&deck[tt-1]&&deck[tt-1].tip?{x:deck[tt-1].tip,only:deck[tt-1].hl}:'')})}
  const e=deck[turn-1];
  app.innerHTML=header()+`<div class="card"><div class="turn">${dlc?'The Thal Reckoning, turn':'Turn'} ${turn} of ${dlc?DLC_TURNS:runTurns()}</div><span class="beststat">${(()=>{const k=dlc?route:BEST[EK()];return `Best stat: ${icon(k)} ${LABELS[k]}`})()}</span><h2>${e.t}</h2><p>${e.x}</p>${(()=>{if(dlc)return '';if(e._echoTurn!==turn){e._echo=echoFor(e);e._echoTurn=turn}const a=e._echo||voiceFor(e);return a?`<p class="aside">${a}</p>`:''})()}${e.c.map(choiceBtn).join('')}${(dlc?news:DISPATCH[turn-1])?`<div class="dispatch"><span class="bn-tag"><i></i>GNN</span> ${dlc?news:DISPATCH[turn-1]}</div>`:''}</div>`+logBox();
  startTimer(TIME_LIMIT+(turn===1?TIME_FIRST:0));
@@ -2552,7 +2556,7 @@ function showFinal(){LAST_SCREEN=showFinal;
  app.innerHTML=header()+`<div class="card"><div class="turn">Final battle</div><h2>The Core Swarm</h2><p>Bio-ships pour from the galactic core, eating planets like fruit. Three empires fell this week. You\'re next. ${VOICE[EK()][0]}</p>
  ${R.map(([l,k])=>{const b=basePower(k);const t=b.stat+b.stab+b.en+b.ren-b.pen;return `<button onclick="pickRoute('${k}')">${l}<small class="eq"><span class="gauge"><i style="width:${Math.min(100,Math.round(100*t/NEED))}%"></i></span><span class="gv"><b>${t}</b> power, need ${NEED} <span class="need">(+0–3 luck)</span></span><span class="bd">${icon(k)}${b.stat} + ${icon('stability')}${b.stab} + ${icon('energy')}${b.en}${b.ren?` + ${icon('star')}${b.ren}`:''}${b.pen?` − ${icon('thal')}${b.pen}`:''}</span></small></button>`}).join('')}
  <p class="note">The Thal stab you in the back if their Threat is 5+ (−1) or 8+ (−3).</p></div>`;
- tutAdd('The final battle! Pick which stat to fight with: the fleet uses Fleet, uniting the galaxy uses Influence, the star-cannon uses Science. Each option shows your power against the 16 you need (below 16, you lose the run): that stat, plus half your Stability, a quarter of your Energy and half your Renown (each rounded down), minus the Thal Threat penalty. Luck adds 0 to 3 on top. Science is your best.');
+ tutAdd('The final battle! Your power: the stat you fight with, plus half your Stability, a quarter of your Energy, half your Renown and 0 to 3 luck, minus the Thal Threat penalty (rounded down). You need 16, or you lose. The fleet uses Fleet, uniting the galaxy uses Influence, the star-cannon uses Science (your best).');
  startTimer(TIME_LIMIT);
 }
 function pickRoute(k){LAST_SCREEN=()=>pickRoute(k);
