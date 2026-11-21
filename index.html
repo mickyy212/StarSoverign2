@@ -2650,7 +2650,7 @@ function statTag(c){const k=dlc?route:BEST[EK()];if(!((c.fx||{})[k]>0))return ''
 // ---- Shop: 5 consumables, tiers I to V, bought with credits (one of each item per day, any tier).
 // Items wait in your inventory; use one per turn from the Items button in a run (story and DLC, never the tutorial).
 // Effects roll a little, so they are mildly chance-based. Tier V items can save a run; III can clutch a small gap.
-const SHOP_TIERS=['I','II','III','IV','V'],SHOP_BASE=[10,25,50,100,200];
+const SHOP_TIERS=['I','II','III','IV','V'],SHOP_BASE=[4,8,16,32,47];
 const SHOP_ITEMS={
  supply:{n:'Supply Drop',g:'bolt',f:0.8,when:'any',d:'Fresh Energy and Stability, right now.',t:['+1 Energy (half the time +2)','+2 Energy','+2 Energy and +1 or +2 Stability','+3 Energy and +2 Stability','+3 Energy, +3 Stability and +1 to your best stat']},
  medic:{n:'Field Medic',g:'shield',f:1.2,when:'any',d:'Protects you on your next ⚔ choice (or leading from the front).',t:['25% less chance of injury','Half the chance of injury','Half the injury chance, death chance down a quarter','No injury, half the death chance','No injury and no death: you come home, whatever happens']},
