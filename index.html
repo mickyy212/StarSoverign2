@@ -557,6 +557,43 @@ body:has(#sysroot .tabs){padding-bottom:76px}body:not(:has(#sysroot .tabs)) #sys
 .tuthl{outline:3px solid #ffd166;outline-offset:3px;}
 .stat.tuthl,.pill.tuthl,button.tuthl,.card.tuthl{outline-offset:-5px}
 .tuthl{animation:tuthl 1.2s ease-in-out infinite}@keyframes tuthl{50%{outline-color:rgba(255,209,102,.25)}}@media(prefers-reduced-motion:reduce){.tuthl{animation:none}}
+
+/*MOBILE-COMPACT*/@media(max-width:520px){body{font-size:15px;line-height:1.28}.wrap{padding:8px 8px 22px}.card{padding:8px 9px;margin-bottom:8px}.card p{margin:4px 0}h2{font-size:17px;margin:0 0 4px}button{padding:6px 9px;margin:5px 0;border-width:3px;box-shadow:inset 3px 3px 0 #4a5f9a,inset -3px -3px 0 #18214a}button small{font-size:12px;line-height:1.2}.note{font-size:12px}.drama{margin:6px 0;padding:5px 8px;font-size:14px;line-height:1.28}.drama .dh,.drama small{font-size:12px}.storytag,.bestline{margin:4px 0}}html.phone body{font-size:15px;line-height:1.28}html.phone .wrap{padding:8px 8px 22px}html.phone .card{padding:8px 9px;margin-bottom:8px}html.phone .card p{margin:4px 0}html.phone h2{font-size:17px;margin:0 0 4px}html.phone button{padding:6px 9px;margin:5px 0;border-width:3px;box-shadow:inset 3px 3px 0 #4a5f9a,inset -3px -3px 0 #18214a}html.phone button small{font-size:12px;line-height:1.2}html.phone .note{font-size:12px}html.phone .drama{margin:6px 0;padding:5px 8px;font-size:14px;line-height:1.28}html.phone .drama .dh,html.phone .drama small{font-size:12px}html.phone .storytag,html.phone .bestline{margin:4px 0}
+
+/*PHONE-TYPE: one type scale on phones (small 14 / body 17 / heading 20 / title 30)*/
+html.phone #app{font-size:17px;line-height:1.3}
+html.phone #app *{font-size:inherit!important}
+html.phone #app :is(small,.note,.credbox,.alpha,.stat span,.dvoice,.react,.aside,.cameo,.vox){font-size:14px!important;line-height:1.25}
+html.phone #app :is(h2,.turn,.mplay,.msys,.pname,h1.logo .l2){font-size:20px!important;line-height:1.2}
+html.phone #app :is(h1,h1.logo .l1){font-size:30px!important;line-height:1.1}
+html.phone #app .stat b{font-size:24px!important}
+html.phone #app :is(.delta,.pill,.storytag,.ptitle,.diff){font-size:17px!important}
+
+/*PHONE-PROFILE: compact top-of-decision profile*/
+html.phone #app .topbar{margin:2px 0 4px}
+html.phone #app .topbar button{padding:3px 10px}
+html.phone #app .plate{padding:3px 8px;margin-bottom:4px;gap:8px;border-width:3px;box-shadow:inset 3px 3px 0 var(--hi),inset -3px -3px 0 var(--lo)}
+html.phone #app .plate .hport{width:34px;height:34px;border-width:2px}
+html.phone #app .plate .pname{font-size:16px!important;line-height:1.15}
+html.phone #app .plate .ptitle{font-size:13px!important;line-height:1.15}
+html.phone #app .stats{gap:3px;margin:0 0 4px}
+html.phone #app .stat{padding:2px 0 1px}
+html.phone #app .stat b{font-size:20px!important;line-height:1.05}
+html.phone #app .stat svg,html.phone #app .stat .ic{transform:scale(.85)}
+html.phone #app .hud{margin:0 0 4px;gap:4px}
+html.phone #app .hud .pill{padding:1px 6px}
+
+/*UI-QUEUE-2 (11-20): readability fixes from the agent UI review*/
+.sw{display:inline-block;width:.9em;height:.9em;vertical-align:-.08em;margin-right:.1em;background:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' shape-rendering='crispEdges'><g fill='%23ffd166'><rect x='6' y='0' width='2' height='1'/><rect x='6' y='1' width='2' height='1'/><rect x='5' y='2' width='2' height='1'/><rect x='4' y='3' width='2' height='1'/><rect x='1' y='4' width='4' height='1'/><rect x='3' y='4' width='1' height='1'/><rect x='2' y='5' width='2' height='1'/><rect x='1' y='6' width='1' height='1'/><rect x='0' y='7' width='1' height='1'/></g></svg>") center/contain no-repeat;font-style:normal}
+:root{--dim:#d0d7ee}
+.note,.note *,button small,button small *,.sub,.log,.log div,.risk,.react,.aside,.dvoice,.vox{color:#d0d7ee}
+.stat span{font-size:13px;color:#d0d7ee}
+#achbox{top:auto;bottom:14px}
+.achban.out{transform:translateY(14px)}
+.card.log{max-height:none;overflow:visible}
+.card.log details{margin:0}.card.log summary{padding:6px 0;color:var(--acc);cursor:pointer}
+html.phone #app :is(.stat span){font-size:14px!important;color:#d0d7ee}
+html.phone #app .stats{position:sticky;top:0;z-index:20;background:#0d1630;padding:3px 0 4px;margin:0 0 4px}
 </style>
 </head>
 <body>
@@ -567,19 +604,19 @@ body:has(#sysroot .tabs){padding-bottom:76px}body:not(:has(#sysroot .tabs)) #sys
 </defs></svg>
 <div class="sky" id="sky" aria-hidden="true"></div>
 <div class="wrap" id="app"></div>
-<script>
+<script>(function(){const R=document.documentElement;function f(){const w=Math.min(innerWidth,screen.width||9999),t=matchMedia('(pointer:coarse)').matches||'ontouchstart' in window;R.classList.toggle('phone',innerWidth<=520||(t&&Math.min(screen.width,screen.height)<=600))}f();addEventListener('resize',f);addEventListener('orientationchange',f)})();
 const MAX=15,TURNS=12,NEED=16;
 const LABELS={stability:'Stability',energy:'Energy',military:'Fleet',influence:'Influence',science:'Science'}; // display order: most important first, then power stats A-Z
 const CAT={combat:'Combat',hazard:'Hazard',intrigue:'Intrigue'};
 const EMPIRES=[
- {name:'Vorrani Ascendancy',diff:'Hard',leader:'Warlord-Queen',desc:'Hive-born conquerors who sing before battle. Strongest fleet.',perk:'Chitin Carapace: 40% lower injury chance on every ⚔ choice.',s:{energy:7,military:5,science:3,influence:3,stability:7}},
- {name:'Celest Concord',diff:'Normal',leader:'First Speaker',desc:'Beings of light who never raise their voice. Most influence.',perk:'Precognition: 60% lower risk on Intrigue choices.',s:{energy:5,military:3,science:4,influence:4,stability:4}},
- {name:'Kethari Mind-Collective',diff:'Easy',leader:'Prime Node',desc:'A trillion minds, one vote. Best science.',perk:'Backup Core: cheat death once (you wake Injured, −2 Stability). 30% lower Hazard risk.',s:{energy:6,military:4,science:7,influence:2,stability:5}}
+ {name:'Vorrani Ascendancy',diff:'Hard',leader:'Warlord-Queen',desc:'Hive-born conquerors who sing before battle. Strongest fleet.',perk:'Chitin Carapace: −40% injury on ⚔.',s:{energy:7,military:5,science:3,influence:3,stability:7}},
+ {name:'Celest Concord',diff:'Normal',leader:'First Speaker',desc:'Beings of light who never raise their voice. Most influence.',perk:'Precognition: −60% Intrigue risk.',s:{energy:5,military:3,science:4,influence:4,stability:4}},
+ {name:'Kethari Mind-Collective',diff:'Easy',leader:'Prime Node',desc:'A trillion minds, one vote. Best science.',perk:'Backup Core: cheat death once (−2 Stability). −30% Hazard risk.',s:{energy:6,military:4,science:7,influence:2,stability:5}}
 ];
 const TRAITS=[
- {id:'veteran',name:'Veteran',desc:'Injury chance is halved on every ⚔ choice. On Combat choices, death chance is halved too.'},
- {id:'survivor',name:'Survivor',desc:'Death chance is halved on every ⚔ choice.'},
- {id:'daring',name:'Daring',desc:'⚔ wins give +1 to each stat gained, but ⚔ risks are 25% higher. Once per game you survive a killing blow (−2 Stability; in the final battle, −1 Stability and you lose the +3 front-line bonus).'}
+ {id:'veteran',name:'Veteran',desc:'Half injury chance on ⚔. Half death chance on Combat.'},
+ {id:'survivor',name:'Survivor',desc:'Half death chance on ⚔.'},
+ {id:'daring',name:'Daring',desc:'⚔ wins give +1 per stat gained. ⚔ risks +25%. Survive one killing blow (−2 Stability).'}
 ];
 // Choice: {l,txt,fx} or personal: {l,txt,fx,r:[cat,injury%,death%],f:failText,ff:failFx}
 const EVENTS=[
@@ -708,16 +745,16 @@ function record(d,win){let r=REC[d];if(r.n>=10)r=REC[d]={w:0,n:0};r.n++;if(win)r
 // Reset win stats: clears your latest runs here and takes you off the scoreboard; new runs put you back on.
 function resetRec(b){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again: reset and leave the scoreboard';setTimeout(()=>{if(document.body.contains(b)){delete b.dataset.armed;b.textContent='Reset win stats'}},3000);return}
  REC={Easy:{w:0,n:0},Normal:{w:0,n:0},Hard:{w:0,n:0}};saveRec();if(ARCADE){ARCADE.runs=[];ARCADE.life=blankLife();ARCADE.hidden=false;saveArcade();
-  try{fetch('/api/scores',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:ARCADE.id})}).catch(()=>{})}catch(e){}}showEmpires()}
+  try{fetch('/api/scores',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:ARCADE.id})}).catch(()=>{})}catch(e){}}showAdmin('Win stats reset.')}
 // Win stats come from your latest 20 runs, the same runs the scoreboard counts.
 function recOf(d){return ARCADE?lifeOfRuns(ARCADE.runs).main[d]:{w:0,n:0}}
 function pct(d){const r=recOf(d);return r.n?Math.round(100*r.w/r.n):0}
 function rcls(d){if(!recOf(d).n)return'';const p=pct(d),t=TARGET[d];return p>=t-5?'up':p>=t-25?'warn':'down'}
 function recLine(d){const r=recOf(d),all=ARCADE?(ARCADE.runs||[]).length:0;
- const odds=`<span class="odds"><span>Skilled max: ~${TARGET[d]}%</span><span>Random: ~${RANDOM[d]}%</span></span>`;
- if(!r.n)return `<span class="recl">${odds}</span>`;return `<span class="recl">Your latest ${BOARD_KEEP} runs: <b class="${rcls(d)}">${pct(d)}%</b> (${r.w}/${r.n} here, ${all}/${BOARD_KEEP} runs in all)${odds}</span>`}
+ const odds='';
+ if(!r.n)return '';return `<span class="recl">Your latest ${BOARD_KEEP} runs: <b class="${rcls(d)}">${pct(d)}%</b> (${r.w}/${r.n} here, ${all}/${BOARD_KEEP} runs in all)${odds}</span>`}
 function recBox(d){const r=REC[d];const done=r.n>=10;
- return `<div class="rec"><div><div class="rec-l">${d}: ${done?'last 10 games':'current 10 games'}</div><div class="rec-v ${rcls(d)}">${r.n?pct(d)+'%':'—'}</div></div><div class="rec-r"><b>${r.w}</b> ${r.w===1?'win':'wins'} / <b>${r.n}</b> ${r.n===1?'game':'games'}<br><span class="note">Skilled play wins up to ~${TARGET[d]}%, ${done?'complete, resets next game':`next up: game ${r.n+1} of 10`}</span></div></div>`;
+ return `<div class="rec"><div><div class="rec-l">${d}: ${done?'last 10 games':'current 10 games'}</div><div class="rec-v ${rcls(d)}">${r.n?pct(d)+'%':'—'}</div></div><div class="rec-r"><b>${r.w}</b> ${r.w===1?'win':'wins'} / <b>${r.n}</b> ${r.n===1?'game':'games'}<br><span class="note">${done?'complete, resets next game':`next up: game ${r.n+1} of 10`}</span></div></div>`;
 }
 const clamp=v=>Math.max(0,Math.min(MAX,v));
 
@@ -934,7 +971,7 @@ const DLC_EVENTS=[
 ];
 function startDLC(){dlc=true;prog=0;turn=1;const prevCm=RUNA&&RUNA.cm;RUNA={pc:0,pf:0,reboot:false};addDlcCameo(prevCm);news=Math.random()<.5&&DLC_NEWS_START_EMP[EK()]?DLC_NEWS_START_EMP[EK()]:DLC_NEWS_START;deck=buildDLCDeck();log=[];qStartRun(DLC_TURNS);
  const fx=apply({energy:4,stability:3});saveGame(1);
- app.innerHTML=header()+`<div class="card"><div class="turn">The Thal Reckoning</div><h2>The Swarm is gone. The Thal are not.</h2>${(()=>{const t=STORY[storyKey()];return t?`<div class="storytag"><b>${t.name}</b> ${t.tag}</div>${castKey()}`:''})()}<p>Your victory buys you goodwill at home. The Thal Hegemony, which spent the war filing complaints, now wants your stars. You have 10 turns to settle this, using your ${LABELS[route]}.</p><div class="delta">${fmt(fx)||''}</div><p class="note">Victory celebrations: +4 Energy, +3 Stability (up to the cap of 15).</p><button onclick="showEvent()">Begin</button></div>`}
+ app.innerHTML=`<div class="card"><div class="turn">The Thal Reckoning</div><h2>The Swarm is gone. The Thal are not.</h2>${(()=>{const t=STORY[storyKey()];return t?`<div class="storytag"><b>${t.name}</b> ${t.tag}</div>${castKey()}`:''})()}<p>Victory buys goodwill at home. The Thal now want your stars. You have 10 turns to settle this, using your ${LABELS[route]}.</p><div class="delta">${fmt(fx)||''}</div><button onclick="showEvent()">Begin</button></div>`}
 function showDLCFinal(){LAST_SCREEN=showDLCFinal;
  const b=basePower(route);const t=b.stat+b.stab+b.en+b.ren+b.prog-b.pen;
  const goal={science:'Prove technological supremacy',influence:'Bring the Thal into your federation',military:'Break the Thal navy'}[route];
@@ -1036,7 +1073,7 @@ function achNext(){const it=ACHQ.shift();if(!it){ACH_ON=false;return}ACH_ON=true
  const T=ACH_TIER[a.t||0],cls=['','mod','rare','ultra'][a.t||0],sp=[6,8,10,14][a.t||0];
  const el=document.createElement('div');el.className='achban '+cls;el.setAttribute('role','status');
  el.innerHTML=`<div class="achicon">${achIcon(a,'achico big')}${Array.from({length:sp},(_,i)=>`<i style="--a:${Math.round(i*360/sp)}deg"></i>`).join('')}</div><div class="achtxt"><b>${T.n}</b><span>${a.n}</span><small>${a.d}</small>${reward?`<em class="achgift">${reward}</em>`:''}</div><em class="shine"></em>`;box.appendChild(el);
- const stay=reward?5600:4200;setTimeout(()=>el.classList.add('out'),stay);setTimeout(()=>{el.remove();achNext()},stay+700)}
+ const stay=reward?4500:3500;setTimeout(()=>el.classList.add('out'),stay);setTimeout(()=>{el.remove();achNext()},stay+700)}
 function showAch(){const g=achGot(),n=ACHS.filter(a=>g[a.id]).length;
  const hidden=a=>(a.secret||a.t===3)&&!g[a.id];
  const row=a=>`<div class="achrow${g[a.id]?' got':''}" style="--tc:${ACH_TIER[a.t||0].c}"><span class="achslot">${g[a.id]?achIcon(a):hidden(a)?'?':achIcon(a,'achico dim')}</span><div><b>${hidden(a)?'???':a.n}</b><small>${hidden(a)?'Hidden until you earn it.':a.d}</small></div></div>`;
@@ -1052,7 +1089,7 @@ function adminTestGoods(){if(typeof SYS==='undefined'||!SYS)SYS=loadSys();if(!SY
 async function showAdmin(msg){if(!ADMIN_PASS){app.innerHTML=`<div class="card"><h2>Admin</h2><p class="note">Sign in to manage Systems multiplayer.</p><input id="admpass" class="arcin" type="password" maxlength="40" autocomplete="off"><p class="down" style="min-height:24px">${escH(msg||'')}</p><button class="personal" style="text-align:center" onclick="adminSignIn()">Sign in</button><button style="text-align:center" onclick="start()">Back</button></div>`;return}
  const j=await adminCall('list');if(j.ok===false){ADMIN_PASS='';return showAdmin(j.msg)}
  const plist=v=>(v.list||[]).length?v.list.map(p=>`<div class="nbr"><b>${escH(p.sysName||p.name)}</b> <small class="note">${escH(p.name)} · ${SRES_NAME[p.spec]} · last seen ${p.seen?dur(Date.now()-p.seen)+' ago':'never'}</small><button class="rs" onclick="adminKick('${v.id}','${p.pid}',this)">Kick</button></div>`).join(''):'<p class="note">No players here.</p>';
- app.innerHTML=`<div class="card"><h2>Admin</h2>${msg?`<p class="sysmsg">${escH(msg)}</p>`:''}<h3>Servers</h3>
+ app.innerHTML=`<div class="card"><h2>Admin</h2>${msg?`<p class="sysmsg">${escH(msg)}</p>`:''}<button class="rs" onclick="resetRec(this)">Reset win stats</button><h3>Servers</h3>
  ${(j.servers||[]).length?j.servers.map(v=>`<div class="srvrow"><div class="srvname"><b>${escH(v.name)}</b>${v.main?' <span class="maintag">(Main)</span>':` <small class="note">by ${escH(v.by||'a player')}</small>`}</div><small class="note">${v.players}/${v.max} players · Week ${v.week}, day ${v.day}</small>${plist(v)}<div class="srvbtns"><button class="rs" onclick="adminRmServer('${v.id}',this)">Remove server</button></div></div>`).join(''):'<p class="note">No servers.</p>'}
  <p class="note">Kicking removes a system and its rare good from that galaxy, so nobody there needs it any more; the player can found a new system. Removing a server wipes its whole galaxy, and its players get this week's spending back.</p>
  <h3>Create a Main server</h3><input id="admsrv" class="arcin" maxlength="24" placeholder="Server name" autocomplete="off"><button onclick="adminMkServer()">Create server<small>Admin servers are marked (Main) at the top of the list.</small></button>
@@ -1357,10 +1394,18 @@ function tutBox(t,h){return TUT?`<div class="tut"><div class="tuth">Tutorial${h?
 // Words in a tip, and the part of the screen each one points to. Every one a tip mentions glows.
 const TUT_HL=[[/\bEnergy\b/,'.stat[aria-label^="Energy"]'],[/\bFleet\b/,'.stat[aria-label^="Fleet"]'],[/\bScience\b/,'.stat[aria-label^="Science"]'],[/\bInfluence\b/,'.stat[aria-label^="Influence"]'],
  [/\bStability\b/,'.stat[aria-label^="Stability"]'],[/Thal Threat/,'.pill[title="Thal Threat"]'],[/\bRenown\b/,'.pill[title="Renown"]'],[/\bhealth\b|\bHurt\b/,'.pill[title="Leader"]'],[/Best stat/,'.beststat'],[/\bSurvivor\b/,'.ptitle'],[/backup core/,'.ptitle'],[/⚔ choice/,'.card button.personal']];
-function tutAdd(t){if(!TUT||!t)return;const tip=typeof t==='string'?{x:t}:t;app.querySelectorAll('.tut').forEach(x=>x.remove());app.querySelectorAll('.tuthl').forEach(x=>x.classList.remove('tuthl'));
- const c=app.querySelector('.card');if(c)c.insertAdjacentHTML('beforebegin',tutBox(tip.x,tip.h));
- const plain=tip.x.replace(/<[^>]+>/g,'');if(tip.only)app.querySelectorAll(tip.only).forEach(el=>el.classList.add('tuthl'));else for(const [re,sel] of TUT_HL)if(re.test(plain))app.querySelectorAll(sel).forEach(el=>el.classList.add('tuthl'));
+function tutHL(tip){const plain=tip.x.replace(/<[^>]+>/g,'');if(tip.only)app.querySelectorAll(tip.only).forEach(el=>el.classList.add('tuthl'));else for(const [re,sel] of TUT_HL)if(re.test(plain))app.querySelectorAll(sel).forEach(el=>el.classList.add('tuthl'));
  if(tip.sel){const el=app.querySelector(tip.sel);if(el)el.classList.add('tuthl')}}
+// Tutorial: on decision screens the tip + your stats get their own panel first; Continue then shows the decision itself.
+let TUTSNAP=null,TUTTIP=null;
+function tutGo(){if(TUTSNAP==null)return;app.innerHTML=TUTSNAP;TUTSNAP=null;tutHL(TUTTIP);window.scrollTo(0,0)}
+function tutAdd(t){if(!TUT||!t)return;const tip=typeof t==='string'?{x:t}:t;
+ if(app.querySelector('#tutgo'))return;
+ if(tip.h!=='What happened'&&app.querySelector('.stats')&&app.querySelector('.card')){TUTSNAP=app.innerHTML;TUTTIP=tip;app.innerHTML=header()+tutBox(tip.x,tip.h)+'<button id="tutgo" style="text-align:center" onclick="tutGo()">Continue</button>';tutHL(tip);window.scrollTo(0,0);return}
+ app.querySelectorAll('.tut').forEach(x=>x.remove());app.querySelectorAll('.tuthl').forEach(x=>x.classList.remove('tuthl'));
+ const c=app.querySelector('.card');if(c)c.insertAdjacentHTML('beforebegin',tutBox(tip.x,tip.h));
+ tutHL(tip);
+ if(tip.h==='What happened'){const t=app.querySelector('.tut');if(t)window.scrollTo({top:Math.max(0,t.getBoundingClientRect().top+scrollY-8)})}}
 function showTutorial(){TUT=null;app.innerHTML=`<div class="card"><h2>Tutorial</h2><p>A short guided run: 8 turns and a final battle, always as the Kethari Mind-Collective. Tips explain each event as it happens, and after every choice you see exactly what changed and why. Anything a tip mentions glows on screen.</p><p class="note">Tutorial runs are not saved, do not count on the scoreboard and are never timed. Real runs last 12 turns, with 30 seconds per choice while Timed is on.</p><button onclick="startTutorial()"><b>Start the tutorial</b><small>About 4 minutes</small></button><button style="text-align:center" onclick="start()">Back</button></div>`}
 // ================= SYSTEMS: shared galaxy with players, AI empires, trade and war =================
 // One tick = one real hour (up to 72 catch up). Credits come from finished runs (see CREDITS).
@@ -1506,7 +1551,7 @@ function refundWeek(){const b=weekBank(),n=Math.max(0,Math.round(b.spent||0)),r=
  b.spent=0;b.rspent=0;b.refunded=(b.refunded||0)+n;saveBank(b);
  return n||r?` ${[n?`${n} credit${n===1?'':'s'}`:'',r?`${r} renown`:''].filter(Boolean).join(' and ')} you spent this week ${n+r===1?'is':'are'} back.`:''}
 // The credit rewards, in words, for the empire buttons
-function credLine(d){const m=CREDITS.main,x=CREDITS.dlc,b=Math.round((m.win[d]+x.win[d])*0.2);return `<span class="credbox">Credits: win <b>${m.win[d]}</b> · lose <b>${m.loss[d]}</b> · DLC win <b>${x.win[d]}</b> · both <b>+${b}</b></span>`}
+function credLine(d){const m=CREDITS.main,x=CREDITS.dlc,b=Math.round((m.win[d]+x.win[d])*0.2);return `<span class="credbox">Credits: win <b>${m.win[d]}</b> · lose <b>${m.loss[d]}</b></span>`}
 function dlcCredLine(d){const m=CREDITS.main,x=CREDITS.dlc,b=Math.round((m.win[d]+x.win[d])*0.2);return `<span class="credbox">Credits: win <b>${x.win[d]}</b> · lose <b>${x.loss[d]}</b>${CHAIN?` · back-to-back bonus <b>+${b}</b> if you win`:''}</span>`}
 function awardCredits(isDlc,diff,win){if(!diff)return {n:0,bonus:0,r:0};const rn=RENOWN[isDlc?'dlc':'main'][win?'win':'loss'][diff]||0;if(rn)addRenown(rn,'earn');const n=CREDITS[isDlc?'dlc':'main'][win?'win':'loss'][diff]||0;let bonus=0;
  if(isDlc&&CHAIN){bonus=Math.round((CHAIN+n)*0.2);CHAIN=0}else if(!isDlc){CHAIN=win?n:0}
@@ -2541,9 +2586,9 @@ function start(){TUT=null;
  <button onclick="showAch()">Achievements<small>${ACHS.filter(a=>achGot()[a.id]).length} / ${ACHS.length}</small></button><button onclick="showTutorial()">Tutorial<small>Learn the basics</small></button></div>
  <button class="mhelp" onclick="openHelp(RULES)">Rules</button><button class="rs adminbtn" onclick="showAdmin()">Admin</button>${qPending()?`<p class="note down" style="margin:0 0 10px">Quantum debt: your next run has a 1 in 3 chance of ending in sudden quantum death.</p>`:''}<p class="note" style="margin:0 0 10px">Playing as <b>${escH(ARCADE.name)}</b></p></div>`;
 }
-// Play: choose your empire (win stats, Reset win stats and Timed live here).
+// Play: choose your empire (win stats and Timed live here; Reset win stats is on the Admin screen).
 function showEmpires(){TUT=null;
- app.innerHTML=`<div class="card"><h2>Choose your empire</h2><p class="note" style="margin:0 0 10px">Skilled max: win rate a strong player reaches. Random: win rate picking at random.</p>${EMPIRES.map((e,i)=>`<button onclick="pickEmp(${i})"><b>${e.name}</b> <span class="diff d-${e.diff}">${e.diff}</span><small>${e.desc}<br><span class="warn">${e.perk}</span><br>${recLine(e.diff)}</small>${credLine(e.diff)}</button>`).join('')}<div class="recbtns"><button class="rs" onclick="resetRec(this)">Reset win stats</button><button class="rs ${timedOn()?'on':''}" aria-pressed="${timedOn()}" title="30 seconds per choice (20 for the last decision); when time runs out, a choice is made at random" onclick="timedToggle()">Timed ${timedOn()?'on':'off'}</button></div></div><button style="text-align:center" onclick="start()">Back</button>`;window.scrollTo(0,0);
+ app.innerHTML=`<div class="card"><h2>Choose your empire</h2>${EMPIRES.map((e,i)=>`<button onclick="pickEmp(${i})"><b>${e.name}</b> <span class="diff d-${e.diff}">${e.diff}</span><small>${e.desc}<br><span class="warn">${e.perk}</span>${recLine(e.diff)?'<br>'+recLine(e.diff):''}</small>${credLine(e.diff)}</button>`).join('')}<div class="recbtns"><button class="rs ${timedOn()?'on':''}" aria-pressed="${timedOn()}" title="30 seconds per choice (20 for the last decision); when time runs out, a choice is made at random" onclick="timedToggle()">Timed ${timedOn()?'on':'off'}</button></div></div><button style="text-align:center" onclick="start()">Back</button>`;window.scrollTo(0,0);
 }
 function pickEmp(i){
  emp=EMPIRES[i];
@@ -2592,7 +2637,7 @@ function header(){const _h='<button class="rs" onclick="openHelp(RULES)">Rules</
  return `<div class="topbar">${_h}${!TUT&&invCount()?`<button class="rs" onclick="openItems()">Items ${invCount()}</button>`:''}${RB}</div><div class="plate">${look?`<img class="hport fr-${TUT?'plain':frameOf(look)}" src="${portraitURL(look)}" alt="">`:''}<div><div class="pname">${emp.name}</div><div class="ptitle">${leaderTitle()}, ${trait.name}${aug?', Augmented':''}${cores?', 1 backup core':''}${trait.id==='daring'&&!closeUsed?', close call ready':''}</div></div></div>${statBar()}
  <div class="hud"><span class="pill" title="Leader">${icon('heart')}<b class="${hcls}">${hp==='Healthy'?'Healthy':'Hurt '+injT}</b></span><span class="pill" title="Renown">${icon('star')}Renown <b>${renown}</b></span>${dlc?`<span class="pill" title="${PROGN[route]}">${icon('flag')}<b>${prog}</b></span>`:''}<span class="pill" title="Thal Threat">${icon('thal')}Thal <b class="${threat>=8?'down':threat>=5?'warn':'up'}">${threat}/10</b></span></div>`;
 }
-function logBox(){return log.length?`<div class="card log">${log.slice().reverse().map(l=>`<div>${l}</div>`).join('')}</div>`:''}
+function logBox(){if(!log.length)return '';const r=log.slice().reverse().map(l=>`<div>${l}</div>`);return `<div class="card log">${r.slice(0,4).join('')}${r.length>4?`<details><summary>Earlier (${r.length-4})</summary>${r.slice(4).join('')}</details>`:''}</div>`}
 function saveNote(){return trait&&trait.id==='daring'&&!closeUsed?' (your close call turns it into a bad injury)':cores?' (your backup core brings you back)':''}
 function progTag(c){if(!dlc)return '';const a=(c.fx.p||{})[route]||0,f=c.r?((c.ff||{}).p||{})[route]||0:0;if(!a&&!f)return '';return `<small class="up">+${a} ${PROGN[route]}${c.r?(f?` if it succeeds (+${f} if it fails)`:' if it succeeds'):''}</small>`}
 function statTag(c){const k=dlc?route:BEST[EK()];if(!((c.fx||{})[k]>0))return '';return `<small class="gain">${icon(k)} Builds ${LABELS[k]}${c.r?' if it succeeds':''}</small>`}
@@ -2716,12 +2761,20 @@ function showEvent(){LAST_SCREEN=showEvent;
  saveGame(turn);
  if(turn>(dlc?DLC_TURNS:runTurns()))return dlc?showDLCFinal():showFinal();
  if(qd&&turn===qd){qd=0;return end(false,'Quantum Death','The branches you discarded in your last final battle come back to collect. Reality quietly edits you out, mid-sentence. Somewhere, another version of you carries on.')}
- {const tt=turn;setTimeout(()=>{if(!dlc&&turn===tt&&!app.querySelector('.result'))tutAdd(TUT&&deck[tt-1]&&deck[tt-1].tip?{x:deck[tt-1].tip,only:deck[tt-1].hl,h:'Turn '+tt+': '+deck[tt-1].h}:'');if(TUT&&deck[tt-1])tutPick(deck[tt-1])})}
+ {const tt=turn;setTimeout(()=>{if(TUT&&deck[tt-1])tutPick(deck[tt-1]);if(!dlc&&turn===tt&&!app.querySelector('.result'))tutAdd(TUT&&deck[tt-1]&&deck[tt-1].tip?{x:deck[tt-1].tip,only:deck[tt-1].hl,h:'Turn '+tt+': '+deck[tt-1].h}:'')})}
  if(!TUT&&deck[turn-1])deck[turn-1]=dlc?withDlcCameo(deck[turn-1]):withCameo(deck[turn-1]);
  const e=deck[turn-1];if(!dlc&&!TUT)achSeen(e);if(dlc&&e.cameoLine)ach('again');if(e.xBy)e.x=e.xBy[(RUNA||{})[e.xKey]]||e.xBy.a;
- app.innerHTML=header()+`<div class="card${e.rare?' rarecard':''}">${e.rare?'<span class="raretag">Rare event</span>':''}<div class="turn">${dlc?'The Thal Reckoning, turn':'Turn'} ${turn} of ${dlc?DLC_TURNS:runTurns()}</div><span class="beststat">${(()=>{const k=dlc?route:BEST[EK()];return `Best stat: ${icon(k)} ${LABELS[k]}`})()}</span><h2>${e.t}</h2><p>${e.x}</p>${e.cameoLine?`<div class="cameo"><span class="cameotag">${e.cameoName}</span> ${e.cameoLine}</div>`:''}${(()=>{if(dlc||e.cameoLine)return '';if(e._echoTurn!==turn){e._echo=echoFor(e);e._echoTurn=turn}const a=e._echo||voiceFor(e);return a?`<p class="aside">${a}</p>`:''})()}${e.c.map(choiceBtn).join('')}${(dlc?news:DISPATCH[turn-1])?`<div class="dispatch"><span class="bn-tag"><i></i>GNN</span> ${dlc?news:DISPATCH[turn-1]}</div>`:''}</div>`+logBox();
+ app.innerHTML=header()+`<div class="card${e.rare?' rarecard':''}">${e.rare?'<span class="raretag">Rare event</span>':''}<div class="turn">${dlc?'The Thal Reckoning, turn':'Turn'} ${turn} of ${dlc?DLC_TURNS:runTurns()}</div><span class="beststat">${(()=>{const k=dlc?route:BEST[EK()];return `Best stat: ${icon(k)} ${LABELS[k]}`})()}</span><h2>${e.t}</h2><p>${e.x}</p>${e.cameoLine?`<div class="cameo"><span class="cameotag">${e.cameoName}</span> ${e.cameoLine}</div>`:''}${(()=>{if(dlc||e.cameoLine)return '';if(e._echoTurn!==turn){e._echo=echoFor(e);e._echoTurn=turn}const a=e._echo||voiceFor(e);return a?`<p class="aside">${a}</p>`:''})()}${e.c.map(choiceBtn).join('')}</div>`;
  startTimer(TIME_LIMIT+(turn===1?TIME_FIRST:0));
+ fitDecision();
 }
+// One scroll per decision screen: start at the top, then scroll down just far enough that the last choice is on screen.
+// On phones the stat row is sticky, so stats stay visible; the story text is never scrolled past the stat row.
+function fitDecision(){const go=()=>{window.scrollTo(0,0);const c=app.querySelector('.card'),bs=c&&c.querySelectorAll('button');if(!bs||!bs.length)return;
+  const last=bs[bs.length-1].getBoundingClientRect(),st=app.querySelector('.stats'),sh=st&&getComputedStyle(st).position==='sticky'?st.getBoundingClientRect().height:0;
+  const need=last.bottom-innerHeight+12,max=c.getBoundingClientRect().top-sh-6;
+  if(need>0)window.scrollTo(0,Math.max(0,Math.min(need,max)))};
+ requestAnimationFrame(()=>requestAnimationFrame(go))}
 function fmt(fx){const a=Object.entries(fx).filter(([k,v])=>v).map(([k,v])=>{const lbl=k==='threat'?'Thal Threat':LABELS[k];const good=k==='threat'?v<0:v>0;return `<span class="${good?'up':'down'}">${v>0?'+':''}${v} ${lbl}</span>`});return a.join(', ')}
 function apply(fx){const real={};for(const k in fx){if(k==='threat'){const o=threat;threat=Math.max(0,Math.min(10,threat+fx[k]));real[k]=threat-o}else{const o=S[k];S[k]=clamp(S[k]+fx[k]);real[k]=S[k]-o}}return real}
 // returns 'ok' | 'injured' | 'dead' | 'saved'
@@ -2761,7 +2814,7 @@ const DRAMA={military:{"The Bill": [{"s": "Broodmother Ysk signs the transfer he
 // LEAN[empire voice][stat]: short line added when your leading stat (Fleet / Influence / Science right now) differs from your empire's native one.
 const LEAN={"Vorrani": {"influence": "The hive notices its Sovereign reaching for words instead of blades. So does Marshal Dreth.", "science": "The forges now outshine the war-halls. Dreth wonders aloud what the Sovereign is building."}, "Celest": {"military": "The Concord dims. Its Sovereign has begun to speak of fleets.", "science": "The Concord's light turns cold and bright, toward the labs."}, "Kethari": {"military": "The Collective reallocates. Processing shifts from research to targeting.", "influence": "The Collective begins to model hearts instead of weapons."}};
 // VOICE_D[empire][stat]: optional framing line before the aftermath (the empire's own voice, in the tone of the stat leading right now).
-const VOICE_D={"Vorrani": {"military": "From the war-chronicle of the hive", "influence": "From the hive's envoy-scrolls, written uneasily", "science": "From the forge-records of the hive"}, "Celest": {"military": "From the Concord's grief-ledger", "influence": "From the Concord's evening record", "science": "From the Concord's lightwork journals"}, "Kethari": {"military": "Collective log: threat assessment", "influence": "Collective log: social model", "science": "Collective log: research thread"}};
+const VOICE_D={"Vorrani": {"military": "Hive war-chronicle", "influence": "Envoy scrolls", "science": "Forge records"}, "Celest": {"military": "Grief ledger", "influence": "Evening record", "science": "Lightwork journals"}, "Kethari": {"military": "Threat assessment", "influence": "Social model", "science": "Research thread"}};
 // ---- DLC chronicle data ----
 const CHRON={military:{"title": "The Long Cold War", "voice": "As set down in the war-chronicle of the hive", "ev": {"The Bill": [{"s": "The Thal sent their bill, and the Sovereign paid it in full. The border quieted, and Mor filed the payment under weakness."}, {"s": "The Sovereign's analysts picked the Thal invoice apart line by line, and Hegemon Vael never forgave the joke."}, {"s": "The Sovereign refused the Thal bill on the steps of their own capital, and the brood-halls roared.", "f": "The Sovereign went to refuse the Thal bill in person and came home bruised, with Dreth's fleet already moving."}], "The Border Buildup": [{"s": "When the Thal massed on the border, the Sovereign matched them hull for hull and paid in hatchlings."}, {"s": "The Sovereign offered the Thal a joint patrol. It held for three weeks, until someone in Vael's court recalled their captain."}, {"s": "The Sovereign flew the border alone and found the gap at Kessar Reach.", "f": "Thal pickets shot up the Sovereign's recon run, and fifty more of Mor's ships came to the line."}], "The Defector": [{"s": "The Sovereign gave asylum to Dr. Imra Sohl, and the Thal branded her family enemies of the Hegemony."}, {"s": "The Sovereign sent Imra Sohl home. She was not seen again."}, {"s": "The Sovereign brought Imra Sohl's family out of Thal space alive.", "f": "The Sovereign tried to rescue Imra Sohl's family, and her brother died in the attempt."}], "Fuel Embargo": [{"s": "When the Thal cut off fuel, the Sovereign built plants on three moons and broke Vael's lever for good."}, {"s": "The Sovereign signed a fuel quota, and from then on each side knew how long the other could fight."}, {"s": "The Sovereign answered the embargo with a blockade. Two captains locked weapons, held fire, and were both decorated."}], "The Embassy Fire": [{"s": "When the Thal embassy burned, the Sovereign's crews brought every soul out alive."}, {"s": "The Sovereign investigated the embassy fire and found a fuel cell where a candle should have been."}, {"s": "The Sovereign carried Ambassador Tamar out of the burning embassy with their own hands.", "f": "The Sovereign carried Ambassador Tamar from the fire and spent nine days in a sealed ward for it."}], "Stolen Shield Codes": [{"s": "When the shield codes were stolen, the Sovereign had every one rewritten by dawn."}, {"s": "The Sovereign fed the Thal false shield codes and learned how Mor would attack."}, {"s": "The Sovereign caught the code thief and found the hand that paid him inside their own court.", "f": "The code thief escaped the Sovereign, and Vael called the chase an attempt on a Thal life."}], "The Thal Election": [{"s": "The Sovereign quietly funded Dasa Corrin, who won the election, and Vael refused to leave the palace."}, {"s": "The Sovereign stayed out of the Thal election, and Vael won it with no one left to tell her no."}, {"s": "The Sovereign funded Vael's hardliners and paid for the pretext Marshal Dreth had asked for."}], "The Prototype": [{"s": "The Sovereign tested the new weapon slowly, and it worked."}, {"s": "The Sovereign shared the prototype with the Thal, and three of their warships were never built."}, {"s": "The Sovereign flew the prototype in person and set the pace of the arms race.", "f": "The prototype exploded under the Sovereign, and Vael answered with a test closer to the border."}], "The Ultimatum": [{"s": "When Vael issued her ultimatum, every Vorrani fleet lit its engines, and for six hours no one on either side breathed."}, {"s": "The Sovereign answered the ultimatum with a summit and shared a table with Vael while her fleets kept moving."}, {"s": "The Sovereign answered the ultimatum with a demonstration, and Mor rewrote a war plan ten years old."}], "The Last Ledger": [{"s": "At the last, the Sovereign signed the peace the Thal had written, and Dreth kept the fleet ready anyway."}, {"s": "At the last, the Sovereign's envoys rewrote the treaty line by line, and Mor walked out of the talks."}, {"s": "At the last, the Sovereign boarded Vael's flagship alone, and Mor saluted them goodbye.", "f": "At the last, the Sovereign boarded Vael's flagship alone and came home bruised, carrying her offer of a ceasefire."}], "The Mothball Fleet": [{"s": "The Sovereign seized three hundred sleeping Thal ships, and Mor was ordered to take them back."}, {"s": "The Sovereign walked the bridge of a sleeping Thal flagship and stole Mor's old war plans.", "f": "The Sovereign boarded the sleeping Thal fleet, and Commander Ivek woke it."}, {"s": "The Sovereign let the Thal ghost fleet sleep and watched it, until the Thal began to watch it too."}], "Old Comrades": [{"s": "The Sovereign drank with old Thal comrades and learned which generals would refuse to fire.", "f": "The Sovereign's reunion with old Thal comrades ended under artillery, and two of Harro's soldiers died."}, {"s": "The Sovereign sent medals to old Thal comrades, and half the garrisons hid them from Vael."}, {"s": "The Sovereign took in Thal veterans who knew where Mor would strike, and Dreth moved his flag to meet him."}], "The Assassin's Apprentice": [{"s": "The Sovereign questioned the assassin Sei, and three of Vael's ministers fell.", "f": "The Sovereign questioned the assassin Sei, was poisoned, and never learned who silenced her."}, {"s": "The Sovereign traced every Thal paymaster back to one office in Vael's palace."}, {"s": "The Sovereign sent the assassin Sei home, and Vael made her a teacher."}], "The Nebula Race": [{"s": "The Sovereign raced Admiral Venn through the Vel Nebula, won by half a hull, and heard a Thal officer laugh.", "f": "The Sovereign crashed racing Admiral Venn, and she pulled them from the wreck at the cost of her standing."}, {"s": "The Sovereign's pilot beat Admiral Venn through the Vel Nebula, and Venn was posted away."}, {"s": "The Sovereign declined Venn's race and charted a place to hide a fleet."}], "Song for the Hegemon": [{"s": "The Sovereign sent the war-choir to Vael's court, and the Hegemon heard what a war would cost."}, {"s": "The Sovereign sang before the Hegemon, and her guards lowered their rifles.", "f": "The Sovereign sang before the Hegemon, Thal hardliners opened fire, and Mor set the shooter free."}, {"s": "The Sovereign showed the Thal court fleet drills instead of a song, and the border watch doubled by nightfall."}], "The Census": [{"s": "The Sovereign answered the Thal census with a photograph of every family it had left out."}, {"s": "The Sovereign parked warships over the disputed worlds, and Mor's fleet came to stare back."}, {"s": "The Sovereign's hackers rewrote the Thal census, and Mor took his fleet orders off the network."}]}, "end": {"win": {"military": "The long cold war ended the way the hive had always said it would: in fire, at the border Marshal Dreth had watched for half his life. Grand Admiral Mor went down with his flagship. Hegemon Vael signed the surrender herself and did not look up from the page. The brood-halls sang for forty days. The chroniclers note that the Sovereign did not sing. Some victories are only the end of being afraid.", "influence": "The war both empires had built for never came. Pressed by her own Assembly and outlasted by the Sovereign's patience, Hegemon Vael signed the Thal into the Federation. Grand Admiral Mor resigned his commission that afternoon and left the palace on foot. Marshal Dreth called it surrender. Broodmother Ysk closed her ledger of hatchlings sent to the line and did not open a new one.", "science": "In the end, no shot was fired. The Sovereign built what the Thal could not answer, and Mor, who knew fleets better than anyone alive, was the one who told Vael there was no war left to win. One by one the Thal border yards went dark. The hive remembers it as the year the war-choirs had nothing to sing about, and were glad."}, "loss": {"military": "The fleets met at last, and neither broke. For eleven days Dreth and Mor bled each other across the border, and when it was over the line had not moved. Broodmother Ysk read the names of the dead aloud until her voice gave out. Both empires began rebuilding their navies the next morning. The cold war did not end. It only learned its price.", "influence": "The talks failed. Hegemon Vael's Assembly voted for war, and Mor's fleets crossed the border while the Sovereign's envoys were still packing. The hive held, barely. The chronicle leaves its last page blank, because the war that began that day is not over.", "science": "The Thal answered the Sovereign's edge with one of their own. Neither weapon was ever fired, and neither empire trusted the other again. Spymaster Tav counted Thal shipyards every night until the night he died. The race the Sovereign started has no finish line."}, "dead": "The Sovereign died in the act of choosing, as the hive's rulers have always hoped to. Without them, the court split between Dreth's war and Ysk's caution, and the throne room stood empty while they argued. Hegemon Vael did not wait for the argument to end. The chronicle stops here, mid-page, as the reign did.", "coup": "The Sovereign fell to the hive, not to the Thal. Worn thin by a war that never came, the guards opened the throne room doors and stood aside. Across the border, Vael watched the broadcast without a word, then sent Mor's fleets forward. Some say she was sorry. The chroniclers do not."}, "lean": {"influence": "The chronicle records, too, that this warrior Sovereign learned late to reach for words before blades. The hive still argues whether that was weakness or the hardest kind of strength.", "science": "The chronicle records, too, that the forges burned hotter than the war-halls that year, and that the Sovereign came to trust what could be measured over what could be sworn."}}};
 const CAST={military:{"mine": ["Marshal Dreth", "Broodmother Ysk", "Spymaster Tav", "Dreth", "Ysk", "Tav"], "thal": ["Grand Admiral Serek Mor", "Grand Admiral Mor", "Admiral Mor", "Hegemon Vael", "Ambassador Rell Tamar", "Ambassador Tamar", "Admiral Kaya Venn", "Admiral Venn", "Commander Ivek", "Dasa Corrin", "Mor", "Vael", "Tamar", "Venn", "Ivek", "Harro", "Corrin"], "neutral": ["Dr. Imra Sohl", "Imra Sohl", "Imra", "Sohl", "Sei"]}};
@@ -2812,7 +2865,7 @@ function choose(i){narrBranch(deck[turn-1].c[i]);
  if(S.stability<=0)return end(false,'Coup','Your own guards turn on you in the throne room. By evening, your portraits are being repainted.'+VOICE[EK()][2]);
  saveGame(turn+1);
  const mood=c.r&&look?(tag.includes('Success')?'good':'bad'):null; // reactions only for ⚔ outcomes
- app.innerHTML=header()+`<div class="card result"><div class="turn">Turn ${turn}</div>${mood?`<div class="react ${mood}"><img src="${portraitURL(look)}" alt="">${mood==='good'?'<i></i><i></i><i></i>':''}</div>`:''}<p>${tag}${txt}</p>${dramaFor(e,i,!!(c.r&&!tag.includes('Success')))}<div class="delta">${[fmt(fx),pg?`<span class="up">+${pg} ${PROGN[route]}</span>`:''].filter(x=>x).join(', ')||'<span class="note">No change.</span>'}</div><div class="delta note">${up.join(', ')}</div><button onclick="next()">Continue</button></div>`;
+ app.innerHTML=(dlc?'':header())+`<div class="card result"><div class="turn">${dlc?'The Thal Reckoning, turn '+turn+' of '+DLC_TURNS:'Turn '+turn}</div>${mood&&!dlc?`<div class="react ${mood}"><img src="${portraitURL(look)}" alt="">${mood==='good'?'<i></i><i></i><i></i>':''}</div>`:''}<p>${tag}${txt}</p>${dramaFor(e,i,!!(c.r&&!tag.includes('Success')))}<div class="delta">${[fmt(fx),pg?`<span class="up">+${pg} ${PROGN[route]}</span>`:'',...up].filter(x=>x).join(', ')||'<span class="note">No change.</span>'}</div>${(!dlc&&DISPATCH[turn-1])?`<div class="dispatch"><span class="bn-tag"><i></i>GNN</span> ${DISPATCH[turn-1]}</div>`:''}<button onclick="next()">Continue</button></div>`;
  if(TUT)tutAdd({h:'What happened',x:tutAfter(fx,up,tag,c.heal)});
 }
 function next(){turn++;showEvent()}
@@ -3244,6 +3297,13 @@ function end(win,title,msg,fight){
 })();
 loadSave()?resume():start();
 checkDeleted();
+
+// Swap the font's slash-like sword glyph for a drawn pixel sword in all on-screen text.
+(function(){const G='\u2694',R=/\u2694\uFE0F?/g;let busy=false;
+ function fix(root){if(busy||!root)return;busy=true;try{const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.nodeValue.includes(G)&&!/^(SCRIPT|STYLE|TEXTAREA)$/.test(n.parentNode.nodeName)?1:3});const hit=[];let n;while(n=w.nextNode())hit.push(n);
+  hit.forEach(t=>{const f=document.createDocumentFragment();t.nodeValue.split(R).forEach((part,i,a)=>{if(part)f.appendChild(document.createTextNode(part));if(i<a.length-1){const e=document.createElement('i');e.className='sw';e.setAttribute('role','img');e.setAttribute('aria-label','personal');f.appendChild(e)}});t.parentNode.replaceChild(f,t)})}finally{busy=false}}
+ function go(){const a=document.getElementById('app');if(!a)return;fix(a);new MutationObserver(()=>fix(a)).observe(a,{childList:true,subtree:true,characterData:true})}
+ if(document.readyState==='loading')addEventListener('DOMContentLoaded',go);else go()})();
 </script>
 </body>
 </html>
