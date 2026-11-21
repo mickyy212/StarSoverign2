@@ -594,6 +594,7 @@ html.phone #app .hud .pill{padding:1px 6px}
 .card.log details{margin:0}.card.log summary{padding:6px 0;color:var(--acc);cursor:pointer}
 html.phone #app :is(.stat span){font-size:14px!important;color:#d0d7ee}
 html.phone #app .stats{position:sticky;top:0;z-index:20;background:#0d1630;padding:3px 0 4px;margin:0 0 4px}
+.achban.shopban{border-color:#7fd0e0}.shopit{font-style:normal;color:#7fd0e0}.shopcheck{border-left:4px solid #7fd0e0;padding-left:8px}.achban.shopban b{color:#7fd0e0}.achban.shopban .achicon{border-color:#7fd0e0}
 </style>
 </head>
 <body>
@@ -1070,6 +1071,7 @@ let ACHQ=[],ACH_ON=false;
 function achBanner(a,reward){ACHQ.push([a,reward]);if(!ACH_ON)achNext()}
 function achNext(){const it=ACHQ.shift();if(!it){ACH_ON=false;return}ACH_ON=true;const [a,reward]=it;
  if(typeof document==='undefined'||!document.createElement||!document.body){ACH_ON=false;return}let box=document.getElementById('achbox');if(!box){box=document.createElement('div');box.id='achbox';document.body.appendChild(box)}
+ if(a.custom){const h=a.custom,el=document.createElement('div');el.className='achban shopban';el.setAttribute('role','status');el.innerHTML=`<div class="achicon">${h.k?glyph(SHOP_ITEMS[h.k].g,'#7fd0e0','achico big'):'<b style="color:#7fd0e0;font-size:22px">?</b>'}</div><div class="achtxt"><b>Shop check</b><span style="font-size:16px">${h.txt}</span>${h.own?`<small>${h.own}</small>`:''}</div>`;box.appendChild(el);setTimeout(()=>el.classList.add('out'),4500);setTimeout(()=>{el.remove();achNext()},5200);return}
  const T=ACH_TIER[a.t||0],cls=['','mod','rare','ultra'][a.t||0],sp=[6,8,10,14][a.t||0];
  const el=document.createElement('div');el.className='achban '+cls;el.setAttribute('role','status');
  el.innerHTML=`<div class="achicon">${achIcon(a,'achico big')}${Array.from({length:sp},(_,i)=>`<i style="--a:${Math.round(i*360/sp)}deg"></i>`).join('')}</div><div class="achtxt"><b>${T.n}</b><span>${a.n}</span><small>${a.d}</small>${reward?`<em class="achgift">${reward}</em>`:''}</div><em class="shine"></em>`;box.appendChild(el);
@@ -2670,7 +2672,7 @@ let SHOP_OPEN=null,SHOP_T={};
 function shopOpen(k){SHOP_OPEN=SHOP_OPEN===k?null:k;showShop()}
 function shopTier(k,t){SHOP_T[k]=t;showShop()}
 function showShop(msg){const v=inv(),bt=boughtToday();
- app.innerHTML=`<div class="card"><h2>Shop</h2><p class="note"><b>${credits()}</b> credits · one of each item a day · use one item a turn in a run (Items button).</p>${msg?`<p class="sysmsg">${escH(msg)}</p>`:''}
+ app.innerHTML=`<div class="card"><h2>Shop</h2><p class="note"><b>${credits()}</b> credits · one of each item a day · use one item a turn in a run (Items button).</p>${shopLastLoss()}${msg?`<p class="sysmsg">${escH(msg)}</p>`:''}
  ${Object.entries(SHOP_ITEMS).map(([k,it])=>{const own=v[k].reduce((a,x)=>a+x,0),open=SHOP_OPEN===k,t=SHOP_T[k]||0,price=shopPrice(k,t),can=!bt.k[k]&&credits()>=price;
   return `<div class="shoprow${open?' open':''}"><button class="shophd" onclick="shopOpen('${k}')">${glyph(it.g,'#ffd166','achico')}<span><b>${it.n}</b><small>${it.d}</small></span><i>${own?'×'+own:''}${bt.k[k]?' ✓':''} ${open?'▴':'▾'}</i></button>
   ${open?`<div class="shopbody"><div class="tierchips">${SHOP_TIERS.map((T,j)=>`<button class="rs${j===t?' on':''}" onclick="shopTier('${k}',${j})">${T}</button>`).join('')}</div>
@@ -2781,13 +2783,13 @@ function fitDecision(){const go=()=>{window.scrollTo(0,0);const c=app.querySelec
   if(need>0)window.scrollTo(0,Math.max(0,Math.min(need,max)))};
  requestAnimationFrame(()=>requestAnimationFrame(go))}
 function fmt(fx){const a=Object.entries(fx).filter(([k,v])=>v).map(([k,v])=>{const lbl=k==='threat'?'Thal Threat':LABELS[k];const good=k==='threat'?v<0:v>0;return `<span class="${good?'up':'down'}">${v>0?'+':''}${v} ${lbl}</span>`});return a.join(', ')}
-function apply(fx){const real={};for(const k in fx){if(k==='threat'){const o=threat;threat=Math.max(0,Math.min(10,threat+fx[k]));real[k]=threat-o}else{const o=S[k];S[k]=clamp(S[k]+fx[k]);real[k]=S[k]-o}}return real}
+function apply(fx){const real={};for(const k in fx){if(k==='stability')RAWSTAB=S.stability+fx[k];if(k==='threat'){const o=threat;threat=Math.max(0,Math.min(10,threat+fx[k]));real[k]=threat-o}else{const o=S[k];S[k]=clamp(S[k]+fx[k]);real[k]=S[k]-o}}return real}
 // returns 'ok' | 'injured' | 'dead' | 'saved'
 function roll(r){
- const k={...risk(r[0],r[1],r[2])};const md=(RUNA.it||{}).medic;
+ const k={...risk(r[0],r[1],r[2])};const md=(RUNA.it||{}).medic;const k0={...k};
  // Field Medic (shop): cuts the risk of this one roll, then it is used up
  if(md!=null){k.inj*=[0.75,0.5,0.5,0,0][md];k.death*=[1,1,0.75,0.5,0][md];delete RUNA.it.medic}
- const x=Math.random()*100;
+ const x=Math.random()*100;LASTROLL={x,d:k0.death,md};
  if(x<k.death){if(trait.id==='daring'&&!closeUsed){closeUsed=true;hp='Injured';injT=3;S.stability=clamp(S.stability-1);return 'close'}if(cores){cores=0;hp='Injured';injT=3;S.stability=clamp(S.stability-2);return 'saved'}return 'dead'}
  if(x<k.death+k.inj){hp='Injured';injT=3;return 'injured'}
  return 'ok';
@@ -2848,7 +2850,7 @@ function choose(i){narrBranch(deck[turn-1].c[i]);
  const e=deck[turn-1],c=e.c[i];let txt=c.txt,fx={...c.fx},tag='';if(c.heal&&hp==='Injured')ach('heal');if(e.mk)RUNA[e.mk]='abc'[i];if(c.cameo&&RUNA.cm){if(c.first)RUNA.cm.took=1;else RUNA.cm.took2=1}
  if(c.r){
   const o=roll(c.r);RUNA.pc++;if(o!=='ok')RUNA.pf++;if(o==='saved')RUNA.reboot=true;if(RUNA.pc>=5&&!TUT)ach('bold');
-  if(o==='dead')return end(false,'The Line Ends',`<b>${e.t}:</b> You chose to ${c.l.charAt(0).toLowerCase()+c.l.slice(1)}. It was your last choice. Without its ${leaderTitle()}, your empire splinters ${dlc?'and the Thal simply file it under "acquired"':'long before the end even arrives'}.`);
+  if(o==='dead')return end(false,'The Line Ends',`<b>${e.t}:</b> You chose to ${c.l.charAt(0).toLowerCase()+c.l.slice(1)}. It was your last choice. Without its ${leaderTitle()}, your empire splinters ${dlc?'and the Thal simply file it under "acquired"':'long before the end even arrives'}.`+medicHint());
   if(o==='ok'){if(trait.id==='daring')for(const k in fx)if(fx[k]>0&&k!=='threat')fx[k]++;renown++;tag=`<b class="up">Success!</b> <span class="note">(+1 Renown)</span> `;if(c.aug){aug=true;hp='Healthy';injT=0}}
   else{txt=c.f;fx={...c.ff};
    if(o==='close'){RUNA.hc=(RUNA.hc||0)+1;tag='<b class="warn">Close call!</b> That should have killed you. It didn\'t. You are badly hurt (−2 Stability). ';S.stability=clamp(S.stability-1);}
@@ -2867,7 +2869,7 @@ function choose(i){narrBranch(deck[turn-1].c[i]);
  if(S.energy===0){S.stability=clamp(S.stability-1);RUNA.bo=1;up.push('<span class="down">Blackouts! −1 Stability</span>')}
  if(threat<10){threat++;up.push('+1 Thal Threat')}
  if(hp==='Injured'&&!tag.includes('Injured')&&!tag.includes('Core reboot')&&!tag.includes('Close call')){injT--;if(injT<=0){hp='Healthy';up.push('<span class="up">You have recovered.</span>')}}
- if(S.stability<=0)return end(false,'Coup','Your own guards turn on you in the throne room. By evening, your portraits are being repainted.'+VOICE[EK()][2]);
+ if(S.stability<=0)return end(false,'Coup','Your own guards turn on you in the throne room. By evening, your portraits are being repainted.'+VOICE[EK()][2]+coupHint());
  saveGame(turn+1);
  const mood=c.r&&look?(tag.includes('Success')?'good':'bad'):null; // reactions only for ⚔ outcomes
  app.innerHTML=(dlc?'':header())+`<div class="card result"><div class="turn">${dlc?'The Thal Reckoning, turn '+turn+' of '+DLC_TURNS:'Turn '+turn}</div>${mood&&!dlc?`<div class="react ${mood}"><img src="${portraitURL(look)}" alt="">${mood==='good'?'<i></i><i></i><i></i>':''}</div>`:''}<p>${tag}${txt}</p>${dramaFor(e,i,!!(c.r&&!tag.includes('Success')))}<div class="delta">${[fmt(fx),pg?`<span class="up">+${pg} ${PROGN[route]}</span>`:'',...up].filter(x=>x).join(', ')||'<span class="note">No change.</span>'}</div>${(!dlc&&DISPATCH[turn-1])?`<div class="dispatch"><span class="bn-tag"><i></i>GNN</span> ${DISPATCH[turn-1]}</div>`:''}<button onclick="next()">Continue</button></div>`;
@@ -2895,23 +2897,42 @@ function pickRoute(k){LAST_SCREEN=()=>pickRoute(k);
  tutAdd({h:'Last decision',x:'Commanding from the rear is safe.||Leading from the front is a ⚔ choice: +3 power, but a risk of injury or death.||Look at your power on the last screen: if it was already well over 16, the rear is the safe bet.'});if(TUT){const b=basePower(k);markPick(app.querySelector(`.card button[onclick="finale(${b.stat+b.stab+b.en+b.ren-b.pen>=NEED?'false':'true'})"]`))}
  startTimer(TIME_FINAL);
 }
+
+// ---- Shop check on a loss: would one shop item (bought before this run) have saved you? Guaranteed effects only.
+let LASTROLL=null,RAWSTAB=null;
+// Not shown on the loss screen: end() stamps it with the run number and keeps the latest loss an item could have saved (ss2lastsave); the Shop shows it.
+let SHOPHINT_P=null;
+function shopLine(k,t){const own=(inv()[k]||[])[t]?'You have one in your Items.':'';SHOPHINT_P={k,t,txt:`A <i class="shopit">${SHOP_ITEMS[k].n} ${SHOP_TIERS[t]}</i> (${shopPrice(k,t)} credits) would have saved you.`,own};return ''}
+function shopNone(){SHOPHINT_P=null;return ''}
+function shopStamp(title){let n=0;try{n=+(localStorage.getItem('ss2runn')||0)+1;localStorage.setItem('ss2runn',n);if(SHOPHINT_P&&SHOPHINT_P.k)localStorage.setItem('ss2lastsave',JSON.stringify({k:SHOPHINT_P.k,t:SHOPHINT_P.t,run:n,how:title,dlc:!!dlc}))}catch(e){}SHOPHINT_P=null}
+function shopLastLoss(){let h=null,n=0;try{h=JSON.parse(localStorage.getItem('ss2lastsave'));n=+(localStorage.getItem('ss2runn')||0)}catch(e){}if(!h||!SHOP_ITEMS[h.k])return '';
+ const ago=n-h.run,when=ago<=0?'Your last run':ago===1?'2 runs ago':`${ago+1} runs ago`,own=(inv()[h.k]||[])[h.t]?' You have one.':'';
+ return `<p class="note shopcheck">${when} (${h.how}${h.dlc?', DLC':''}): a <span class="shopit">${SHOP_ITEMS[h.k].n} ${SHOP_TIERS[h.t]}</span> (${shopPrice(h.k,h.t)} credits) would have saved you.${own}</p>`}
+function medicHint(){if(TUT||!LASTROLL)return '';const m=[1,1,.75,.5,0];for(let t=LASTROLL.md==null?0:LASTROLL.md+1;t<5;t++)if(LASTROLL.x>=LASTROLL.d*m[t])return shopLine('medic',t);return shopNone()}
+function coupHint(){if(TUT)return '';const need=Math.max(1,1-(RAWSTAB==null?0:RAWSTAB)),m=[0,0,1,2,3];for(let t=0;t<5;t++)if(m[t]>=need)return shopLine('supply',t);return shopNone()}
+// final battle / final move: cheapest single item whose guaranteed gain covers the shortfall
+function finalHint(short,luck,usedLuck){if(TUT||short<=0)return '';const pw=(st,th)=>{const pen=th>=8?3:th>=5?1:0;return st[route]+Math.floor(st.stability/2)+Math.floor(st.energy/4)-pen};const base=pw(S,threat),opts=[];
+ const lmin=[0,1,2,3,4];for(let t=usedLuck==null?0:usedLuck+1;t<5;t++)if(lmin[t]-luck>=short)opts.push(['luck',t]);
+ const sup=[[1,0,0],[2,0,0],[2,1,0],[3,2,0],[3,3,1]];sup.forEach(([e,st,b],t)=>{const n={...S};n.energy=clamp(n.energy+e);n.stability=clamp(n.stability+st);if(b){const k=BEST[EK()];n[k]=clamp(n[k]+1)}if(pw(n,threat)-base>=short)opts.push(['supply',t])});
+ const th=[0,1,1,2,4];th.forEach((r,t)=>{if(pw(S,Math.max(0,threat-r))-base>=short)opts.push(['thal',t])});
+ if(!opts.length)return shopNone();opts.sort((a,b)=>shopPrice(a[0],a[1])-shopPrice(b[0],b[1]));return shopLine(opts[0][0],opts[0][1])}
 function finale(front){
- const b=basePower(route),IL=itemLuck(),IP=itemPower();let p=b.stat+b.stab+b.en+b.ren+b.prog-b.pen+IL.l+IP.p,note=IL.n+IP.n;if(RUNA.it){delete RUNA.it.luck;delete RUNA.it.reinf}
+ const usedLuck=(RUNA.it||{}).luck,b=basePower(route),IL=itemLuck(),IP=itemPower();let p=b.stat+b.stab+b.en+b.ren+b.prog-b.pen+IL.l+IP.p,note=IL.n+IP.n;if(RUNA.it){delete RUNA.it.luck;delete RUNA.it.reinf}
  LASTFIN={q:false,front:false};
  if(front==='q'){if(Math.random()<.1){p+=10;LASTFIN.q=true;note='Reality collapses onto the perfect branch: +10. '}else note='Reality collapses onto an ordinary branch. The gamble adds nothing: +0. ';if(!TUT)qSet(true)}
  if(front===true){const o=roll(['combat',25,20]);
-  if(o==='dead')return end(false,'Fallen Sovereign',dlc?'You lead the final move in person and do not come back. The Thal send flowers, and an invoice.':'You charge the Swarm queen and do not come back. Leaderless, your fleet is eaten by dawn.');
+  if(o==='dead')return end(false,'Fallen Sovereign',(dlc?'You lead the final move in person and do not come back. The Thal send flowers, and an invoice.':'You charge the Swarm queen and do not come back. Leaderless, your fleet is eaten by dawn.')+medicHint());
   LASTFIN.front=true;if(!TUT)ach('front');if(o==='saved')RUNA.reboot=true;
   if(o==='ok'){p+=3;note='You led from the front: +3. '}
   else if(o==='saved'){const g=3-(b.stab-Math.floor(S.stability/2));p+=g;note=`You died at the front, rebooted from a backup core and kept fighting: +3, minus ${3-g} from the shaken court. `}
   else if(o==='close'){const l=b.stab-Math.floor(S.stability/2);p-=l;note=`A blow that should have killed you knocks you out of the fight. Close call, no bonus${l?`, minus ${l} from the shaken court`:''}. `}
   else note='You were wounded early and pulled from the line: no bonus. '}
- const need=dlc?needDLC():NEED,win=p>=need;LASTFIN.p=p;LASTFIN.need=need;
- if(dlc){const T={science:['Technological Supremacy','Your shields shrug off their best weapons, and your ships outrun their fastest. The Thal ledger now lists you as "unbeatable (provisional)." There is no war, because there is no point.','Annihilated','Their engineers crack your shield in a weekend. Your flagship goes dark first, and the rest follow. The Thal annex what is left.'],influence:['The Thal Join the Federation','The Hegemony signs your federation charter, after proposing 1,400 amendments. They insist on keeping the minutes. You let them.','The Thal Prepare for War','The Thal reject your charter, shred it in triplicate, and recall every warship they own. Their fleets mass on your border, close enough to see their engines.'],military:['The Thal Navy Is No More','Their fleet breaks at the Vel Nebula. The Hegemony\'s navy now exists only on paper, which they still file.','Annihilated','The Thal navy turns out to be better than its paperwork. Your fleet is destroyed ship by ship, and your empire is annexed by Tuesday.']}[route];return end(win,win?T[0]:T[2],(win?T[1]:T[3])+`<br><br><small class="note">${note}Final power ${p}, needed ${need}.</small>`,true)}
+ const need=dlc?needDLC():NEED,win=p>=need;LASTFIN.p=p;LASTFIN.need=need;const SHOPHINT=win?'':finalHint(need-p,IL.l,usedLuck);
+ if(dlc){const T={science:['Technological Supremacy','Your shields shrug off their best weapons, and your ships outrun their fastest. The Thal ledger now lists you as "unbeatable (provisional)." There is no war, because there is no point.','Annihilated','Their engineers crack your shield in a weekend. Your flagship goes dark first, and the rest follow. The Thal annex what is left.'],influence:['The Thal Join the Federation','The Hegemony signs your federation charter, after proposing 1,400 amendments. They insist on keeping the minutes. You let them.','The Thal Prepare for War','The Thal reject your charter, shred it in triplicate, and recall every warship they own. Their fleets mass on your border, close enough to see their engines.'],military:['The Thal Navy Is No More','Their fleet breaks at the Vel Nebula. The Hegemony\'s navy now exists only on paper, which they still file.','Annihilated','The Thal navy turns out to be better than its paperwork. Your fleet is destroyed ship by ship, and your empire is annexed by Tuesday.']}[route];return end(win,win?T[0]:T[2],(win?T[1]:T[3])+`<br><br><small class="note">${note}Final power ${p}, needed ${need}.</small>${SHOPHINT}`,true)}
  const text={military:['The Swarm queen burns and breaks apart. Your fleet forms up around your flagship.','Your fleet fires one heroic shot. It bounces off the queen and back into your flagship. The Swarm is briefly confused. Then it eats you.'],
   influence:['A hundred species, one banner, one volley. The Swarm breaks against it.','You give a stirring speech. Your allies show up, say "yeah... no," and warp away. The Swarm waits politely for the speech to end. Then it eats you.'],
   science:['The star-cannon fires. For one second there are two suns, and then no Swarm.','Your star-cannon charges for a dramatic eternity, says "pew", and drops one sad spark. The Swarm sniffs it. Then it eats you.']}[route];
- end(win,win?'Victory':'Defeat',text[win?0:1]+(win&&S.stability>0?VOICE[EK()][1]:'')+(win&&S.stability===0?' The throne room is empty when you return. Victory is enough, for now.':'')+`<br><br><small class="note">${note}Final power ${p}, needed ${need}.</small>`,true);
+ end(win,win?'Victory':'Defeat',text[win?0:1]+(win&&S.stability>0?VOICE[EK()][1]:'')+(win&&S.stability===0?' The throne room is empty when you return. Victory is enough, for now.':'')+`<br><br><small class="note">${note}Final power ${p}, needed ${need}.</small>${SHOPHINT}`,true);
 }
 // ---------- pixel sprites for battles (drawn once, cached as data URLs) ----------
 const SPR={};
@@ -3252,7 +3273,7 @@ let lastDlc=false;
 function replay(win){document.getElementById('arenaBox').innerHTML=lastDlc?arenaDLC(win,route):arena(win,route)}
 const REVEAL={military:4800,influence:4400,science:4200};
 let endToken=0;
-function end(win,title,msg,fight){
+function end(win,title,msg,fight){if(!TUT)shopStamp(title);else SHOPHINT_P=null;
  if(TUT)return tutFinish(win,title,msg);
  clearSave();
  const before=header();
