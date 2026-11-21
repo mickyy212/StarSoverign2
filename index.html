@@ -2565,6 +2565,9 @@ function setSysNames(){const clean=v=>v.replace(/[^A-Za-z0-9 '-]/g,'').trim().sl
  if(a.length<2||b.length<2){document.getElementById('nerr').textContent='Use 2 to 16 letters or numbers for each.';return}
  SYS.sysName=a;SYS.planets[0].n=b;FOUND=null;sysLook();saveSys();ach('claim');leaderScreen(true)}
 // Systems multiplayer is under construction: only a signed-in admin (Admin button) gets in, with no extra password.
+// DLC is admin-only for now (same gate and message as Systems multiplayer). To open it to everyone, make dlcGate just call startDLC().
+function dlcGate(){if(ADMIN_PASS)return startDLC();
+ app.innerHTML=`<div class="card"><h2>The Thal Reckoning <span class="alpha">DLC</span></h2><p>Under construction. The DLC isn't open yet. Check back soon!</p><button style="text-align:center" onclick="start()">Back</button></div>`;window.scrollTo(0,0)}
 function mpGate(){if(ADMIN_PASS)return showSystems()
  app.innerHTML=`<div class="card"><h2>Systems multiplayer <span class="alpha">ALPHA</span></h2><p>Under construction. Systems multiplayer isn't open yet. Check back soon!</p><button style="text-align:center" onclick="start()">Back</button></div>`;window.scrollTo(0,0)}
 async function showSystems(quick){
@@ -3255,7 +3258,7 @@ function end(win,title,msg,fight){
  const unlock=win&&!wasDlc&&title==='Victory'&&!TUT;dlc=false;
  achEnd(win,wasDlc,CR,title);
  const dlcThreat=wasDlc?(win?0:10):null; // the campaign settles the Thal for good: 0/10 on a win, 10/10 on a loss
- const result=`<div class="stampban ${win?'sw':'sl'}">${title}</div><p>${msg}</p>${wasDlc&&!TUT?chronBtn(win,title):''}${CR&&CR.n?`<p class="credline">+${CR.n} credits${CR.bonus?` and a +${CR.bonus} back-to-back bonus`:''} ${CR.r?` and +${CR.r} renown for your general`:''} for Systems. You now have ${credits()} credits${CR.r?` and ${renownPts()} renown`:''}.</p>`:''}${unlock?`<button class="personal" style="text-align:center" onclick="startDLC()">DLC: The Thal Reckoning<small>10 more turns to deal with the Thal for good, using your ${LABELS[route]}. Your empire carries over.</small>${dlcCredLine(emp.diff)}</button>`:''}${TUT?`<p class="note">Tutorial complete. Real runs are saved, count on the scoreboard and, after a victory, unlock the DLC.</p>`:''}<button style="text-align:center" onclick="start()">${TUT?'Play for real':'Play again'}</button>`;
+ const result=`<div class="stampban ${win?'sw':'sl'}">${title}</div><p>${msg}</p>${wasDlc&&!TUT?chronBtn(win,title):''}${CR&&CR.n?`<p class="credline">+${CR.n} credits${CR.bonus?` and a +${CR.bonus} back-to-back bonus`:''} ${CR.r?` and +${CR.r} renown for your general`:''} for Systems. You now have ${credits()} credits${CR.r?` and ${renownPts()} renown`:''}.</p>`:''}${unlock?`<button class="personal" style="text-align:center" onclick="dlcGate()">DLC: The Thal Reckoning<small>10 more turns to deal with the Thal for good, using your ${LABELS[route]}. Your empire carries over.</small>${dlcCredLine(emp.diff)}</button>`:''}${TUT?`<p class="note">Tutorial complete. Real runs are saved, count on the scoreboard and, after a victory, unlock the DLC.</p>`:''}<button style="text-align:center" onclick="start()">${TUT?'Play for real':'Play again'}</button>`;
  if(!fight){if(dlcThreat!==null)threat=dlcThreat;app.innerHTML=header()+(wasDlc||TUT?'':recBox(emp.diff))+`<div class="card" style="text-align:center">${result}</div>`+logBox();return}
  const tok=++endToken;
  app.innerHTML=`<div id="hdr">${before}</div><div class="card" style="text-align:center"><div id="arenaBox">${(lastDlc=wasDlc)?arenaDLC(win,route):arena(win,route)}</div><div id="resSlot"><p class="note suspense">The battle rages.</p></div></div><div id="recSlot"></div>`;
