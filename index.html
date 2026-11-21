@@ -754,7 +754,7 @@ function recLine(d){const r=recOf(d),all=ARCADE?(ARCADE.runs||[]).length:0;
  const odds='';
  if(!r.n)return '';return `<span class="recl">Your latest ${BOARD_KEEP} runs: <b class="${rcls(d)}">${pct(d)}%</b> (${r.w}/${r.n} here, ${all}/${BOARD_KEEP} runs in all)${odds}</span>`}
 function recBox(d){const r=REC[d];const done=r.n>=10;
- return `<div class="rec"><div><div class="rec-l">${d}: ${done?'last 10 games':'current 10 games'}</div><div class="rec-v ${rcls(d)}">${r.n?pct(d)+'%':'—'}</div></div><div class="rec-r"><b>${r.w}</b> ${r.w===1?'win':'wins'} / <b>${r.n}</b> ${r.n===1?'game':'games'}<br><span class="note">${done?'complete, resets next game':`next up: game ${r.n+1} of 10`}</span></div></div>`;
+ return `<div class="rec"><div><div class="rec-l">${d}: ${done?'last 10 games':'current 10 games'}</div><div class="rec-v ${rcls(d)}">${r.n?pct(d)+'%':'—'}</div></div><div class="rec-r"><b>${r.w}</b> ${r.w===1?'win':'wins'} / <b>${r.n}</b> ${r.n===1?'game':'games'}<br><span class="note">${done?'complete, resets next game':`next up: game ${r.n+1} of 10 · max ${Math.round(10*(r.w+10-r.n))}%`}</span></div></div>`;
 }
 const clamp=v=>Math.max(0,Math.min(MAX,v));
 
@@ -1241,33 +1241,33 @@ function addVessa(){if(Math.random()>=0.5)return;const own=new Set(Object.values
 // Nothing is pushed out of the deck. VESSA_EVENTS above is kept only so older saves still load.
 const CAMEOS=[
  {id:'vessa',n:'Vessa',
-  a:{line:'Vessa, the Thal envoy, has been watching too. <i>"Let me help,"</i> she says. <i>"The Thal owe me a favor."</i>',
-     c:{l:'Let Vessa handle it, the Thal way',txt:'Vessa makes a few calls. The problem quietly goes away, and the Thal feel included.',fx:{threat:-2,stability:1}}},
-  took:{line:'Vessa is back. <i>"You trusted me once,"</i> she says. <i>"Trust me again: the Thal are planning something."</i>',
-     c:{l:'Let Vessa talk the Thal council down',txt:'Whatever she said worked. The Thal back off, for now.',fx:{threat:-3,influence:1},note:'Because you trusted her before.'}},
-  skip:{line:'Vessa is back, a little cooler this time. <i>"Still doing everything yourself?"</i> she asks.',
-     c:{l:'Make it up to Vessa with a gift',txt:'She accepts the gift, and some of the chill.',fx:{threat:-1,energy:-1},note:'She remembers you turned her down.'}}},
+  a:{line:'Vessa, the Thal envoy, appears at your elbow. <i>"Allow me. The Thal owe me a favor."</i>',
+     c:{l:'Let Vessa fix it with the Thal',txt:'Vessa makes three calls and one toast. The matter settles quietly, and the Thal feel consulted.',fx:{threat:-2,stability:1}}},
+  took:{line:'Vessa is back. <i>"You trusted me once. Do it again. The Thal are planning something."</i>',
+     c:{l:'Let Vessa calm the Thal council',txt:'She never says what she said. The Thal back off, for now.',fx:{threat:-3,influence:1},note:'Trust, once spent, pays interest.'}},
+  skip:{line:'Vessa is back, frosty. <i>"Still doing everything yourself?"</i>',
+     c:{l:'Send Vessa a peace offering',txt:'She accepts the gift, and some of the chill.',fx:{threat:-1,energy:-1},note:'She remembers you turned her down.'}}},
  {id:'rook',n:'Rook',
-  a:{line:'Rook, a smuggler with a fast ship and no flag, offers to help. <i>"For a price,"</i> he adds. <i>"Naturally."</i>',
-     c:{l:'Pay Rook to run it through the back lanes',txt:'Rook delivers, on time and off the books. The Thal notice the traffic.',fx:{energy:2,military:1,threat:1}}},
-  took:{line:'Rook is back, grinning. <i>"Good customers get first pick,"</i> he says.',
-     c:{l:'Buy Rook\'s best cargo',txt:'Engines, guns and fuel, no questions asked.',fx:{military:2,energy:2},note:'Because you hired him before.'}},
-  skip:{line:'Rook drifts by again. <i>"Still not buying? Fine. Here\'s a sample."</i>',
-     c:{l:'Take Rook\'s free sample',txt:'It is a very small sample.',fx:{energy:1},note:'You turned him down last time.'}}},
+  a:{line:'Rook, a smuggler with a fast ship and no flag, flips a coin. <i>"I can help. For a price. Naturally."</i>',
+     c:{l:'Hire Rook and his fast ship',txt:'Rook gets it done, quietly. The Thal notice the ship traffic.',fx:{energy:2,military:1,threat:1}}},
+  took:{line:'Rook docks, grinning. <i>"Repeat customers get the good crates."</i>',
+     c:{l:'Take first pick of Rook\'s cargo',txt:'Engines, guns, fuel. Rook asks nothing. The crates rattle.',fx:{military:2,energy:2},note:'Loyalty has a discount.'}},
+  skip:{line:'Rook flies by again. <i>"Still not buying? Fine. Take a sample."</i>',
+     c:{l:'Take Rook\'s free sample',txt:'One thimble of fuel. Generous, for Rook.',fx:{energy:1},note:'He remembers the no.'}}},
  {id:'marr',n:'Dr. Marr',
-  a:{line:'Dr. Ilen Marr, a scientist the Thal sent into exile, asks for a lab and a little trust.',
-     c:{l:'Give Dr. Marr a lab',txt:'Strange lights burn in the new lab all night. Some people worry.',fx:{science:2,stability:-1}}},
+  a:{line:'Dr. Ilen Marr, exiled by the Thal, wants a lab and a little trust. <i>"Ignore the smell."</i>',
+     c:{l:'Give Dr. Marr a lab',txt:'The new lab glows all night. The neighbors start moving out.',fx:{science:2,stability:-1}}},
   took:{line:'Dr. Marr bursts in, eyes shining. <i>"It works!"</i> she says. <i>"Mostly."</i>',
-     c:{l:'Fund Dr. Marr\'s breakthrough',txt:'Mostly is good enough. Your labs leap ahead.',fx:{science:3},note:'Because you gave her a lab.'}},
-  skip:{line:'Dr. Marr found a lab somewhere else. She sends a polite note, and a copy of her research.',
+     c:{l:'Back Dr. Marr\'s breakthrough',txt:'"Mostly" is good enough. Your labs jump ahead.',fx:{science:3},note:'She remembers who lent the lab.'}},
+  skip:{line:'Dr. Marr found another lab. Her note is polite. The research smells.',
      c:{l:'Read Dr. Marr\'s notes',txt:'Half of it is brilliant. The other half is doodles.',fx:{science:1},note:'You turned her away before.'}}},
  {id:'tesk',n:'Admiral Tesk',
-  a:{line:'Admiral Tesk, the last commander of a fallen empire, offers you her fleet, if you give her a title.',
-     c:{l:'Make Admiral Tesk your commander',txt:'Tesk salutes. Your old officers grumble.',fx:{military:2,influence:1,stability:-1}}},
+  a:{line:'Admiral Tesk, last commander of a fallen empire, offers her fleet. The price: a proper title.',
+     c:{l:'Make Tesk your commander',txt:'Tesk salutes. Your old officers study their boots.',fx:{military:2,influence:1,stability:-1}}},
   took:{line:'Admiral Tesk reports in. <i>"Your fleet is ready,"</i> she says. <i>"So is mine."</i>',
-     c:{l:'Send Tesk on a show of force',txt:'Her fleet sweeps the border. Neighbors take note, and so do the Thal.',fx:{military:2,influence:1,threat:-1},note:'Because you gave her command.'}},
-  skip:{line:'Admiral Tesk now serves someone else. She sends a message: <i>"Your loss."</i>',
-     c:{l:'Win back some of Tesk\'s officers',txt:'A few of her best captains switch sides.',fx:{military:1,influence:1,energy:-1},note:'You turned her down before.'}}}];
+     c:{l:'Send Tesk\'s fleet on patrol',txt:'Her fleet patrols the border. Neighbors take note, and the Thal think twice.',fx:{military:2,influence:1,threat:-1},note:'She remembers who gave her command.'}},
+  skip:{line:'Admiral Tesk now serves a rival power. Her message is two words: <i>"Your loss."</i>',
+     c:{l:'Recruit some of Tesk\'s officers',txt:'A few of her best captains come over. Their pay comes out of your fuel.',fx:{military:1,influence:1,energy:-1},note:'You turned her down before.'}}}];
 function addCameo(){if(Math.random()>=0.4)return;const C=CAMEOS[Math.floor(Math.random()*CAMEOS.length)];
  RUNA.cm={id:C.id,t1:2+Math.floor(Math.random()*4),t2:7+Math.floor(Math.random()*4),took:0}}
 // the event shown this turn, with the character's line and offer if they visit now (a copy: the shared event is untouched)
@@ -1277,10 +1277,10 @@ function withCameo(e){const m=RUNA&&RUNA.cm;if(!m||dlc||TUT||e._cm||e.rare||(tur
 
 // ---- DLC: if you took a character's offer on both main-story visits, 1 time in 5 they come back once more (turns 3-8). Their offer is always the best one on that screen: 3 visits at most.
 const DLC_CAMEO={
- vessa:{line:'The doors of your war room swing open. Vessa stands there, the Thal colors torn from her coat. <i>"I resigned,"</i> she says. <i>"Loudly. Now let me help you end this."</i>',c:{l:'Take Vessa\'s inside knowledge',txt:'Vessa walks you through every secret door of the Thal Hegemony. By dawn, they are all open.',fx:{threat:-1,p:{military:1,influence:1,science:1}}}},
- rook:{line:'Alarms scream as an unflagged ship smashes through your blockade and docks without asking. Rook steps out, bleeding and grinning. <i>"Miss me? I stole their whole playbook."</i>',c:{l:'Take Rook\'s stolen secrets',txt:'Rook drops a crate of Thal secrets on your table. <i>"On the house,"</i> he says. <i>"Just this once."</i>',fx:{energy:1,p:{military:1,influence:1,science:1}}}},
- marr:{line:'Every light in the capital dies at once. In the dark, Dr. Marr\'s voice: <i>"Sorry. I needed the power. You will want to see this."</i>',c:{l:'Use Dr. Marr\'s invention',txt:'Her machine hums, and every Thal screen goes black. <i>"One use,"</i> she whispers. <i>"Make it count."</i>',fx:{stability:1,p:{military:1,influence:1,science:1}}}},
- tesk:{line:'A battle fleet drops out of warp on top of yours, guns hot. Then a voice on every channel: <i>"Stand down. It\'s Tesk. I came back to finish this with you."</i>',c:{l:'Let Tesk lead the charge',txt:'Tesk\'s fleet takes the front of the line. Her captains fight like they have something to prove.',fx:{military:1,p:{military:1,influence:1,science:1}}}}};
+ vessa:{line:'The doors of your war room swing open. Vessa stands there, the Thal colors torn from her coat. <i>"I resigned,"</i> she says. <i>"Loudly. You trusted me. Let me finish this."</i>',c:{l:'Use Vessa\'s Thal secrets',txt:'Vessa shows you every secret way into Thal space. By dawn, all are open.',fx:{threat:-1,p:{military:1,influence:1,science:1}}}},
+ rook:{line:'Alarms scream as an unflagged ship smashes through your blockade and docks without asking. Rook steps out, bleeding and grinning. <i>"Miss me? I stole their whole playbook."</i>',c:{l:'Take Rook\'s stolen plans',txt:'Rook drops a crate of Thal secrets on your table. <i>"On the house,"</i> he says. <i>"Just this once."</i>',fx:{energy:1,p:{military:1,influence:1,science:1}}}},
+ marr:{line:'Every light in the capital goes out. In the dark, Dr. Marr says: <i>"Sorry. Needed the power. You gave me a lab. Watch this."</i>',c:{l:'Use Dr. Marr\'s machine',txt:'Her machine hums. Every Thal screen goes black, and your capital cheers when the lights return. <i>"One use,"</i> she whispers. <i>"Make it count."</i>',fx:{stability:1,p:{military:1,influence:1,science:1}}}},
+ tesk:{line:'A battle fleet drops out of warp on top of yours, guns hot. Then a voice on every channel: <i>"Stand down. It\'s Tesk. I came back to finish this with you."</i>',c:{l:'Let Tesk take the front line',txt:'Tesk takes the front of the line. Her captains fight like the empire is watching.',fx:{military:1,p:{military:1,influence:1,science:1}}}}};
 function addDlcCameo(prev){if(!prev||!DLC_CAMEO[prev.id]||!prev.took||!prev.took2||Math.random()>=0.2)return; // only a character whose offer you took on both main-story visits, 1 time in 5, a third and last time
  RUNA.dcm={id:prev.id,t:3+Math.floor(Math.random()*6)}}
 function withDlcCameo(e){const m=RUNA&&RUNA.dcm;if(!m||!dlc||e._cm||turn!==m.t)return e;const v=DLC_CAMEO[m.id],C=CAMEOS.find(x=>x.id===m.id);if(!v||!C)return e;
@@ -2566,8 +2566,10 @@ function setSysNames(){const clean=v=>v.replace(/[^A-Za-z0-9 '-]/g,'').trim().sl
  SYS.sysName=a;SYS.planets[0].n=b;FOUND=null;sysLook();saveSys();ach('claim');leaderScreen(true)}
 // Systems multiplayer is under construction: only a signed-in admin (Admin button) gets in, with no extra password.
 // DLC is admin-only for now (same gate and message as Systems multiplayer). To open it to everyone, make dlcGate just call startDLC().
-function dlcGate(){if(ADMIN_PASS)return startDLC();
- app.innerHTML=`<div class="card"><h2>The Thal Reckoning <span class="alpha">DLC</span></h2><p>Under construction. The DLC isn't open yet. Check back soon!</p><button style="text-align:center" onclick="start()">Back</button></div>`;window.scrollTo(0,0)}
+let DLCSNAP=null;
+function dlcBack(){if(DLCSNAP!=null){app.innerHTML=DLCSNAP;DLCSNAP=null;window.scrollTo(0,0)}else start()}
+function dlcGate(){if(ADMIN_PASS)return startDLC();DLCSNAP=app.innerHTML;
+ app.innerHTML=`<div class="card"><h2>The Thal Reckoning <span class="alpha">DLC</span></h2><p>Under construction. The DLC isn't open yet. Check back soon!</p><button style="text-align:center" onclick="dlcBack()">Back</button></div>`;window.scrollTo(0,0)}
 function mpGate(){if(ADMIN_PASS)return showSystems()
  app.innerHTML=`<div class="card"><h2>Systems multiplayer <span class="alpha">ALPHA</span></h2><p>Under construction. Systems multiplayer isn't open yet. Check back soon!</p><button style="text-align:center" onclick="start()">Back</button></div>`;window.scrollTo(0,0)}
 async function showSystems(quick){
