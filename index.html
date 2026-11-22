@@ -1205,11 +1205,11 @@ function checkDeleted(){checkRestore();if(!ARCADE)return;try{fetch('/api/scores?
 // The admin reset achievements (everyone, or this player): unlocks and their progress counters are cleared, once per reset.
 function applyAchReset(t){let done=0;try{done=+(localStorage.getItem('ss2achreset')||0)}catch(e){}if(!t||t<=done)return;
  try{['ss2ach','ss2rares','ss2buys'].forEach(k=>localStorage.removeItem(k));localStorage.setItem('ss2achreset',String(t))}catch(e){}
- if(app&&app.querySelector&&app.querySelector('.mgrid'))start();setTimeout(()=>openHelp('<h2>Achievements reset</h2><p>The admin reset your achievements. You can earn them all again.</p><button style="text-align:center" onclick="closeHelp()">OK</button>'),600)}
+ if(app&&app.querySelector&&app.querySelector('.mgrid'))start();}
 // The admin reset credits (everyone, or this player): banked credits and this week's refund bank go to 0, once per reset.
 function applyCredReset(t){let done=0;try{done=+(localStorage.getItem('ss2credreset')||0)}catch(e){}if(!t||t<=done)return;
  try{localStorage.setItem(CRED_KEY,'0');localStorage.removeItem(WEEK_KEY);localStorage.setItem('ss2credreset',String(t))}catch(e){}
- if(app&&app.querySelector&&app.querySelector('.mgrid'))start();setTimeout(()=>openHelp('<h2>Credits reset</h2><p>The admin reset your credits. You start again from 0.</p><button style="text-align:center" onclick="closeHelp()">OK</button>'),300)}
+ if(app&&app.querySelector&&app.querySelector('.mgrid'))start();}
 function pushScore(){if(!ARCADE||ARCADE.hidden)return;try{fetch('/api/scores',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:ARCADE.id,name:ARCADE.name,runs:ARCADE.runs||[]})}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.deleted)wipeDevice()}).catch(()=>{})}catch(e){}}
 function lifeRecord(isDlc,d,win){if(!ARCADE||!d)return;const r=ARCADE.life[isDlc?'dlc':'main'][d];r.n++;if(win)r.w++;
  ARCADE.runs=[...(ARCADE.runs||[]),{m:isDlc?'dlc':'main',d,w:win?1:0,t:Date.now()}].slice(-BOARD_KEEP);saveArcade();pushScore()}
@@ -1717,7 +1717,7 @@ async function sysCall(op,extra){if(!ARCADE)return null;try{const r=await fetch(
  if(j.gone&&SYS){if(typeof lostServer==='function')lostServer(j.msg);return j}
  if(j.server)SERVER=j.server;if(j.rules)SRV_RULES=j.rules;if(j.rulesGen)SRV_BONUS=j.rulesGen.bonus||0;
  if(j.reset&&SYS){const keep={leader:SYS.leader,general:SYS.general,srv:SYS.srv},rf=refundWeek();SYS=newSystem(0);Object.assign(SYS,keep);saveSys();SYS_PID=null;
-  SYS_MSG=`The admin reset ${SERVER?SERVER.name:'this server'}: it starts again from day 1, and your old system is gone.${rf} Found a new one.`;if(typeof nameScreen==='function'&&document.getElementById('sysroot')){stopPoll();nameScreen()}return j}if(j.srv&&SYS&&!SYS.srv){SYS.srv=j.srv;saveSys()}
+  SYS_MSG='';if(typeof nameScreen==='function'&&document.getElementById('sysroot')){stopPoll();nameScreen()}return j}if(j.srv&&SYS&&!SYS.srv){SYS.srv=j.srv;saveSys()}
  if(j.kicked&&SYS){const keep=SYS.leader,rf=refundWeek();SYS=newSystem(0);SYS.leader=keep;SYS_MSG=`An admin removed your system from ${SERVER?SERVER.name:'the galaxy'}. You can found a new one.${rf}`;saveSys();if(typeof serverScreen==='function'&&document.getElementById('sysroot')){stopPoll();serverScreen()}return j}
  if(j.season){SEASON=j.season;if(SEASON.crisis&&SEASON.crisis.won&&typeof ach==='function')ach('rift');if(SYS&&SYS.sysName&&(SYS.season||1)!==SEASON.n&&!SYS.joined){SYS.season=SEASON.n;saveSys()}
  if(SYS&&SYS.sysName&&(SYS.season||1)!==SEASON.n){seasonReset();if(typeof showSystems==='function'&&document.getElementById('sysroot'))showSystems(true);return j}}
