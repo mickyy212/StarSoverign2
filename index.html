@@ -614,6 +614,7 @@ html.phone #app .stats{position:sticky;top:0;z-index:20;background:#0d1630;paddi
 .achban.shopban{border-color:#7fd0e0}.shopit{font-style:normal;color:#7fd0e0}.shopcheck{border-left:4px solid #7fd0e0;padding-left:8px}.achban.shopban b{color:#7fd0e0}.achban.shopban .achicon{border-color:#7fd0e0}
 .vox.voxbox{display:none;position:static;margin:6px 0 8px;min-height:5.2em;background:#070b18;border:3px solid #3d5185;padding:8px 10px;cursor:pointer;font-size:17px;line-height:1.35}.vox.voxbox.on{display:block}.ykas{color:#9aa6c8}.risk.odds{color:#b59cff}.vox.voxbox.gap{opacity:.35}.vox.voxbox.gap .voxtap{visibility:hidden}.vox.voxbox{border-left-width:8px}.vxn{display:block;font-size:19px;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px}.vxn small{font-size:13px;opacity:.85;letter-spacing:0}.voxtap{display:block;text-align:right;color:#7fd0e0;font-size:14px;margin-top:4px}.arena.cine{cursor:pointer}
 .helpnote{border-left:4px solid #b59cff;padding:6px 8px;margin:8px 0;color:#d0d7ee}
+.admtabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}.admtabs button{flex:1 1 auto;width:auto;margin:0;padding:8px 6px;text-align:center}.admtabs button.on{border-color:currentColor;font-weight:bold}.admfoot{margin-top:14px;overflow:hidden}.admfoot .rs{float:none}.admin .srvbtns .rs{float:none}.admrow .rs{margin-top:4px}
 </style>
 </head>
 <body>
@@ -1114,44 +1115,71 @@ async function adminCall(act,extra){try{const r=await fetch('/api/systems',{meth
 // Admin testing helpers: local only (credits and goods live on this device).
 function adminTestCredits(){addCredits(1000,'test');showAdmin(`1000 test credits added. You now have ${credits()}.`)}
 function adminTestGoods(){if(typeof SYS==='undefined'||!SYS)SYS=loadSys();if(!SYS)return showAdmin('Found a system in Systems multiplayer first.');for(const r of [...COMMON,...RARE])SYS.res[r]=Math.max(SYS.res[r]||0,200);saveSys();showAdmin('Your system now has at least 200 of every good.')}
-async function showAdmin(msg){if(!ADMIN_PASS){app.innerHTML=`<div class="card"><h2>Admin</h2><p class="note">Sign in to manage Systems multiplayer.</p><input id="admpass" class="arcin" type="password" maxlength="40" autocomplete="off"><p class="down" style="min-height:24px">${escH(msg||'')}</p><button class="personal" style="text-align:center" onclick="adminSignIn()">Sign in</button><button style="text-align:center" onclick="start()">Back</button></div>`;return}
- const j=await adminCall('list');if(j.ok===false){ADMIN_PASS='';return showAdmin(j.msg)}
- const plist=v=>(v.list||[]).length?v.list.map(p=>`<div class="nbr"><b>${escH(p.sysName||p.name)}</b> <small class="note">${escH(p.name)} · ${SRES_NAME[p.spec]} · last seen ${p.seen?dur(Date.now()-p.seen)+' ago':'never'}</small><button class="rs" onclick="adminKick('${v.id}','${p.pid}',this)">Kick</button></div>`).join(''):'<p class="note">No players here.</p>';
- app.innerHTML=`<div class="card"><h2>Admin</h2>${msg?`<p class="sysmsg">${escH(msg)}</p>`:''}<button class="rs" onclick="resetRec(this)">Reset win stats</button><h3>Servers</h3>
- ${(j.servers||[]).length?j.servers.map(v=>`<div class="srvrow"><div class="srvname"><b>${escH(v.name)}</b>${v.main?' <span class="maintag">(Main)</span>':` <small class="note">by ${escH(v.by||'a player')}</small>`}</div><small class="note">${v.players}/${v.max} players · Week ${v.week}, day ${v.day}</small>${plist(v)}<div class="srvbtns"><button class="rs" onclick="adminRmServer('${v.id}',this)">Remove server</button></div></div>`).join(''):'<p class="note">No servers.</p>'}
- <p class="note">Kicking removes a system and its rare good from that galaxy, so nobody there needs it any more; the player can found a new system. Removing a server wipes its whole galaxy, and its players get this week's spending back.</p>
- <h3>Create a Main server</h3><input id="admsrv" class="arcin" maxlength="24" placeholder="Server name" autocomplete="off"><button onclick="adminMkServer()">Create server<small>Admin servers are marked (Main) at the top of the list.</small></button>
- <h3>Scoreboard</h3><button onclick="adminClearBoard(this)">Clear the scoreboard<small>Removes every player's runs from the shared scoreboard. It can't be undone.</small></button>
- <h3>Testing</h3><button onclick="adminTestCredits()">Give me 1000 test credits<small>Added to this device only, to try out buying. They don't count as earned or spent this week.</small></button><button onclick="adminTestGoods()">Fill my goods<small>200 of every good in your Systems multiplayer system on this device, to try out upgrades.</small></button>
- <h3>Credits</h3><button onclick="adminCredReset('',this)">Reset everyone's credits<small>Every player's banked credits go to 0 the next time they open the game. It can't be undone.</small></button>
- <h3>Achievements</h3><button onclick="adminAchReset('',this)">Reset everyone's achievements<small>Every player's achievements are cleared the next time they open the game. It can't be undone.</small></button>
- <h3>Player accounts</h3><button onclick="showAccounts()">Show all player accounts<small>Everyone on the scoreboard or in Systems multiplayer, with a Delete button for each.</small></button>
- <h3>This device</h3><button class="lethal" onclick="adminDeleteMe(this)">Delete my account<small>Removes ${escH(ARCADE.name)} from the scoreboard and from Systems multiplayer, and wipes every stat, credit, item, achievement and leader on this device. Then you start again as a new player. It can't be undone.</small></button>
- <h3>Change password</h3><input id="admnew" class="arcin" type="password" maxlength="40" autocomplete="off"><button onclick="adminSetPass()">Save new password</button>
- <button class="rs" style="float:none;margin-top:10px" onclick="ADMIN_PASS='';start()">Sign out</button> <button class="rs" style="float:none;margin-top:10px" onclick="start()">Back</button></div>`}
+// ---- Admin (rebuilt 11-22): tabs Players / Deleted / Servers / Everyone / Me. Every risky action opens a confirm box naming exactly what it does.
+let ADMIN_TAB='players',ADM_Q='';
+const ADM_TABS=[['players','Players'],['deleted','Deleted'],['servers','Servers'],['everyone','Everyone'],['me','Me']];
+const ago=t=>t?dur(Date.now()-t)+' ago':'never';
+let ADM_FN=null;
+function admConfirm(title,body,label,fn){ADM_FN=fn;openHelp(`<h2>${escH(title)}</h2><p>${body}</p><button class="lethal" style="text-align:center" onclick="closeHelp();const f=ADM_FN;ADM_FN=null;f&&f()">${escH(label)}</button><button style="text-align:center" onclick="closeHelp()">Cancel</button>`)}
+function admTabs(){return `<div class="admtabs">${ADM_TABS.map(([k,n])=>`<button class="${k===ADMIN_TAB?'on':''}" onclick="ADMIN_TAB='${k}';showAdmin()">${n}</button>`).join('')}</div>`}
+function admBusy(){app.innerHTML=`<div class="card"><h2>Admin</h2>${admTabs()}<p class="note">Loading…</p></div>`}
+let ADM_DATA=null;
+async function showAdmin(msg,tab){if(tab)ADMIN_TAB=tab;
+ if(!ADMIN_PASS){app.innerHTML=`<div class="card"><h2>Admin</h2><p class="note">Sign in to manage players and servers.</p><input id="admpass" class="arcin" type="password" maxlength="40" autocomplete="off" onkeydown="if(event.key==='Enter')adminSignIn()"><p class="down" style="min-height:24px">${escH(msg||'')}</p><button class="personal" style="text-align:center" onclick="adminSignIn()">Sign in</button><button style="text-align:center" onclick="start()">Back</button></div>`;return}
+ admBusy();
+ const need=ADMIN_TAB==='servers'?'list':ADMIN_TAB==='players'||ADMIN_TAB==='deleted'?'accounts':'list';
+ const j=await adminCall(need);if(j.ok===false){if(/password/i.test(j.msg||''))ADMIN_PASS='';ADMIN_PASS?app.innerHTML=`<div class="card"><h2>Admin</h2>${admTabs()}<p class="down">${escH(j.msg)}</p><button style="text-align:center" onclick="showAdmin()">Try again</button><button style="text-align:center" onclick="start()">Back</button></div>`:showAdmin(j.msg);return}
+ ADM_DATA=j;
+ const body=ADMIN_TAB==='players'?admPlayers(j):ADMIN_TAB==='deleted'?admDeleted(j):ADMIN_TAB==='servers'?admServers(j):ADMIN_TAB==='everyone'?admEveryone():admMe();
+ app.innerHTML=`<div class="card admin"><h2>Admin</h2>${admTabs()}${msg?`<p class="sysmsg">${escH(msg)}</p>`:''}${body}<div class="admfoot"><button class="rs" onclick="ADMIN_PASS='';start()">Sign out</button> <button class="rs" onclick="start()">Back to game</button></div></div>`;
+ const q=document.getElementById('admq');if(q){q.value=ADM_Q;admFilter()}}
+// Players: one row each, one Manage button (no tiny side-by-side buttons to mis-tap)
+function admPlayers(j){const L=j.accounts||[];
+ const row=a=>`<div class="nbr admrow" data-n="${escH((a.name||'').toLowerCase())}"><b>${escH(a.name||'(no name)')}</b>${a.pid===j.me?' <span class="maintag">(you)</span>':''}<br><small class="note">${a.runs} run${a.runs===1?'':'s'} · ${a.servers.length?'in '+a.servers.map(escH).join(', '):'not in multiplayer'} · seen ${ago(a.seen)}</small><button class="rs" onclick="admManage('${a.pid}')">Manage</button></div>`;
+ return `<p class="note">${L.length} player${L.length===1?'':'s'}. Tap Manage for one player.</p>${L.length>5?`<input id="admq" class="arcin" placeholder="Search a name" autocomplete="off" oninput="ADM_Q=this.value;admFilter()">`:''}${L.map(row).join('')||'<p class="note">No players yet.</p>'}`}
+function admFilter(){const q=(ADM_Q||'').toLowerCase().trim();document.querySelectorAll('.admrow').forEach(r=>r.style.display=!q||r.dataset.n.includes(q)?'':'none')}
+function admManage(pid){const a=(ADM_DATA.accounts||[]).find(x=>x.pid===pid);if(!a)return;const nm=escH(a.name||'this player'),you=pid===ADM_DATA.me;
+ openHelp(`<h2>${nm}${you?' (you)':''}</h2><p class="note">${a.runs} run${a.runs===1?'':'s'} · ${a.servers.length?'in '+a.servers.map(escH).join(', '):'not in multiplayer'} · seen ${ago(a.seen)}</p>
+ <button onclick="closeHelp();admAct('credreset','${pid}','Reset credits of ${nm}?','Their banked credits go to 0 next time they open the game.','Reset credits')">Reset credits</button>
+ <button onclick="closeHelp();admAct('achreset','${pid}','Reset achievements of ${nm}?','Their achievements are cleared next time they open the game.','Reset achievements')">Reset achievements</button>
+ ${you?'<p class="note">To delete your own account, use the Me tab.</p>':`<button class="lethal" onclick="closeHelp();admAct('delacct','${pid}','Delete ${nm}?','Only ${nm} is removed: their runs leave the scoreboard and their system leaves every server. A copy is kept, so you can restore them from the Deleted tab.','Delete ${nm}')">Delete this account</button>`}
+ <button style="text-align:center" onclick="closeHelp()">Close</button>`)}
+function admAct(act,pid,title,text,label){admConfirm(title,text,label,async()=>{admBusy();const j=await adminCall(act,{target:pid});if(act!=='delacct'&&pid===ADM_DATA.me)checkDeleted();showAdmin(j.msg)})}
+// Deleted: restore by name (older deletes without a name show when they happened)
+function admDeleted(j){const L=j.deleted||[];
+ return `<p class="note">Accounts you deleted. Restore brings one back${L.some(d=>!d.backup)?'. Older deletes have no saved copy: their device puts its runs and system back when it next opens the game, if it still has them':''}.</p>`+
+ (L.map(d=>`<div class="nbr"><b>${escH(d.name||'Unknown name')}</b><br><small class="note">deleted ${ago(d.t)} · ${d.backup?'full copy kept':'no copy (older delete)'} · code ${d.pid.slice(0,6)}</small><button class="rs" onclick="admUndel('${d.pid}','${escH(d.name||'this account')}')">Restore</button></div>`).join('')||'<p class="note">Nothing deleted.</p>')}
+function admUndel(pid,nm){admConfirm(`Restore ${nm}?`,`${nm} can play again, and their runs and system come back.`,'Restore',async()=>{admBusy();const j=await adminCall('undelete',{target:pid});showAdmin(j.msg)})}
+// Servers
+function admServers(j){const S=j.servers||[];
+ const plist=v=>(v.list||[]).length?v.list.map(p=>`<div class="nbr"><b>${escH(p.sysName||p.name)}</b> <small class="note">${escH(p.name)} · ${SRES_NAME[p.spec]} · seen ${ago(p.seen)}</small><button class="rs" onclick="admKick('${v.id}','${p.pid}','${escH(p.sysName||p.name)}','${escH(v.name)}')">Kick</button></div>`).join(''):'<p class="note">No players here.</p>';
+ return (S.map(v=>`<div class="srvrow"><div class="srvname"><b>${escH(v.name)}</b>${v.main?' <span class="maintag">(Main)</span>':` <small class="note">by ${escH(v.by||'a player')}</small>`}</div><small class="note">${v.players}/${v.max} players · Week ${v.week}, day ${v.day}</small>${plist(v)}<div class="srvbtns"><button class="rs" onclick="admSrv('resetsrv','${v.id}','${escH(v.name)}')">Reset to day 1</button> <button class="rs" onclick="admSrv('rmserver','${v.id}','${escH(v.name)}')">Remove server</button></div></div>`).join('')||'<p class="note">No servers.</p>')+
+ `<h3>New Main server</h3><input id="admsrv" class="arcin" maxlength="24" placeholder="Server name" autocomplete="off"><button onclick="adminMkServer()">Create server</button>`}
+function admKick(srv,pid,sys,sn){admConfirm(`Kick ${sys}?`,`Removes ${sys} from ${sn}. The player keeps their account and can found a new system.`,'Kick',async()=>{admBusy();const j=await adminCall('kick',{srv,target:pid});showAdmin(j.msg)})}
+function admSrv(act,srv,sn){const t=act==='rmserver'?[`Remove ${sn}?`,`Wipes the whole ${sn} galaxy and takes it off the list. Its players get this week's spending back.`,'Remove server']:[`Reset ${sn}?`,`Every system on ${sn} is wiped and it starts again at day 1. Players get this week's spending back.`,'Reset server'];
+ admConfirm(t[0],t[1],t[2],async()=>{admBusy();const j=await adminCall(act,{srv});showAdmin(j.msg)})}
+async function adminMkServer(){const n=document.getElementById('admsrv').value;admBusy();const j=await adminCall('mkserver',{name:n});showAdmin(j.msg)}
+// Everyone: the big resets, each behind a confirm box
+function admEveryone(){return `<p class="note">These change EVERY player. Each one asks first.</p>
+ <button class="lethal" onclick="admAll('credreset','Reset everyone\\'s credits?','Every player\\'s banked credits go to 0 the next time they open the game.','Reset all credits')">Reset everyone's credits</button>
+ <button class="lethal" onclick="admAll('achreset','Reset everyone\\'s achievements?','Every player\\'s achievements are cleared the next time they open the game.','Reset all achievements')">Reset everyone's achievements</button>
+ <button class="lethal" onclick="admAll('clear','Clear the whole scoreboard?','Every player\\'s runs leave the shared scoreboard. Accounts stay.','Clear scoreboard')">Clear the scoreboard</button>`}
+function admAll(act,title,text,label){admConfirm(title,text,label,async()=>{admBusy();let j;
+ if(act==='clear'){try{const r=await fetch('/api/scores',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify({op:'clear',pass:ADMIN_PASS})});j=await r.json()}catch(e){j={msg:'No connection to the scoreboard.'}}}
+ else{j=await adminCall(act,{});checkDeleted()}showAdmin(j.msg)})}
+// Me: this device only
+function admMe(){return `<h3>Testing (this device)</h3><button onclick="adminTestCredits()">Give me 1000 test credits</button><button onclick="adminTestGoods()">Fill my goods</button><button onclick="admConfirm('Reset your win stats?','Clears your own runs on this device and the scoreboard.','Reset win stats',()=>resetRec({dataset:{armed:1}}))">Reset my win stats</button>
+ <h3>Password</h3><input id="admnew" class="arcin" type="password" maxlength="40" placeholder="New password" autocomplete="off"><input id="admnew2" class="arcin" type="password" maxlength="40" placeholder="Type it again" autocomplete="off"><button onclick="adminSetPass()">Save new password</button>
+ <h3>My account</h3><button class="lethal" onclick="admConfirm('Delete your own account?','Removes ${escH(ARCADE.name)} from the scoreboard and multiplayer, and wipes every stat, credit, item, achievement and leader on this device. A safety copy stays on this device in case the admin restores you.','Delete my account',()=>adminDeleteMe({dataset:{armed:1},firstChild:{}}))">Delete my account</button>`}
+async function adminSetPass(){const np=document.getElementById('admnew').value,n2=document.getElementById('admnew2').value;if(np!==n2)return showAdmin('The two passwords don\'t match.');admBusy();const j=await adminCall('setpass',{newpass:np});if(j.ok!==false)ADMIN_PASS=np;showAdmin(j.msg)}
+async function adminSignIn(){ADMIN_PASS=document.getElementById('admpass').value;showAdmin()}
 // Delete my account: leave Systems, leave the scoreboard, wipe this device's game data (not the preview's galaxy), start as a new player.
 async function adminDeleteMe(b){if(!b.dataset.armed){b.dataset.armed=1;b.firstChild.textContent='Tap again: delete everything';return}
  b.disabled=true;try{if(!SYS)SYS=loadSys();if(SYS&&SYS.srv)await sysCall('leave')}catch(e){}
  try{await fetch('/api/scores',{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:ARCADE.id})})}catch(e){}
  try{Object.keys(localStorage).filter(k=>k.startsWith('ss2')&&!k.startsWith('ss2preview')).forEach(k=>localStorage.removeItem(k))}catch(e){}
  location.reload()}
-async function showAccounts(msg){const j=await adminCall('accounts');if(j.ok===false){return showAdmin(j.msg)}
- const me=SYS_PID,row=a=>`<div class="nbr"><b>${escH(a.name||'(no name)')}</b> <small class="note">${a.runs} run${a.runs===1?'':'s'} on the scoreboard${a.servers.length?' · in '+a.servers.map(escH).join(', '):''} · last seen ${a.seen?dur(Date.now()-a.seen)+' ago':'never'}</small><button class="rs" onclick="adminCredReset('${a.pid}',this,true)">Reset credits</button><button class="rs" onclick="adminAchReset('${a.pid}',this,true)">Reset achievements</button><button class="rs" onclick="adminDelAcct('${a.pid}',this)">Delete</button></div>`;
- app.innerHTML=`<div class="card"><h2>Player accounts</h2>${msg?`<p class="sysmsg">${escH(msg)}</p>`:''}<p class="note">${(j.accounts||[]).length} account${(j.accounts||[]).length===1?'':'s'}. Delete removes a player from the scoreboard and every server for good. Their device wipes its stats and starts as a new player the next time it opens the game.</p>
- ${(j.accounts||[]).map(row).join('')||'<p class="note">No accounts yet.</p>'}<button style="text-align:center" onclick="showAdmin()">Back</button></div>`;window.scrollTo(0,0)}
-async function adminCredReset(pid,b,fromList){if(!b.dataset.armed){b.dataset.armed=1;const t=pid?'Tap again to reset':'Tap again: reset everyone\'s credits';if(b.firstChild)b.firstChild.textContent=t;else b.textContent=t;return}b.disabled=true;
- const j=await adminCall('credreset',pid?{target:pid}:{});if(pid===SYS_PID||!pid)checkDeleted();fromList?showAccounts(j.msg):showAdmin(j.msg)}
-async function adminAchReset(pid,b,fromList){if(!b.dataset.armed){b.dataset.armed=1;const t=pid?'Tap again to reset':'Tap again: reset everyone\'s achievements';if(b.firstChild)b.firstChild.textContent=t;else b.textContent=t;return}b.disabled=true;
- const j=await adminCall('achreset',pid?{target:pid}:{});if(!pid)checkDeleted();fromList?showAccounts(j.msg):showAdmin(j.msg)}
-async function adminDelAcct(pid,b){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again to delete';return}b.disabled=true;const j=await adminCall('delacct',{target:pid});showAccounts(j.msg)}
-async function adminSignIn(){ADMIN_PASS=document.getElementById('admpass').value;showAdmin()}
-async function adminKick(srv,pid,b){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again to kick';return}const j=await adminCall('kick',{srv,target:pid});showAdmin(j.msg)}
-async function adminRmServer(srv,b){if(!b.dataset.armed){b.dataset.armed=1;b.textContent='Tap again: wipe this galaxy';return}const j=await adminCall('rmserver',{srv});showAdmin(j.msg)}
-async function adminMkServer(){const n=document.getElementById('admsrv').value;const j=await adminCall('mkserver',{name:n});showAdmin(j.msg)}
-async function adminClearBoard(b){if(!b.dataset.armed){b.dataset.armed=1;b.firstChild.textContent='Tap again: clear it for everyone';return}
- let j=null;try{const r=await fetch('/api/scores',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify({op:'clear',pass:ADMIN_PASS})});j=await r.json()}catch(e){}
- showAdmin(j?j.msg:'No connection to the scoreboard.')}
-async function adminSetPass(){const np=document.getElementById('admnew').value;const j=await adminCall('setpass',{newpass:np});if(j.ok!==false)ADMIN_PASS=np;showAdmin(j.msg)}
+function showAccounts(msg){showAdmin(msg,'players')}
 // per-run notes for achievements (saved with the run)
 let RUNA={pc:0,pf:0,reboot:false},LASTFIN=null;
 // ---- Arcade name + scoreboard of your latest 20 runs. The server banks them (they outlive every new build) until the admin clears the board. ----
@@ -1164,8 +1192,16 @@ function saveArcade(){try{localStorage.setItem(ARC,JSON.stringify(ARCADE))}catch
 function escH(t){return String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 // sends your latest runs; the server adds any it doesn't have yet (so a run finished offline still counts later)
 // The admin deleted this account: wipe this device's game data (not the preview's galaxy) and start as a new player.
-function wipeDevice(){try{Object.keys(localStorage).filter(k=>k.startsWith('ss2')&&!k.startsWith('ss2preview')).forEach(k=>localStorage.removeItem(k));sessionStorage.setItem('ss2wiped','1')}catch(e){}location.reload()}
-function checkDeleted(){if(!ARCADE)return;try{fetch('/api/scores?me='+encodeURIComponent(ARCADE.id),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.deleted)return wipeDevice();if(j&&j.credReset)applyCredReset(j.credReset);if(j&&j.achReset)applyAchReset(j.achReset)}).catch(()=>{})}catch(e){}}
+function wipeDevice(){try{const keep={};Object.keys(localStorage).filter(k=>k.startsWith('ss2')&&!k.startsWith('ss2preview')).forEach(k=>keep[k]=localStorage.getItem(k));localStorage.setItem('ssbak-del',JSON.stringify({t:Date.now(),keys:keep}))}catch(e){}try{Object.keys(localStorage).filter(k=>k.startsWith('ss2')&&!k.startsWith('ss2preview')).forEach(k=>localStorage.removeItem(k));sessionStorage.setItem('ss2wiped','1')}catch(e){}location.reload()}
+// A deleted device keeps one safety copy ('ssbak-del'). If the admin restores that account, the copy comes back here.
+function checkRestore(){let b=null;try{b=JSON.parse(localStorage.getItem('ssbak-del')||'null')}catch(e){}if(!b||!b.keys)return;
+ if(Date.now()-b.t>90*864e5){try{localStorage.removeItem('ssbak-del')}catch(e){}return}
+ let old=null;try{old=JSON.parse(b.keys[ARC]||'null')}catch(e){}if(!old||!old.id||(ARCADE&&ARCADE.id===old.id))return;
+ try{fetch('/api/scores?me='+encodeURIComponent(old.id),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(!j||j.deleted)return;
+  const go=()=>{try{Object.keys(localStorage).filter(k=>k.startsWith('ss2')&&!k.startsWith('ss2preview')).forEach(k=>localStorage.removeItem(k));for(const k in b.keys)localStorage.setItem(k,b.keys[k]);localStorage.removeItem('ssbak-del');sessionStorage.setItem('ss2restored','1')}catch(e){}location.reload()};
+  if(!ARCADE)return go();
+  openHelp(`<h2>Account restored</h2><p>The admin restored your old account <b>${escH(old.name)}</b>. Switch back to it? This replaces ${escH(ARCADE.name)} on this device.</p><button class="personal" style="text-align:center" id="rsgo">Switch back</button><button style="text-align:center" onclick="closeHelp();try{localStorage.removeItem('ssbak-del')}catch(e){}">Keep ${escH(ARCADE.name)}</button>`);document.getElementById('rsgo').onclick=go}).catch(()=>{})}catch(e){}}
+function checkDeleted(){checkRestore();if(!ARCADE)return;try{fetch('/api/scores?me='+encodeURIComponent(ARCADE.id),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.deleted)return wipeDevice();if(j&&j.credReset)applyCredReset(j.credReset);if(j&&j.achReset)applyAchReset(j.achReset)}).catch(()=>{})}catch(e){}}
 // The admin reset achievements (everyone, or this player): unlocks and their progress counters are cleared, once per reset.
 function applyAchReset(t){let done=0;try{done=+(localStorage.getItem('ss2achreset')||0)}catch(e){}if(!t||t<=done)return;
  try{['ss2ach','ss2rares','ss2buys'].forEach(k=>localStorage.removeItem(k));localStorage.setItem('ss2achreset',String(t))}catch(e){}
@@ -3606,6 +3642,7 @@ function end(win,title,msg,fight){if(!TUT)shopStamp(title);else SHOPHINT_P=null;
 })();
 loadSave()?resume():start();
 checkDeleted();
+try{if(sessionStorage.getItem('ss2restored')){sessionStorage.removeItem('ss2restored');setTimeout(()=>openHelp('<h2>Welcome back</h2><p>Your account was restored.</p><button style="text-align:center" onclick="closeHelp()">OK</button>'),500)}}catch(e){}
 
 // Swap the font's slash-like sword glyph for a drawn pixel sword in all on-screen text.
 (function(){const G='\u2694',R=/\u2694\uFE0F?/g;let busy=false;

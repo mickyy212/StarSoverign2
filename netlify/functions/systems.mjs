@@ -228,15 +228,38 @@ export default async (req) => {
       const sb = getStore("scoreboard");
       for (const b of (await sb.list()).blobs) { if (b.key === "_meta") continue; const r = await sb.get(b.key, { type: "json" }); if (r) add(pidOf(b.key), { name: r.name, runs: (r.runs || []).length, seen: r.updated || 0 }); }
       for (const v of await summaries(servers, me, true)) for (const p of v.list || []) add(p.pid, { name: p.name, seen: p.seen, srv: v.name });
-      return json({ ok: true, accounts: Object.values(acc).sort((a, b) => b.seen - a.seen), now }); }
-    else if (body.act === "delacct") { // remove an account everywhere; its device wipes itself on its next call
+      const del = (await reg.get("deleted", { type: "json" })) || {}, bak = (await reg.get("deletedbak", { type: "json" })) || {};
+      const deleted = Object.entries(del).map(([pid, v]) => ({ pid, t: typeof v === "number" ? v : v.t, name: (v && v.name) || (bak[pid] && bak[pid].name) || "", backup: !!bak[pid] })).sort((a, b) => b.t - a.t);
+      for (const d of deleted) delete acc[d.pid]; // a deleted account is never listed as live
+      return json({ ok: true, me, accounts: Object.values(acc).sort((a, b) => b.seen - a.seen), deleted, now }); }
+    else if (body.act === "delacct") { // remove ONE account everywhere; a full copy is kept so the admin can restore it
       const pid = String(body.target || "").replace(/[^a-f0-9]/g, "").slice(0, 12); if (pid.length !== 12) return json({ ok: false, msg: "No such account." });
-      const sb = getStore("scoreboard"); let name = "";
-      for (const b of (await sb.list()).blobs) if (b.key !== "_meta" && pidOf(b.key) === pid) { const r = await sb.get(b.key, { type: "json" }); name ||= (r && r.name) || ""; await sb.delete(b.key); }
+      if (pid === me) return json({ ok: false, msg: "That's your own account. Use Delete my account on the Me tab instead." });
+      const sb = getStore("scoreboard"), copy = { name: "", t: now, sb: [], sys: [] };
+      for (const b of (await sb.list()).blobs) if (b.key !== "_meta" && pidOf(b.key) === pid) { const r = await sb.get(b.key, { type: "json" }); if (r) { copy.name ||= r.name || ""; copy.sb.push({ key: b.key, rec: r }); } }
       for (const s of servers.list) { const st = galaxyStore(s.id), rec = await st.get(pid, { type: "json" });
-        if (rec) { name ||= rec.name || ""; await galaxy({ ...body, op: "adminkick", target: pid, srv: s.id }, s, true); } }
-      const del = (await reg.get("deleted", { type: "json" })) || {}; del[pid] = now; await reg.setJSON("deleted", del);
-      msg = `${name || "That account"} was deleted. Their device starts over as a new player next time they open the game.`; }
+        if (rec) { copy.name ||= rec.name || ""; copy.sys.push({ srv: s.id, rec, inbox: (await st.get("in-" + pid, { type: "json" })) || [] }); } }
+      // the copy and the deleted mark are saved BEFORE anything is removed, so a timeout part-way can always be restored
+      const bak = (await reg.get("deletedbak", { type: "json" })) || {}; bak[pid] = copy; await reg.setJSON("deletedbak", bak);
+      const del = (await reg.get("deleted", { type: "json" })) || {}; del[pid] = { t: now, name: copy.name }; await reg.setJSON("deleted", del);
+      for (const x of copy.sb) await sb.delete(x.key);
+      for (const x of copy.sys) { const s = servers.list.find((v) => v.id === x.srv); if (s) await galaxy({ ...body, op: "adminkick", target: pid, srv: s.id }, s, true); }
+      msg = `${copy.name || "That account"} was deleted. You can restore it from the Deleted tab.`; }
+    else if (body.act === "undelete") { // bring a deleted account back: its scoreboard runs and systems (if a copy was kept) and its right to play
+      const pid = String(body.target || "").replace(/[^a-f0-9]/g, "").slice(0, 12);
+      const del = (await reg.get("deleted", { type: "json" })) || {}, bak = (await reg.get("deletedbak", { type: "json" })) || {};
+      if (!del[pid] && !bak[pid]) return json({ ok: false, msg: "That account isn't on the deleted list." });
+      const copy = bak[pid], name = (copy && copy.name) || (del[pid] && del[pid].name) || "";
+      delete del[pid]; await reg.setJSON("deleted", del);
+      const sb = getStore("scoreboard"); let back = 0;
+      if (copy) for (const x of copy.sb || []) if (!(await sb.get(x.key, { type: "json" }))) { await sb.setJSON(x.key, x.rec); back++; }
+      // let its system back into every galaxy (an old copy would be refused as "kicked")
+      for (const s of servers.list) { const st = galaxyStore(s.id), k = (await st.get("kicked", { type: "json" })) || {}; if (k[pid]) { delete k[pid]; await st.setJSON("kicked", k); } }
+      if (copy) { const where = (await reg.get("where", { type: "json" })) || {};
+        for (const x of copy.sys || []) { const s = servers.list.find((v) => v.id === x.srv); if (!s) continue; const st = galaxyStore(s.id);
+          if (!(await st.get(pid, { type: "json" }))) { await st.setJSON(pid, x.rec); if ((x.inbox || []).length) await st.setJSON("in-" + pid, x.inbox); where[pid] = s.id; back++; } }
+        await reg.setJSON("where", where); delete bak[pid]; await reg.setJSON("deletedbak", bak); }
+      msg = `${name || "That account"} was restored.` + (copy ? "" : " Its device puts its runs and system back the next time it opens the game, if it still has them."); }
     else if (body.act === "credreset") { // wipe banked credits: everyone, or one player (by pid). Devices clear themselves on their next visit.
       const cr = (await reg.get("credreset", { type: "json" })) || { all: 0, p: {} }; cr.p ||= {};
       const pid = String(body.target || "").replace(/[^a-f0-9]/g, "").slice(0, 12);
