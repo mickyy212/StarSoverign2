@@ -629,9 +629,9 @@ const MAX=15,TURNS=12,NEED=16;
 const LABELS={stability:'Stability',energy:'Energy',military:'Fleet',influence:'Influence',science:'Science'}; // display order: most important first, then power stats A-Z
 const CAT={combat:'Combat',hazard:'Hazard',intrigue:'Intrigue'};
 const EMPIRES=[
- {name:'Vorrani Ascendancy',diff:'Hard',leader:'Warlord-Queen',desc:'Hive-born conquerors who sing before battle. Strongest fleet.',perk:'Chitin Carapace: −40% injury on ⚔.',s:{energy:7,military:5,science:3,influence:3,stability:7}},
- {name:'Celest Concord',diff:'Normal',leader:'First Speaker',desc:'Beings of light who never raise their voice. Most influence.',perk:'Precognition: −60% Intrigue risk.',s:{energy:5,military:3,science:4,influence:4,stability:4}},
- {name:'Kethari Mind-Collective',diff:'Easy',leader:'Prime Node',desc:'A trillion minds, one vote. Best science.',perk:'Backup Core: cheat death once (−2 Stability). −30% Hazard risk.',s:{energy:6,military:4,science:7,influence:2,stability:5}}
+ {name:'Vorrani Ascendancy',diff:'Hard',leader:'Warlord-Queen',desc:'Hive-born conquerors who sing before battle. Strongest fleet.',perk:'Chitin Carapace: −40% injury on ⚔.',s:{energy:7,military:6,science:3,influence:3,stability:7}},
+ {name:'Celest Concord',diff:'Normal',leader:'First Speaker',desc:'Beings of light who never raise their voice. Most influence.',perk:'Precognition: −60% Intrigue risk.',s:{energy:4,military:3,science:4,influence:3,stability:4}},
+ {name:'Kethari Mind-Collective',diff:'Easy',leader:'Prime Node',desc:'A trillion minds, one vote. Best science.',perk:'Backup Core: cheat death once (−2 Stability). −30% Hazard risk.',s:{energy:5,military:4,science:5,influence:2,stability:5}}
 ];
 const TRAITS=[
  {id:'veteran',name:'Veteran',desc:'Half injury chance on ⚔. Half death chance on Combat.'},
@@ -1272,6 +1272,14 @@ function addVessa(){if(Math.random()>=0.5)return;const own=new Set(Object.values
 // First meeting = a risky (⚔) option (40% injury / 10% death base, 11-22): you go to them in person. Only ONE character per run (RUNA.cm). Success: the choice plus +2 of the stat, and they will
 // come back. Failure: the plain choice happens, and they never return. The return visit is a plain (safe) 4th option.
 // If no choice on the screen fits, they wait for a later turn that does.
+// ---- Risk rebalance (11-22, user: "risk slightly more dangerous, winning more reliant on ⚔"). Main game only (not DLC, tutorial or cameos).
+// Every ⚔ choice: base injury and death x RISKBAL.risk. ⚔ success: its biggest stat gain +RISKBAL.win. Safe choices: biggest gain of +RISKBAL.cut_at or more is cut by 1.
+const RISKBAL={risk:1.2,win:1,cut_at:3};
+(function(){const top=fx=>{let k=null,v=0;for(const x in fx)if(x!=='threat'&&x!=='p'&&typeof fx[x]==='number'&&fx[x]>v){v=fx[x];k=x}return k};
+ const pools=[EVENTS,...Object.values(EMP_EVENTS),RARE_EVENTS,VESSA_EVENTS];
+ for(const P of pools)for(const e of P)for(const c of e.c||[]){if(c._rb)continue;c._rb=1;const k=top(c.fx||{});
+  if(c.r){c.r=[c.r[0],Math.round(c.r[1]*RISKBAL.risk),Math.round(c.r[2]*RISKBAL.risk)];if(k)c.fx={...c.fx,[k]:c.fx[k]+RISKBAL.win}}
+  else if(k&&c.fx[k]>=RISKBAL.cut_at)c.fx={...c.fx,[k]:c.fx[k]-1}}})();
 const CAMEOS=[
  {id:'tesk',n:'Admiral Tesk',emp:'Vorrani',stat:'military',
   a:{line:'Admiral Tesk, last commander of a fallen empire, will only talk to you face to face, on her own flagship, surrounded by her guns.',r:['combat',40,10],
