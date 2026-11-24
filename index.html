@@ -615,6 +615,7 @@ html.phone #app .stats{position:sticky;top:0;z-index:20;background:#0d1630;paddi
 .vox.voxbox{display:none;position:static;margin:6px 0 8px;min-height:5.2em;background:#070b18;border:3px solid #3d5185;padding:8px 10px;cursor:pointer;font-size:17px;line-height:1.35}.vox.voxbox.on{display:block}.ykas{color:#9aa6c8}.risk.odds{color:#b59cff}.vox.voxbox.gap{opacity:.35}.vox.voxbox.gap .voxtap{visibility:hidden}.vox.voxbox{border-left-width:8px}.vxn{display:block;font-size:19px;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px}.vxn small{font-size:13px;opacity:.85;letter-spacing:0}.voxtap{display:block;text-align:right;color:#7fd0e0;font-size:14px;margin-top:4px}.arena.cine{cursor:pointer}
 .helpnote{border-left:4px solid #b59cff;padding:6px 8px;margin:8px 0;color:#d0d7ee}
 .admtabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}.admtabs button{flex:1 1 auto;width:auto;margin:0;padding:8px 6px;text-align:center}.admtabs button.on{border-color:currentColor;font-weight:bold}.admfoot{margin-top:14px;overflow:hidden}.admfoot .rs{float:none}.admin .srvbtns .rs{float:none}.admrow .rs{margin-top:4px}
+.wtag{font-style:normal;color:#7fd0e0}.wold{opacity:.5}.wtdemo{background:rgba(0,0,0,.25);padding:8px;margin:8px 0;border-radius:4px}.wtdemo .ico{width:12px;height:12px;display:inline-block;vertical-align:-1px;margin:0 0 0 2px}.wtbtn{pointer-events:none}.wtnav{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:10px}.wtnav button{width:auto;float:none;margin:0}.wup{color:#e8665a}.wfat{color:#e8665a}.risk .ico,.wico .ico{width:12px;height:12px;display:inline-block;vertical-align:-1px;margin:0 0 0 2px}.warbar{font-size:.8em;margin:4px 0 8px;display:flex;flex-wrap:wrap;gap:4px 10px}
 </style>
 </head>
 <body>
@@ -1009,11 +1010,11 @@ function showDLCFinal(){LAST_SCREEN=showDLCFinal;
 }
 // Autosave: survives page reloads (app switching, updates). One save per browser.
 const SAVE='ss2v2save';
-function saveGame(t){if(TUT)return;try{localStorage.setItem(SAVE,JSON.stringify({e:EMPIRES.indexOf(emp),t:TRAITS.indexOf(trait),S,turn:t,deck:deck.map(d=>d.t),log,threat,hp,injT,aug,cores,closeUsed,renown,dlc,prog,route,look,mem,news,qd,dsp:DISPATCH,ra:RUNA}))}catch(_){}}
+function saveGame(t){if(TUT)return;try{localStorage.setItem(SAVE,JSON.stringify({e:EMPIRES.indexOf(emp),t:TRAITS.indexOf(trait),S,turn:t,deck:deck.map(d=>d.t),log,threat,hp,injT,aug,cores,closeUsed,renown,dlc,prog,route,look,mem,news,qd,dsp:DISPATCH,ra:RUNA,war:WAR}))}catch(_){}}
 function clearSave(){try{localStorage.removeItem(SAVE)}catch(_){}}
 function loadSave(){try{const g=JSON.parse(localStorage.getItem(SAVE));return g&&EMPIRES[g.e]&&TRAITS[g.t]&&g.deck&&g.deck.every(t=>t===RESCUE_EV.t||EVENTS.some(e=>e.t===t)||DLC_EVENTS.some(e=>e.t===t)||DLC_EXTRA.some(e=>e.t===t)||Object.values(EMP_EVENTS).flat().some(e=>e.t===t)||RARE_EVENTS.some(e=>e.t===t)||VESSA_EVENTS.some(e=>e.t===t))?g:null}catch(_){return null}}
 function resume(){const g=loadSave();if(!g){clearSave();return start()}
- emp=EMPIRES[g.e];trait=TRAITS[g.t];S=g.S;turn=g.turn;deck=g.deck.map(t=>(t===RESCUE_EV.t?(rescueEvent()||RESCUE_EV):t===HOSTAGES_EV.t?HOSTAGES_EV:null)||EVENTS.find(e=>e.t===t)||DLC_EVENTS.find(e=>e.t===t)||DLC_EXTRA.find(e=>e.t===t)||Object.values(EMP_EVENTS).flat().find(e=>e.t===t)||RARE_EVENTS.find(e=>e.t===t)||VESSA_EVENTS.find(e=>e.t===t));dlc=!!g.dlc;prog=g.prog||0;look=g.look||null;mem=g.mem||[];news=g.news||'';qd=g.qd||0;if(Array.isArray(g.dsp)&&g.dsp.length===DISPATCH_POOL.length)DISPATCH=g.dsp;if(g.route)route=g.route;log=g.log||[];threat=g.threat;hp=g.hp;injT=g.injT;aug=g.aug;cores=g.cores;closeUsed=g.closeUsed;renown=g.renown||0;RUNA=g.ra||{pc:0,pf:0,reboot:false};showEvent()}
+ emp=EMPIRES[g.e];trait=TRAITS[g.t];S=g.S;turn=g.turn;deck=g.deck.map(t=>(t===RESCUE_EV.t?(rescueEvent()||RESCUE_EV):t===HOSTAGES_EV.t?HOSTAGES_EV:null)||EVENTS.find(e=>e.t===t)||DLC_EVENTS.find(e=>e.t===t)||DLC_EXTRA.find(e=>e.t===t)||Object.values(EMP_EVENTS).flat().find(e=>e.t===t)||RARE_EVENTS.find(e=>e.t===t)||VESSA_EVENTS.find(e=>e.t===t));dlc=!!g.dlc;prog=g.prog||0;look=g.look||null;mem=g.mem||[];news=g.news||'';qd=g.qd||0;if(Array.isArray(g.dsp)&&g.dsp.length===DISPATCH_POOL.length)DISPATCH=g.dsp;if(g.route)route=g.route;log=g.log||[];threat=g.threat;hp=g.hp;injT=g.injT;aug=g.aug;cores=g.cores;closeUsed=g.closeUsed;renown=g.renown||0;RUNA=g.ra||{pc:0,pf:0,reboot:false};WAR=!!g.war&&!dlc;showEvent()}
 
 // ---- Achievements: 50, kept on this device (11-20; 'again' added, 'played' removed). Banners show one at a time.
 // A small banner drops in when one unlocks; the Achievements button lists them all.
@@ -1077,7 +1078,7 @@ function achSeen(e){if(['military','influence','science','stability','energy'].s
  if(e.cameoLine||VESSA_EVENTS.includes(e))ach('vessa');if(e.cameoLine&&RUNA.cm&&turn===RUNA.cm.s2&&RUNA.cm.took)ach('vessa3');
  if(e.rare){ach('rare1');try{const r=new Set(JSON.parse(localStorage.getItem('ss2rares')||'[]'));r.add(e.t);localStorage.setItem('ss2rares',JSON.stringify([...r]));if(r.size>=RARE_EVENTS.length)ach('allrare')}catch(x){}}}
 function achGot(){try{return JSON.parse(localStorage.getItem(ACH_KEY))||{}}catch(e){return {}}}
-function ach(id){if(TUT&&id!=='tut')return;const g=achGot();if(g[id])return;const a=ACHS.find(x=>x.id===id);if(!a)return;g[id]=Date.now();try{localStorage.setItem(ACH_KEY,JSON.stringify(g))}catch(e){}achBanner(a,achReward(a))}
+function ach(id){if(TUT&&id!=='tut')return;if(WAR&&!dlc&&!TUT)return;const g=achGot();if(g[id])return;const a=ACHS.find(x=>x.id===id);if(!a)return;g[id]=Date.now();try{localStorage.setItem(ACH_KEY,JSON.stringify(g))}catch(e){}achBanner(a,achReward(a))}
 // rare: always a free tier II-III shop item; really rare: always a tier IV-V item
 function achReward(a){if(a.t<2)return null;const ks=Object.keys(SHOP_ITEMS),k=ks[Math.floor(Math.random()*ks.length)],t=a.t===3?3+Math.floor(Math.random()*2):1+Math.floor(Math.random()*2);
  try{const v=inv();v[k][t]++;saveInv(v)}catch(e){}return `Free item: ${SHOP_ITEMS[k].n} ${SHOP_TIERS[t]}`}
@@ -1184,7 +1185,7 @@ function showAccounts(msg){showAdmin(msg,'players')}
 let RUNA={pc:0,pf:0,reboot:false},LASTFIN=null;
 // ---- Arcade name + scoreboard of your latest 20 runs. The server banks them (they outlive every new build) until the admin clears the board. ----
 const ARC='ss2arcade',DIFFS=['Easy','Normal','Hard'];
-function blankLife(){const z=()=>({Easy:{w:0,n:0},Normal:{w:0,n:0},Hard:{w:0,n:0}});return {main:z(),dlc:z()}}
+function blankLife(){const z=()=>({Easy:{w:0,n:0},Normal:{w:0,n:0},Hard:{w:0,n:0}});return {main:z(),dlc:z(),war:z()}}
 let ARCADE=(()=>{try{const a=JSON.parse(localStorage.getItem(ARC));if(a&&a.id&&a.name){a.life=a.life||blankLife();a.runs=Array.isArray(a.runs)?a.runs:[];return a}}catch(e){}return null})();
 const BOARD_KEEP=20;
 function lifeOfRuns(runs){const o=blankLife();for(const r of runs||[])if(o[r.m]&&o[r.m][r.d]){o[r.m][r.d].n++;o[r.m][r.d].w+=r.w?1:0}return o}
@@ -1211,8 +1212,8 @@ function applyCredReset(t){let done=0;try{done=+(localStorage.getItem('ss2credre
  try{localStorage.setItem(CRED_KEY,'0');localStorage.removeItem(WEEK_KEY);localStorage.setItem('ss2credreset',String(t))}catch(e){}
  if(app&&app.querySelector&&app.querySelector('.mgrid'))start();}
 function pushScore(){if(!ARCADE||ARCADE.hidden)return;try{fetch('/api/scores',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:ARCADE.id,name:ARCADE.name,runs:ARCADE.runs||[]})}).then(r=>r.ok?r.json():null).then(j=>{if(j&&j.deleted)wipeDevice()}).catch(()=>{})}catch(e){}}
-function lifeRecord(isDlc,d,win){if(!ARCADE||!d)return;const r=ARCADE.life[isDlc?'dlc':'main'][d];r.n++;if(win)r.w++;
- ARCADE.runs=[...(ARCADE.runs||[]),{m:isDlc?'dlc':'main',d,w:win?1:0,t:Date.now()}].slice(-BOARD_KEEP);saveArcade();pushScore()}
+function lifeRecord(isDlc,d,win){if(!ARCADE||!d)return;const m=isDlc==='war'?'war':isDlc?'dlc':'main';ARCADE.life[m]=ARCADE.life[m]||blankLife()[m];const r=ARCADE.life[m][d];r.n++;if(win)r.w++;
+ ARCADE.runs=[...(ARCADE.runs||[]),{m,d,w:win?1:0,t:Date.now()}].slice(-BOARD_KEEP);saveArcade();pushScore()}
 function showName(again){
  app.innerHTML=`<h1 class="logo"><span class="l1">STAR SOVEREIGN</span> <span class="l2">II</span></h1><div class="card"><h2>${again?'Change your arcade name':'Enter your arcade name'}</h2>${(()=>{try{if(sessionStorage.getItem('ss2wiped')){sessionStorage.removeItem('ss2wiped');return '<p class="sysmsg">Your account was deleted. Start again as a new player.</p>'}}catch(e){}return ''})()}<p class="note" style="margin:0 0 10px">It goes on the scoreboard with your win rates over your latest 20 runs.</p><input id="arcname" class="arcin" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${again?escH(ARCADE.name):''}" placeholder="ACE-7"><p id="namerr" class="down" style="min-height:30px;margin:6px 0"></p><button class="personal" style="text-align:center" onclick="setName()">${again?'Save name':'Start'}</button>${again?'<button style="text-align:center" onclick="showBoard()">Back</button>':''}</div>`;
  const i=document.getElementById('arcname');i.onkeydown=e=>{if(e.key==='Enter')setName()};try{i.focus()}catch(e){}}
@@ -1229,7 +1230,7 @@ function addMeBack(){ARCADE.hidden=false;saveArcade();pushScore();setTimeout(()=
 let boardTab='main';
 function cell(r,d){const x=r&&r[d];return x&&x.n?`${Math.round(100*x.w/x.n)}% <i>(${x.w}/${x.n})</i>`:'—'}
 async function showBoard(tab){if(tab)boardTab=tab;const T=boardTab;
- app.innerHTML=`<div class="card"><h2>Scoreboard</h2><div class="tabs"><button class="${T==='main'?'on':''}" onclick="showBoard('main')">Main story</button><button class="${T==='dlc'?'on':''}" onclick="showBoard('dlc')">DLC</button></div><div id="board"><p class="note">Loading…</p></div><button style="text-align:center" onclick="showName(true)">Change name</button><button style="text-align:center" onclick="start()">Back</button>${ARCADE.hidden?`<button style="text-align:center" onclick="addMeBack()">Add me back to the scoreboard<small>Your latest ${BOARD_KEEP} runs go back up.</small></button>`:`<button class="rs" style="float:none;display:block;margin:10px auto 0" onclick="removeMe(this)">Remove me from the scoreboard</button>`}</div>`;
+ app.innerHTML=`<div class="card"><h2>Scoreboard</h2><div class="tabs"><button class="${T==='main'?'on':''}" onclick="showBoard('main')">Main story</button><button class="${T==='dlc'?'on':''}" onclick="showBoard('dlc')">DLC</button><button class="${T==='war'?'on':''}" onclick="showBoard('war')">War Room</button></div><div id="board"><p class="note">Loading…</p></div><button style="text-align:center" onclick="showName(true)">Change name</button><button style="text-align:center" onclick="start()">Back</button>${ARCADE.hidden?`<button style="text-align:center" onclick="addMeBack()">Add me back to the scoreboard<small>Your latest ${BOARD_KEEP} runs go back up.</small></button>`:`<button class="rs" style="float:none;display:block;margin:10px auto 0" onclick="removeMe(this)">Remove me from the scoreboard</button>`}</div>`;
  let rows=null,res=null;try{const r=await fetch('/api/scores?me='+encodeURIComponent(ARCADE.id),{cache:'no-store'});if(r.ok)res=await r.json()}catch(e){}
  if(boardTab!==T||!document.getElementById('board'))return;
  if(res&&Array.isArray(res.rows)){rows=res.rows;
@@ -1253,7 +1254,7 @@ const QFLAV={military:'Your fleet tries a thousand flanking routes at once, then
 function qOn(){return true} // Quantum suicide is part of the main game (the Experimental toggle is gone)
 function qToggle(){try{localStorage.setItem('ss2qon',qOn()?'0':'1')}catch(e){}start();window.scrollTo(0,document.body.scrollHeight)}
 // Quantum suicide only appears when it is the only way left to win: even max luck (+3) and leading from the front (+3) fall short, but +10 and max luck would not.
-function qOnlyHope(){const b=basePower(route),t=b.stat+b.stab+b.en+b.ren+(b.prog||0)-b.pen,need=dlc?needDLC():NEED;return t+6<need&&t+13>=need}
+function qOnlyHope(){const b=basePower(route),t=b.stat+b.stab+b.en+b.ren+(b.prog||0)-b.pen,need=dlc?needDLC():needMain();return t+6<need&&t+13>=need}
 // Narrative mode: each choice decides which kind of event comes next (Thal intrigue, the core, or home affairs).
 function narrOn(){return false} // Narrative mode was removed
 function narrToggle(){try{localStorage.setItem('ss2narr',narrOn()?'0':'1')}catch(e){}start();window.scrollTo(0,document.body.scrollHeight)}
@@ -1487,7 +1488,7 @@ function tutAdd(t){if(!TUT||!t)return;const tip=typeof t==='string'?{x:t}:t;
  const c=app.querySelector('.card');if(c)c.insertAdjacentHTML('beforebegin',tutBox(tip.x,tip.h));
  tutHL(tip);
  if(tip.h==='What happened'){const t=app.querySelector('.tut');if(t)window.scrollTo({top:Math.max(0,t.getBoundingClientRect().top+scrollY-8)})}}
-function showTutorial(){TUT=null;app.innerHTML=`<div class="card"><h2>Tutorial</h2><p>A short guided run: 8 turns and a final battle, always as the Kethari Mind-Collective. Tips explain each event as it happens, and after every choice you see exactly what changed and why. Anything a tip mentions glows on screen.</p><p class="note">Tutorial runs are not saved, do not count on the scoreboard and are never timed. Real runs last 12 turns, with 30 seconds per choice while Timed is on.</p><button onclick="startTutorial()"><b>Start the tutorial</b><small>About 4 minutes</small></button><button style="text-align:center" onclick="start()">Back</button></div>`}
+function showTutorial(){TUT=null;WAR=false;app.innerHTML=`<div class="card"><h2>Tutorial</h2><p>A short guided run: 8 turns and a final battle, always as the Kethari Mind-Collective. Tips explain each event as it happens, and after every choice you see exactly what changed and why. Anything a tip mentions glows on screen.</p><p class="note">Tutorial runs are not saved, do not count on the scoreboard and are never timed. Real runs last 12 turns, with 30 seconds per choice while Timed is on.</p><button onclick="startTutorial()"><b>Start the tutorial</b><small>About 4 minutes</small></button><button style="text-align:center" onclick="start()">Back</button></div>`}
 // ================= SYSTEMS: shared galaxy with players, AI empires, trade and war =================
 // One tick = one real hour (up to 72 catch up). Credits come from finished runs (see CREDITS).
 // <sim-core> (tools/systems-sim.mjs runs everything between the sim-core markers)
@@ -2663,10 +2664,96 @@ async function showSystems(quick){
  renderSystems();startPoll();if(!guideSeen())setTimeout(guideWhenClear,700)}
 // the first-run guide waits for any achievement banner to leave the screen
 function guideWhenClear(){if(guideSeen()||!document.getElementById('sysroot'))return;if(document.querySelector('.achban'))return setTimeout(guideWhenClear,600);guideStart()}
+
+// ===== WAR ROOM (11-22): a second main-game mode for returning players. Classic is untouched: every War Room rule is behind WAR.
+// 1) delayed consequences (WR_DELAY), 2) stats that work together (warRisk/warThreat), 3) the final battle punishes weak flanks (warFlank).
+// Not simmed yet. No DLC, no achievements. Runs go on the scoreboard as mode 'war'.
+let WAR=false;
+// Combined arms: a stat's 6+ bonus only works while at least TWO power stats (Fleet, Influence, Science) are 6+
+function wb(k){return WAR&&!dlc&&!TUT&&S[k]>=6&&['military','influence','science'].filter(x=>S[x]>=6).length>=2}
+const WR_DELAY={
+ "Pirate Warlord":{1:{in:4,fx:{military:2,threat:-2},msg:"Saxis's raiders come back towing a captured Thal frigate."},2:{in:3,fx:{energy:-3},msg:"Saxis is back. He liked being paid, and wants it again."}},
+ "Succession Plot":{1:{in:3,fx:{military:-2},msg:"The posts you purged are still empty. Your fleet feels it."},2:{in:4,fx:{stability:-2,energy:-1},msg:"The champagne admirals want bigger offices."}},
+ "Refugee Fleet":{0:{in:4,fx:{science:3},msg:"The refugees' engineers open their first workshops."},1:{in:3,fx:{threat:2,influence:-1},msg:"Thal news shows your turned-away refugees every night."}},
+ "Thal Spy Ring":{1:{in:3,fx:{influence:-2},msg:"Three neighbours quietly expel your diplomats in return."},2:{in:3,fx:{threat:-2,military:2},msg:"The Thal are still chasing the ghosts you invented."}},
+ "The Ledger Audit":{1:{in:4,fx:{influence:-2,threat:2},msg:"The Thal publish your gift, with a receipt."}},
+ "Rogue AI":{2:{in:4,fx:{science:3},msg:"The sealed AI finally trades: a proof for a name. You give it one."}},
+ "Comet Harvest":{1:{in:3,fx:{threat:2},msg:"One of the three buyers of your comet data was the Thal."}},
+ "Famine Riots":{1:{in:3,fx:{stability:-2},msg:"The riot worlds remember your soldiers."},0:{in:4,fx:{stability:2},msg:"The farm worlds' first good harvest goes out with your crest on it."}},
+ "Thal Envoy":{1:{in:3,fx:{threat:2},msg:"The Hegemony wants its envoy back. Loudly, with warships."},2:{in:4,fx:{energy:2},msg:"The fuel lanes you kept start paying off."}},
+ "Plague on Ossia IV":{0:{in:4,fx:{science:2,influence:1},msg:"Three empires buy your Ossia cure."},1:{in:3,fx:{military:2},msg:"The quarantine fleet comes home, hardened."}},
+ "Signal from the Abyss":{1:{in:4,fx:{influence:2},msg:"Every empire that heard the signal now owes you a favour."},2:{in:3,fx:{science:-2},msg:"Two of your best scientists resign over the jammed signal."}},
+ "The Star-Shroud Proposal":{0:{in:4,fx:{stability:-2},msg:"Your people miss the stars at night. They say so, often."},2:{in:3,fx:{influence:2},msg:"Pilgrims from three empires come to see the sacred star."}},
+ "Border Skirmish":{1:{in:3,fx:{threat:2},msg:"The Thal paid the reparations. Then they mobilised."},2:{in:4,fx:{military:2,threat:-1},msg:"Your border guns turn back a Thal raid."}},
+ "Gas Giant Mining Rush":{0:{in:3,fx:{stability:-2},msg:"A rig fire on the gas giant. The miners blame you."},1:{in:4,fx:{energy:2},msg:"The regulated rigs pass a full year without a fire."}},
+ "Deserters":{0:{in:3,fx:{military:-2,threat:1},msg:"Your deserters guide a Thal raid through your lines."},1:{in:4,fx:{military:2},msg:"The pardoned crews fight like they have something to prove."}},
+ "The Smuggler's Blueprints":{0:{in:4,fx:{military:2},msg:"The first warships on the stolen plans launch."},1:{in:3,fx:{influence:2},msg:"The Thal senate praises your goodwill, in public."}},
+ "The Varn Referendum":{0:{in:4,fx:{influence:1,stability:1},msg:"Varn stays a friend, and says so to everyone."},1:{in:3,fx:{stability:-3},msg:"The rigged Varn count leaks. Riots follow."}},
+ "The Body Engineers":{2:{in:3,fx:{threat:2,military:-1},msg:"The anonymous buyer was the Thal. Your research now armours their fleet."}},
+ "Galactic Summit":{1:{in:3,fx:{influence:-2,stability:-1},msg:"The trade deals you swapped votes for come due. Twelve empires remember."}},
+ "The Ring Gate":{0:{in:3,fx:{threat:2,stability:-1},msg:"Something on the far side followed your probe home."}},
+ "The Silent Bio-Ship":{0:{in:3,fx:{stability:-2,science:-1},msg:"Spores from the dissected bio-ship escape the lab."}},
+ "The Falling Elevator":{1:{in:3,fx:{stability:-2},msg:"The tidal wave from the downed cable reaches the coast."}},
+ "Derelict Megaship":{2:{in:4,fx:{influence:2},msg:"Pilgrims to the derelict now come from three empires."}}};
+const warPend=()=>(RUNA.wd||(RUNA.wd=[]));
+function warQueue(e,i){if(!WAR||dlc||TUT)return;const c=e.c[i];if(c&&c.plan){if(turn+WR_PLAN_IN<=runTurns())warPend().push({at:turn+WR_PLAN_IN,fx:{[c.plan.k]:c.plan.n},msg:'Your plan pays off.',from:e.t});return}const d=(WR_DELAY[e.t]||{})[i];if(d)warPend().push({at:turn+d.in,fx:d.fx,msg:d.msg,from:e.t})}
+function warDue(){if(!WAR||dlc||TUT)return '';const due=warPend().filter(x=>x.at<=turn);if(!due.length)return '';RUNA.wd=warPend().filter(x=>x.at>turn);
+ return due.map(x=>{const r=apply({...x.fx});const fx=Object.entries(r).filter(([k,v])=>v).map(([k,v])=>`${v>0?'+':''}${v} ${k==='threat'?'Thal Threat':LABELS[k]}`).join(', ');return `<div class="cameo"><span class="cameotag">⏳ ${escH(x.from)}</span> ${x.msg}${fx?` <b>(${fx})</b>`:''}</div>`}).join('')}
+// stats that work together (War Room only): Science 6+ = ⚔ death risk x0.8; Military 6+ = ⚔ injury risk x0.7; Influence 6+ = Thal Threat rises only every other turn
+// War fatigue: each ⚔ choice adds 1, each safe choice removes 1; every point makes ⚔ risk 25% higher
+const warFat=()=>WAR&&!dlc&&!TUT?(RUNA.fat||0):0;
+function warRisk(k){if(!WAR||dlc||TUT)return k;const f=1+.25*warFat();let inj=Math.min(60,Math.round(k.inj*f)),death=Math.min(50,Math.round(k.death*f));
+ return {inj:wb('military')?Math.round(inj*.5):inj,death:wb('science')?Math.round(death*.6):death}}
+function warThreatSkip(){return WAR&&!dlc&&!TUT&&wb('influence')&&turn%2===0}
+function needMain(){return WAR&&!dlc&&!TUT?NEED+1:NEED} // War Room final battle needs 17
+function warFlank(k){if(!WAR||dlc||TUT)return 0;return ['military','influence','science'].filter(x=>x!==k&&S[x]<3).length}
+// War Room: a changed % shows the Classic value struck through, then the new value and the icon of the stat that changed it
+function warPct(r,k,v){if(!WAR||dlc||TUT)return v+'%';const was=WAR;WAR=false;const b=risk(r[0],r[1],r[2])[k];WAR=was;if(b===v)return v+'%';const st=k==='inj'?wb('military'):wb('science');return `<s class="wold">${b}%</s> <b class="${v>b?'wup':'wtag'}">${v}%</b>${warFat()?'<b class="wfat">⚔</b>':''}${st?icon(k==='inj'?'military':'science'):''}`}
+function warTag(k,v){if(!WAR||dlc||TUT||!v)return '';if(k==='inj'&&wb('military'))return ' <i class="wtag">(−50% while Fleet 6+)</i>';if(k==='death'&&wb('science'))return ' <i class="wtag">(−40% while Science 6+)</i>';return ''}
+function warBar(){if(!WAR||dlc||TUT)return '';const on=(c,t)=>`<span class="${c?'up':'note'}">${c?'✓':'·'} ${t}</span>`;
+ return `<div class="warbar"><b>War Room</b> ${on(wb('science'),'Science 6+: safer ⚔')} ${on(wb('military'),'Fleet 6+: fewer injuries')} ${on(wb('influence'),'Influence 6+: Thal slower')}${warPend().length?` <span class="warn">⏳ ${warPend().length} pending</span>`:''}</div>`}
+function showModes(){TUT=null;
+ app.innerHTML=`<div class="card"><h2>Choose a mode</h2>
+ <button class="mplay" onclick="WAR=false;showEmpires()">Star Sovereign<small>Classic (recommended)</small></button>
+ <button class="mplay" onclick="WAR=true;showEmpires()">Star Sovereign: War Room<small>For returning players looking for a new challenge.</small></button><button class="rs" style="float:none;margin:6px 0 0" onclick="openHelp(WAR_RULES)">War Room rules</button></div><button style="text-align:center" onclick="start()">Back</button>`;window.scrollTo(0,0)}
+
+// War Room tutorial: a short slideshow, only on the War Room empire page (opens itself the first time)
+const WR_TUT=()=>[
+ ['Welcome to the War Room','Same events, same empires. Five new rules make every choice matter more. This takes a minute.',''],
+ ['1. Choices come back','Some choices have a big second effect 3 to 4 turns later, good or bad. The most tempting choice is often a trap. They are marked like this:',`<div class="wtdemo"><button class="wtbtn">Pay them off<span class="risk warn">⏳ This comes back later</span></button><p class="note">Later, at the start of a turn:</p><div class="cameo"><span class="cameotag">⏳ Pirate Warlord</span> Saxis is back. He liked being paid, and wants it again. <b>(−2 Energy)</b></div></div>`],
+ ['2. Stats work together','Get TWO of Fleet, Influence and Science to 6+ to switch on their bonuses (combined arms). A changed risk shows the old number crossed out, the new one, and the stat that changed it.',`<div class="wtdemo"><p class="risk">Combat risk: <s class="wold">11%</s> <b class="wtag">8%</b>${icon('military')} injury, <s class="wold">7%</s> <b class="wtag">6%</b>${icon('science')} death</p><p class="note">${icon('military')} Fleet 6+: −50% injury<br>${icon('science')} Science 6+: −40% death<br>${icon('influence')} Influence 6+: the Thal Threat only rises every other turn. The aftermath says <span class="up">Thal Threat holds</span>.</p></div>`],
+ ['3. War fatigue','Every ⚔ choice adds 1 fatigue. A safe choice removes 1, but only while you are Healthy. Each point makes ⚔ risk 25% higher. Your fatigue is next to the Thal Threat.',`<div class="wtdemo"><div class="hud"><span class="pill"><b class="wfat">⚔</b><b class="warn">2</b></span></div><p class="risk">Combat risk: <s class="wold">11%</s> <b class="wup">16%</b><b class="wfat">⚔</b> injury</p><p class="note">Red means fatigue made it worse. Rest before the ⚔ choices that matter.</p></div>`],
+ ['4. Weak flanks','The final battle needs 17 power instead of 16. You also lose 1 power for each of your other two power stats (Fleet, Influence, Science) below 3. Don\'t let one fall behind.',`<div class="wtdemo"><p class="note">Fighting with Fleet 9, Influence 2, Science 2:</p><p class="risk"><b class="wup">−2 power</b> (two weak flanks)</p></div>`],
+ ['5. Plan ahead','Every event has a 4th choice. It costs 1 Energy now and gives +3 to one stat 3 turns later. Plans that land after turn 12 are wasted, so plan early. It also counts as resting.',`<div class="wtdemo"><button class="wtbtn">Track Saxis's routes for a strike later<span class="risk warn">⏳ +3 Fleet on turn 7 · −1 Energy now</span></button></div>`],
+ ['Ready','No DLC and no achievements here. Your War Room runs get their own scoreboard tab. Good luck, Sovereign.','']];
+let WR_TI=0;
+function warTut(i){WR_TI=i;const T=WR_TUT(),[h,x,d]=T[i],last=i===T.length-1;try{localStorage.setItem('ss2wrtut','1')}catch(e){}
+ openHelp(`<div class="turn">War Room tutorial · ${i+1} of ${T.length}</div><h2>${h}</h2><p>${x}</p>${d}<div class="wtnav">${i?`<button class="rs" onclick="warTut(${i-1})">Back</button>`:''}<button class="${last?'personal':'rs'}" style="${last?'text-align:center':''}" onclick="${last?'closeHelp()':`warTut(${i+1})`}">${last?'Start':'Next'}</button>${last?'':'<button class="rs" onclick="closeHelp()">Skip</button>'}</div>`)}
+
+// War Room 4th choice: "Plan ahead". Costs 1 Energy now; +3 to one stat 3 turns later (lost if that is after turn 12). Counts as a safe choice.
+const WR_PLAN={"Derelict Megaship":["Seal it, and send engineers in later","science"],"Thal Envoy":["Stall the envoy while your spies dig","influence"],
+ "Plague on Ossia IV":["Fund a slow, thorough research program","science"],"Pirate Warlord":["Track Saxis's routes for a strike later","military"],
+ "Signal from the Abyss":["Build a listening array first","science"],"Succession Plot":["Let the plot run, and record everything","stability"],
+ "Primitive World":["Start a long cultural mission","influence"],"Galactic Summit":["Court the small delegations quietly","influence"],
+ "The Star-Shroud Proposal":["Commission a slower, safer design","energy"],"Border Skirmish":["Build a hidden picket line","military"],
+ "Rogue AI":["Isolate it and train a counter-AI","science"],"Famine Riots":["Rebuild the supply chain properly","stability"],
+ "Assassin in the Palace":["Let them escape, and follow the trail","influence"],"The Body Engineers":["Fund research into a safer procedure","science"],
+ "The Drifting Behemoth":["Study its migration first","science"],"Thal Spy Ring":["Turn one of the spies","influence"],
+ "Gas Giant Mining Rush":["Survey the giant before anyone drills","energy"],"Refugee Fleet":["Build camps before they arrive","stability"],
+ "The Ledger Audit":["Prepare a counter-audit","influence"],"Comet Harvest":["Build a catcher for its next pass","energy"],
+ "Deserters":["Fix whatever made them run","military"],"The Silent Bio-Ship":["Track where it came from","science"],
+ "The Varn Referendum":["Invest in Varn quietly","stability"],"The Smuggler's Blueprints":["Trace the smuggler's supplier","military"],
+ "Solar Storm":["Build storm shields for next time","stability"],"The Thal Wager":["Study the game before you play","influence"],
+ "The Ring Gate":["Map the gate's rhythm first","science"],"The Falling Elevator":["Evacuate now, and rebuild stronger","stability"]};
+const WR_PLAN_N=3,WR_PLAN_IN=3;
+function withWarPlan(e){if(!WAR||dlc||TUT||e._wp||e.resc)return e;const p=WR_PLAN[e.t]||["Lay plans for later",BEST[EK()]];
+ return {...e,_wp:1,c:[...e.c,{l:p[0],txt:'Your people get to work. It will take a few turns.',fx:{energy:-1},plan:{k:p[1],n:WR_PLAN_N}}]}}
+function warPlanTag(c){const at=turn+WR_PLAN_IN,late=at>runTurns();return `<span class="risk ${late?'down':'warn'}">⏳ +${c.plan.n} ${LABELS[c.plan.k]} on turn ${at}${late?' (after the final battle: lost)':''} · −1 Energy now</span>`}
+const WAR_RULES=`<h2>War Room rules</h2><ul><li><b>Choices come back.</b> Some choices (marked ⏳) have a big second effect (±2 to 3) 3 to 4 turns later.</li><li><b>Stats work together (combined arms).</b> Bonuses only work while at least two of Fleet, Influence and Science are 6+. Then: Science 6+ cuts ⚔ death risk by 40%. Fleet 6+ cuts ⚔ injury risk by half. Influence 6+ makes the Thal Threat rise only every other turn.</li><li><b>War fatigue.</b> Every ⚔ choice adds 1 fatigue. A safe choice removes 1, but only while you are Healthy. Each point makes ⚔ risk 25% higher.</li><li><b>Weak flanks.</b> The final battle needs 17 power (Classic: 16), and you lose 1 power for each of your other two power stats (Fleet, Influence, Science) below 3.</li><li><b>Plan ahead.</b> Every event has a 4th choice: −1 Energy now, +3 to one stat 3 turns later. Plans that would land after turn 12 are lost. It counts as a safe choice (it rests fatigue).</li><li><b>No free start.</b> The Vorrani start with Fleet 5, so the Fleet 6+ bonus must be earned.</li><li>No DLC and no achievements. Runs count on the War Room scoreboard.</li></ul><button style="text-align:center" onclick="closeHelp()">Got it</button>`;
 function start(){TUT=null;
  if(!ARCADE)return showName();
  app.innerHTML=`<div class="home${loadSave()?' hasave':''}">${splashW()?`<img class="splash" src="${splashW()}" alt="">`:''}<h1 class="logo"><span class="l1">STAR SOVEREIGN</span> <span class="l2">II</span></h1><p class="note" style="margin:0 0 10px">3rd Edition</p><p class="sub">Twelve turns. Then it arrives.</p><div class="introbox"><p class="intro">Build your empire, then defend it. Choose ⚔ to go in person: bigger rewards, real danger. Keep your people loyal and the Thal in check.</p></div>${loadSave()?`<button class="mplay" onclick="resume()">▶ Resume your game<small>Pick up where you left off</small></button>`:''}
- <button class="mplay" onclick="showEmpires()">▶ Play<small>Choose your empire</small></button>
+ <button class="mplay" onclick="showModes()">▶ Play<small>Choose a mode</small></button>
  <button class="msys" onclick="mpGate()">Systems multiplayer <span class="alpha">ALPHA</span><small>The shared galaxy</small></button>
  <div class="mgrid"><button onclick="showShop()">Shop<small>${credits()} credits</small></button><button onclick="showBoard()">Scoreboard<small>Latest 20 runs</small></button>
  <button onclick="showAch()">Achievements<small>${ACHS.filter(a=>achGot()[a.id]).length} / ${ACHS.length}</small></button><button onclick="showTutorial()">Tutorial<small>Learn the basics</small></button></div>
@@ -2674,7 +2761,8 @@ function start(){TUT=null;
 }
 // Play: choose your empire (win stats and Timed live here; Reset win stats is on the Admin screen).
 function showEmpires(){TUT=null;
- app.innerHTML=`<div class="card"><h2>Choose your empire</h2>${EMPIRES.map((e,i)=>`<button onclick="pickEmp(${i})"><b>${e.name}</b> <span class="diff d-${e.diff}">${e.diff}</span><small>${e.desc}<br><span class="warn">${e.perk}</span>${recLine(e.diff)?'<br>'+recLine(e.diff):''}</small>${credLine(e.diff)}</button>`).join('')}<div class="recbtns"><button class="rs ${timedOn()?'on':''}" aria-pressed="${timedOn()}" title="30 seconds per choice (20 for the last decision); when time runs out, a choice is made at random" onclick="timedToggle()">Timed ${timedOn()?'on':'off'}</button></div></div><button style="text-align:center" onclick="start()">Back</button>`;window.scrollTo(0,0);
+ app.innerHTML=`<div class="card"><h2>${WAR?'War Room: choose your empire':'Choose your empire'}</h2>${WAR?'<button class="rs" style="float:none;margin:0 6px 10px 0" onclick="warTut(0)">War Room tutorial</button><button class="rs" style="float:none;margin:0 0 10px" onclick="openHelp(WAR_RULES)">War Room rules</button>':''}${EMPIRES.map((e,i)=>`<button onclick="pickEmp(${i})"><b>${e.name}</b> <span class="diff d-${e.diff}">${e.diff}</span><small>${e.desc}<br><span class="warn">${e.perk}</span>${!WAR&&recLine(e.diff)?'<br>'+recLine(e.diff):''}</small>${credLine(e.diff)}</button>`).join('')}<div class="recbtns"><button class="rs ${timedOn()?'on':''}" aria-pressed="${timedOn()}" title="30 seconds per choice (20 for the last decision); when time runs out, a choice is made at random" onclick="timedToggle()">Timed ${timedOn()?'on':'off'}</button></div></div><button style="text-align:center" onclick="showModes()">Back</button>`;window.scrollTo(0,0);
+ try{if(WAR&&!localStorage.getItem('ss2wrtut'))setTimeout(()=>warTut(0),200)}catch(e){}
 }
 function pickEmp(i){
  emp=EMPIRES[i];
@@ -2687,7 +2775,7 @@ function pickEmp(i){
  tutAdd(TUT?{h:'Your leader type',x:'Any type can win. You can pick another one in real runs.'}:'')
 }
 function pickTrait(j){
- trait=TRAITS[j];closeUsed=false;renown=0;RUNA={pc:0,pf:0,reboot:false};mem=[];[...EVENTS,...Object.values(EMP_EVENTS).flat()].forEach(x=>{delete x._echoTurn;delete x._echo});S={...emp.s};turn=1;log=[];threat=3;hp='Healthy';injT=0;aug=false;
+ trait=TRAITS[j];closeUsed=false;renown=0;RUNA={pc:0,pf:0,reboot:false};mem=[];[...EVENTS,...Object.values(EMP_EVENTS).flat()].forEach(x=>{delete x._echoTurn;delete x._echo});S={...emp.s};if(WAR&&!TUT&&emp.name.startsWith('Vorrani'))S.military=5;turn=1;log=[];threat=3;hp='Healthy';injT=0;aug=false;
  cores=emp.name.startsWith('Kethari')?1:0;
  deck=[...EVENTS];for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}deck=deck.slice(0,TURNS); // fair shuffle
  CHAIN=0;
@@ -2708,7 +2796,7 @@ function risk(cat,inj,death){
  if(trait.id==='daring')m*=1.25;
  if(aug)m*=.8;
  if(hp==='Injured')m*=1.5;
- return{inj:Math.min(60,Math.round(inj*m*im)),death:Math.min(50,Math.round(death*m*dm))};
+ return warRisk({inj:Math.min(60,Math.round(inj*m*im)),death:Math.min(50,Math.round(death*m*dm))});
 }
 // hand-drawn 7x7 stat icons
 const ICONS={heart:['#e8665a',['.##.##.','#######','#######','.#####.','..###..','...#...','.......']],star:['#f2b134',['...#...','..###..','#######','.#####.','.##.##.','##...##','.......']],thal:['#9fc4b4',['.#####.','#######','##.#.##','#######','.#####.','.#.#.#.','.......']],flag:['#7fd0e0',['##.....','####...','######.','####...','##.....','#......','#......']],energy:['#f2b134',['...##..','..##...','.##....','#####..','...##..','..##...','.##....']],
@@ -2721,7 +2809,7 @@ function statBar(){return `<div class="stats">${Object.keys(LABELS).map(k=>`<div
 function header(){const _h='<button class="rs" onclick="openHelp(RULES)">Rules</button>';
  const hcls=hp==='Healthy'?'up':'down';
  return `<div class="topbar">${_h}${!TUT&&invCount()?`<button class="rs" onclick="openItems()">Items ${invCount()}</button>`:''}${RB}</div><div class="plate">${look?`<img class="hport fr-${TUT?'plain':frameOf(look)}" src="${portraitURL(look)}" alt="">`:''}<div><div class="pname">${emp.name}</div><div class="ptitle">${leaderTitle()}, ${trait.name}${aug?', Augmented':''}${cores?', 1 backup core':''}${trait.id==='daring'&&!closeUsed?', close call ready':''}</div></div></div>${statBar()}
- <div class="hud"><span class="pill" title="Leader">${icon('heart')}<b class="${hcls}">${hp==='Healthy'?'Healthy':'Hurt '+injT}</b></span><span class="pill" title="Renown">${icon('star')}Renown <b>${renown}</b></span>${dlc?`<span class="pill" title="${PROGN[route]}">${icon('flag')}<b>${prog}</b></span>`:''}<span class="pill" title="Thal Threat">${icon('thal')}Thal <b class="${threat>=8?'down':threat>=5?'warn':'up'}">${threat}/10</b></span></div>`;
+ <div class="hud"><span class="pill" title="Leader">${icon('heart')}<b class="${hcls}">${hp==='Healthy'?'Healthy':'Hurt '+injT}</b></span><span class="pill" title="Renown">${icon('star')}Renown <b>${renown}</b></span>${dlc?`<span class="pill" title="${PROGN[route]}">${icon('flag')}<b>${prog}</b></span>`:''}<span class="pill" title="Thal Threat">${icon('thal')}Thal <b class="${threat>=8?'down':threat>=5?'warn':'up'}">${threat}/10</b></span>${WAR&&!dlc&&!TUT?`<span class="pill" title="War fatigue"><b class="wfat">⚔</b><b class="${warFat()?'warn':'up'}">${warFat()}</b></span>`:''}</div>`;
 }
 function logBox(){if(!log.length)return '';const r=log.slice().reverse().map(l=>`<div>${l}</div>`);return `<div class="card log">${r.slice(0,4).join('')}${r.length>4?`<details><summary>Earlier (${r.length-4})</summary>${r.slice(4).join('')}</details>`:''}</div>`}
 function saveNote(){return trait&&trait.id==='daring'&&!closeUsed?' (your close call turns it into a bad injury)':cores?' (your backup core brings you back)':''}
@@ -2809,11 +2897,12 @@ function startTimer(limit){limit=limit||TIME_LIMIT;stopTimer();if(TUT||!timedOn(
   btns.forEach(x=>x.disabled=true);b.classList.add('timepick');lab.textContent='Chosen at random';
   setTimeout(()=>{if(!document.querySelector(`[data-timer="${tok}"]`))return;b.disabled=false;b.click();
    const c=app.querySelector('.card');if(c)c.insertAdjacentHTML('afterbegin',`<p class="timeup">⏱ Time ran out. Chosen at random: <b>${escH(label)}</b></p>`)},1500)},1000)}}
-function choiceBtn(c,i){
+function choiceBtn(c,i){const h=choiceBtn0(c,i),e=deck[turn-1];if(c.plan)return h.replace(/<\/button>$/,warPlanTag(c)+'</button>');if(!WAR||dlc||TUT||!e||!(WR_DELAY[e.t]||{})[i])return h;return h.replace(/<\/button>$/,'<span class="risk warn">⏳ This comes back later</span></button>')}
+function choiceBtn0(c,i){
  if(!c.r&&c.cameo)return `<button class="cameochoice" onclick="choose(${i})"><span class="cameotag">${c.cameo}</span> ${c.l}${progTag(c)}${c.note?`<small>${c.note}</small>`:''}</button>`;
  if(!c.r)return `<button onclick="choose(${i})">${c.l}${progTag(c)}${c.heal?'<span class="risk up">Heals you if you are Hurt</span>':''}</button>`;
  const k=risk(c.r[0],c.r[1],c.r[2]);const lethal=k.death>=10;
- return `<button class="personal ${lethal?'lethal':''}" onclick="choose(${i})">⚔ ${c.l}${progTag(c)}<span class="risk">${lethal?'☠ Deadly. ':''}${CAT[c.r[0]]} risk: ${k.inj}% injury, ${k.death}% death${k.death?saveNote():''}</span>${c.note?`<span class="risk odds">${c.note}</span>`:''}</button>`;
+ return `<button class="personal ${lethal?'lethal':''}" onclick="choose(${i})">⚔ ${c.l}${progTag(c)}<span class="risk">${lethal?'☠ Deadly. ':''}${CAT[c.r[0]]} risk: ${warPct(c.r,'inj',k.inj)} injury, ${warPct(c.r,'death',k.death)} death${k.death?saveNote():''}</span>${c.note?`<span class="risk odds">${c.note}</span>`:''}</button>`;
 }
 function vignette(t){let sd=[...t].reduce((a,c)=>a*31+c.charCodeAt(0)>>>0,7)||7;const rn=()=>(sd=(sd*16807)%2147483647)/2147483647;
  return spriteFn('vig:'+t,80,28,(()=>{const pal=[['#c9845a','#6e3a2c'],['#7fb069','#3d5a30'],['#9d84cc','#4c3a72'],['#6fb7c4','#2f5f6a'],['#d9c27a','#7a6a30']][rn()*5|0];
@@ -2848,9 +2937,10 @@ function showEvent(){LAST_SCREEN=showEvent;
  if(turn>(dlc?DLC_TURNS:runTurns()))return dlc?showDLCFinal():showFinal();
  if(qd&&turn===qd){qd=0;return end(false,'Quantum Death','The branches you discarded in your last final battle come back to collect. Reality quietly edits you out, mid-sentence. Somewhere, another version of you carries on.')}
  {const tt=turn;setTimeout(()=>{if(TUT&&deck[tt-1])tutPick(deck[tt-1]);if(!dlc&&turn===tt&&!app.querySelector('.result'))tutAdd(TUT&&deck[tt-1]&&deck[tt-1].tip?{x:deck[tt-1].tip,only:deck[tt-1].hl,h:'Turn '+tt+': '+deck[tt-1].h}:'')})}
- if(!TUT&&deck[turn-1])deck[turn-1]=dlc?withDlcCameo(deck[turn-1]):withCameo(withKeth(deck[turn-1]));
+ if(!TUT&&deck[turn-1])deck[turn-1]=dlc?withDlcCameo(deck[turn-1]):withWarPlan(withCameo(withKeth(deck[turn-1])));
+ if(WAR&&!dlc&&!TUT&&!(RUNA.wn&&RUNA.wn.t===turn))RUNA.wn={t:turn,h:warDue()};
  const e=deck[turn-1];if(!dlc&&!TUT)achSeen(e);if(dlc&&e.cameoLine)ach('again');if(e.xBy)e.x=e.xBy[(RUNA||{})[e.xKey]]||e.xBy.a;
- app.innerHTML=header()+`<div class="card${e.rare?' rarecard':''}">${e.rare?'<span class="raretag">Rare event</span>':''}<div class="turn">${dlc?'The Thal Reckoning, turn':'Turn'} ${turn} of ${dlc?DLC_TURNS:runTurns()}</div><span class="beststat">${(()=>{const k=dlc?route:BEST[EK()];return `Best stat: ${icon(k)} ${LABELS[k]}`})()}</span><h2>${e.t}</h2><p>${e.x}</p>${e.cameoLine?`<div class="cameo"><span class="cameotag">${e.cameoName}</span> ${e.cameoLine}</div>`:''}${(()=>{if(dlc||e.cameoLine)return '';if(e._echoTurn!==turn){e._echo=echoFor(e);e._echoTurn=turn}const a=e._echo||voiceFor(e);return a?`<p class="aside">${a}</p>`:''})()}${e.c.map(choiceBtn).join('')}</div>`;
+ app.innerHTML=header()+`<div class="card${e.rare?' rarecard':''}">${e.rare?'<span class="raretag">Rare event</span>':''}<div class="turn">${dlc?'The Thal Reckoning, turn':WAR&&!TUT?'War Room · Turn':'Turn'} ${turn} of ${dlc?DLC_TURNS:runTurns()}</div><span class="beststat">${(()=>{const k=dlc?route:BEST[EK()];return `Best stat: ${icon(k)} ${LABELS[k]}`})()}</span><h2>${e.t}</h2>${RUNA.wn&&RUNA.wn.t===turn?RUNA.wn.h:''}<p>${e.x}</p>${e.cameoLine?`<div class="cameo"><span class="cameotag">${e.cameoName}</span> ${e.cameoLine}</div>`:''}${(()=>{if(dlc||e.cameoLine)return '';if(e._echoTurn!==turn){e._echo=echoFor(e);e._echoTurn=turn}const a=e._echo||voiceFor(e);return a?`<p class="aside">${a}</p>`:''})()}${e.c.map(choiceBtn).join('')}</div>`;
  startTimer(TIME_LIMIT+(turn===1?TIME_FIRST:0));
  fitDecision();
 }
@@ -3022,7 +3112,7 @@ const KETH_MEMO={"Plague on Ossia IV": [null, null, "On Ossia, new units are nam
 function withKeth(e){if(dlc||TUT||EK()!=='Kethari'||e._k)return e;const k=KETH_EV[e.t];if(!k||!(k.x||k.c))return e;return {...e,x:k.x||e.x,c:e.c.map((c,i)=>k.c&&k.c[i]?{...c,...k.c[i]}:c),_k:1}}
 function deathText(e){if(dlc||TUT)return '';const k=EK()==='Kethari'&&KETH_EV[e.t];return (k&&k.d)||DEATH[e.t]||''}
 let news='';
-function choose(i){narrBranch(deck[turn-1].c[i]);
+function choose(i){narrBranch(deck[turn-1].c[i]);warQueue(deck[turn-1],i);
  const e=deck[turn-1],c=e.c[i];let txt=c.txt,fx={...c.fx},tag='';if(c.heal&&hp==='Injured')ach('heal');if(e.mk)RUNA[e.mk]='abc'[i];if(c.cameo&&RUNA.cm&&!c.first)RUNA.cm.took2=1
  if(c.r){
   const o=roll(c.r);RUNA.pc++;if(o!=='ok')RUNA.pf++;if(o==='saved')RUNA.reboot=true;if(RUNA.pc>=5&&!TUT)ach('bold');
@@ -3040,15 +3130,16 @@ function choose(i){narrBranch(deck[turn-1].c[i]);
  if(c.resc){RUNA.resc=RUNA.resc||{};const okR=(!c.r&&c.odds==null)||tag.includes('Success');for(const k of ['sohl','sei'])if(neutralPlace()[k]==='thal')RUNA.resc[k]=c.resc.includes(k)&&okR?'saved':'lost'; if(!c.resc.length&&c.resc.constructor===Array&&Object.keys(RUNA.resc).length)ach('heartless')}
  if(c.heal){hp='Healthy';injT=0}
  if(dlc){const failed=(c.r||c.odds!=null)&&!tag.includes('Success'),ci=e.resc?RESCUE_EV.c.indexOf(c):i;news=dlcHeadline(e,ci,c,failed);if(!TUT)RUNA.chron=[...(RUNA.chron||[]),[e.t,ci,failed?1:0]];if(coldWar()&&e.t==='The Defector'&&ci===0){const keep=[...DLC_KEEP,...DLC_PACE.map(x=>x[0])],j=[turn+1,turn+2,turn,turn+3].find(x=>x<DLC_TURNS-2&&deck[x]&&!keep.includes(deck[x].t));if(j!==undefined)deck[j]=HOSTAGES_EV}}
- if(!dlc&&MEMO[e.t]){const failed=c.r&&!tag.includes('Success');mem.push({tag:ETAG[e.t],from:e.t,text:failed?`You still carry a reminder of the ${e.t.replace(/^The /,'')}.`:((EK()==='Kethari'&&KETH_MEMO[e.t]&&KETH_MEMO[e.t][i])||MEMO[e.t][i])})}
+ if(!dlc&&MEMO[e.t]&&MEMO[e.t][i]){const failed=c.r&&!tag.includes('Success');mem.push({tag:ETAG[e.t],from:e.t,text:failed?`You still carry a reminder of the ${e.t.replace(/^The /,'')}.`:((EK()==='Kethari'&&KETH_MEMO[e.t]&&KETH_MEMO[e.t][i])||MEMO[e.t][i])})}
  let pg=0;if(fx.p){if(dlc)pg=fx.p[route]||0;delete fx.p}prog+=pg;
  fx=apply(fx);
  log.push(`T${turn} ${e.t}: ${c.l}${tag?' ('+tag.replace(/<[^>]+>/g,'').split('!')[0].split('.')[0]+')':''}`);
  // upkeep
  let up=[];
+ if(WAR&&!dlc&&!TUT){const f0=RUNA.fat||0;if(c.r){RUNA.fat=f0+1;up.push('<span class="down">+1 <b class="wfat">⚔</b> fatigue</span>')}else if(f0>0&&hp==='Healthy'){RUNA.fat=f0-1;up.push('<span class="up">Rested: −1 <b class="wfat">⚔</b> fatigue</span>')}else if(f0>0)up.push('<span class="warn">Hurt: no rest from <b class="wfat">⚔</b> fatigue</span>')}
  if(S.energy>0){S.energy--;up.push('−1 Energy (upkeep)')}else up.push('Energy reserves empty');
  if(S.energy===0){S.stability=clamp(S.stability-1);RUNA.bo=1;up.push('<span class="down">Blackouts! −1 Stability</span>')}
- if(threat<10){threat++;up.push('+1 Thal Threat')}
+ if(warThreatSkip())up.push(`<span class="up wico">Thal Threat holds${icon('influence')} (Influence 6+)</span>`);else if(threat<10){threat++;up.push('+1 Thal Threat')}
  if(hp==='Injured'&&!tag.includes('Injured')&&!tag.includes('Core reboot')&&!tag.includes('Close call')){injT--;if(injT<=0){hp='Healthy';up.push('<span class="up">'+(KMACH()?'You are fully repaired.':'You have recovered.')+'</span>')}}
  if(S.stability<=0)return end(false,'Coup','Your own guards turn on you in the throne room. By evening, your portraits are being repainted.'+VOICE[EK()][2]+coupHint());
  saveGame(turn+1);
@@ -3057,15 +3148,15 @@ function choose(i){narrBranch(deck[turn-1].c[i]);
  if(TUT)tutAdd({h:'What happened',x:tutAfter(fx,up,tag,c.heal)});
 }
 function next(){turn++;if(coldWar()&&turn===DLC_TURNS-1){const r=rescueEvent();if(r)deck[turn-1]=r}if(coldWar()&&turn===DIS_TURN&&!RUNA.dis)return showDisaster();showEvent()}
-function basePower(k){const pen=threat>=8?3:threat>=5?1:0;return{stat:S[k],stab:Math.floor(S.stability/2),en:Math.floor(S.energy/4),ren:Math.floor(renown/2),prog:dlc?prog:0,pen}}
+function basePower(k){const pen=(threat>=8?3:threat>=5?1:0)+warFlank(k);return{stat:S[k],stab:Math.floor(S.stability/2),en:Math.floor(S.energy/4),ren:Math.floor(renown/2),prog:dlc?prog:0,pen}}
 const VOICE={Vorrani:['Your warriors begin to sing.',' Your warriors sing over the wreckage until dawn.',' The hive picks a new voice by nightfall.'],Celest:['Your people grow very bright and very still.',' The Celest do not cheer. They glow, softly, for a week.',' It is done without a single raised voice.'],Kethari:['A trillion minds go quiet to listen.',' The Collective logs the result: survival. Then, carefully, it celebrates.',' The Collective votes you out, a trillion to one.']};
 // your highest power stat at the end (ties go to your empire's best stat): its final option is tinted like the best-stat tile
 function topStat(){const ks=['military','influence','science'],m=Math.max(...ks.map(k=>S[k]));return S[BEST[EK()]]===m?BEST[EK()]:ks.find(k=>S[k]===m)}
 function showFinal(){LAST_SCREEN=showFinal;
  const R=[['Lead the combined fleet','military'],['Unite the galaxy under your banner','influence'],['Fire the experimental star-cannon','science']];
  app.innerHTML=header()+`<div class="card"><div class="turn">Final battle</div><h2>The Core Swarm</h2><p>Bio-ships pour from the galactic core, eating planets like fruit. Three empires fell this week. You\'re next. ${VOICE[EK()][0]}</p>
- ${R.map(([l,k])=>{const b=basePower(k);const t=b.stat+b.stab+b.en+b.ren-b.pen;return `<button class="tint-${k===topStat()?k:'none'}" onclick="pickRoute('${k}')">${l}<small class="eq"><span class="gauge"><i style="width:${Math.min(100,Math.round(100*t/NEED))}%"></i></span><span class="gv"><b>${t}</b> power, need ${NEED} <span class="need">(+0–3 luck)</span></span><span class="bd">${icon(k)}${b.stat} + ${icon('stability')}${b.stab} + ${icon('energy')}${b.en}${b.ren?` + ${icon('star')}${b.ren}`:''}${b.pen?` − ${icon('thal')}${b.pen}`:''}</span></small></button>`}).join('')}
- <p class="note">The Thal stab you in the back if their Threat is 5+ (−1) or 8+ (−3).</p></div>`;
+ ${R.map(([l,k])=>{const b=basePower(k);const t=b.stat+b.stab+b.en+b.ren-b.pen;return `<button class="tint-${k===topStat()?k:'none'}" onclick="pickRoute('${k}')">${l}<small class="eq"><span class="gauge"><i style="width:${Math.min(100,Math.round(100*t/needMain()))}%"></i></span><span class="gv"><b>${t}</b> power, need ${needMain()} <span class="need">(+0–3 luck)</span></span><span class="bd">${icon(k)}${b.stat} + ${icon('stability')}${b.stab} + ${icon('energy')}${b.en}${b.ren?` + ${icon('star')}${b.ren}`:''}${b.pen?` − ${icon('thal')}${b.pen}`:''}</span></small></button>`}).join('')}
+ <p class="note">The Thal stab you in the back if their Threat is 5+ (−1) or 8+ (−3).${WAR&&!dlc&&!TUT?' War Room: −1 for each of your other two power stats below 3 (weak flanks), counted in the −.':''}</p></div>`;
  tutAdd({h:'Final battle',x:'Your power: the stat you fight with, plus half your Stability, a quarter of your Energy, half your Renown and 0 to 3 luck, minus the Thal Threat penalty (rounded down).||You need 16, or you lose.||The fleet uses Fleet, uniting the galaxy uses Influence, the star-cannon uses Science (your best).||The option for your highest stat is tinted, and suggested.'});if(TUT)markPick(app.querySelector(`.card button[onclick="pickRoute('${topStat()}')"]`));
  startTimer(TIME_LIMIT);
 }
@@ -3073,7 +3164,7 @@ function pickRoute(k){LAST_SCREEN=()=>pickRoute(k);
  route=k;const r=risk('combat',25,20);
  app.innerHTML=header()+`<div class="card"><div class="turn">Final battle</div><h2>Where will you fight?</h2>
  <button onclick="finale(false)">Command from the rear<small>Safe. No bonus.</small></button>
- <button class="personal ${r.death>=10?'lethal':''}" onclick="finale(true)">⚔ Lead from the front: +3 power<span class="risk">${r.death>=10?'☠ Deadly. ':''}Combat risk: ${r.inj}% injury (lose the bonus), ${r.death}% death${saveNote()}</span></button>
+ <button class="personal ${r.death>=10?'lethal':''}" onclick="finale(true)">⚔ Lead from the front: +3 power<span class="risk">${r.death>=10?'☠ Deadly. ':''}Combat risk: ${warPct(['combat',25,20],'inj',r.inj)} injury (lose the bonus), ${warPct(['combat',25,20],'death',r.death)} death${saveNote()}</span></button>
  ${qOn()&&qOnlyHope()?`<button class="quantum" onclick="finale('q')">Quantum suicide<small>${QFLAV[route]} It works 10% of the time: +10 power. The discarded branches don't go quietly. Win or lose, your next run then has a 1 in 3 chance of sudden quantum death${dlc?'':' (the DLC counts, if you go straight into it)'}.${TUT?' In the tutorial, nothing carries over.':''}</small></button>`:''}</div>`;
  tutAdd({h:'Last decision',x:'Commanding from the rear is safe.||Leading from the front is a ⚔ choice: +3 power, but a risk of injury or death.||Look at your power on the last screen: if it was already well over 16, the rear is the safe bet.'});if(TUT){const b=basePower(k);markPick(app.querySelector(`.card button[onclick="finale(${b.stat+b.stab+b.en+b.ren-b.pen>=NEED?'false':'true'})"]`))}
  startTimer(TIME_FINAL);
@@ -3129,7 +3220,7 @@ function finale(front){
   else if(o==='saved'){const g=3-(b.stab-Math.floor(S.stability/2));p+=g;note=`You died at the front, rebooted from a backup core and kept fighting: +3, minus ${3-g} from the shaken court. `}
   else if(o==='close'){const l=b.stab-Math.floor(S.stability/2);p-=l;note=`A blow that should have killed you knocks you out of the fight. Close call, no bonus${l?`, minus ${l} from the shaken court`:''}. `}
   else note='You were wounded early and pulled from the line: no bonus. '}
- const need=dlc?needDLC():NEED,win=p>=need;LASTFIN.p=p;LASTFIN.need=need;const SHOPHINT=win?'':finalHint(need-p,IL.l,usedLuck);
+ const need=dlc?needDLC():needMain(),win=p>=need;LASTFIN.p=p;LASTFIN.need=need;const SHOPHINT=win?'':finalHint(need-p,IL.l,usedLuck);
  if(dlc){const TT={"Vorrani.military":["Fire Over the Hegemony", "Grand Admiral Mor's fleet broke in the Vel Nebula, where Dreth had marked the map in ink. Then your lances turned on the Thal homeworld until Hegemon Marrane signed. Dreth gave that order himself, so it would not carry your name. Broodmother Ysk began a new count: the young soldiers who would not come home.", "The Counted Halls", "Mor came through Kessar Reach, the same gap Dreth had meant to use. Your fleet died there, and then the Thal lances turned on your homeworld. Marshal Dreth and Spymaster Tav died with it. A Hegemony clerk came with peace terms, and Broodmother Ysk read him the numbers herself, one hall at a time, before she signed."],"Celest.influence":["Forty Empty Seats", "Hegemon Marrane signed the charter before her whole Assembly, so no one could say it was done in secret. Chancellor Orun Thask's seat stayed empty, and so did forty others. Envoy Sarai Lune counted every one. Then she asked for a guard on Marrane's door.", "The Torn Charter", "Chancellor Thask's clerks sent your charter back torn in half, with a receipt. By morning Marrane's chair was empty, and no one would say where she had gone. Thask's fleets massed on your border before Envoy Lune got home. She kept the pieces anyway."],"Kethari.science":["The Unfought War", "The Hegemony ran its war plans against your shield a thousand times and lost every one. It filed them under \"not attempted.\" Dr. Imra Sohl, who built half that shield, watched the Thal border yards go dark one by one. She had made war unthinkable, and her own people would never let her come home.", "The Dark Flagship", "The Thal cracked your shield in one night, along the seam Dr. Imra Sohl had warned you about. Your flagship went dark mid-transmission. The Collective was still voting on a reply when the Thal came to annex what was left. Voice Ithe cast the last vote alone."],"military":["The Lights Went Out", "Grand Admiral Mor's fleet broke against yours. Then your lances turned on the Thal homeworld, and its cities went dark one by one. Hegemon Marrane held out for three days. Then she signed.", "Annexed by Morning", "Your fleet died at the border, one ship after another. Then Grand Admiral Mor turned his lances on your homeworld. When the firestorms burned out, a Hegemony clerk arrived with annexation forms. No one was left to refuse them."],"influence":["A Seat at the Table", "Hegemon Marrane signed your federation charter in front of her whole Assembly. Not one shot was fired. The Thal flag now hangs beside yours. Some of her admirals still will not look at it.", "Returned Unsigned", "The Hegemony sent your federation charter back unsigned, with no reason given. By nightfall, Thal fleets were massing on your border. Peace had been one signature away."],"science":["No Shot Fired", "Your science pulled so far ahead that the Hegemony stopped building warships. Grand Admiral Mor told Marrane there was no war left to win. So no war came.", "The Shield Breaks", "The Thal cracked your shield in a single night. Your flagship went dark mid-transmission. By morning Thal ships held your orbit, and the Hegemony annexed what was left."]},T=TT[EK()+"."+route]||TT[route];return end(win,win?T[0]:T[2],(win?T[1]:T[3])+fateHTML(win)+`<br><br><small class="note">${note}Final power ${p}, needed ${need}.</small>${SHOPHINT}`,true)}
  const text={military:['The Swarm queen burns and breaks apart. Your fleet forms up around your flagship.','Your fleet fires one heroic shot. It bounces off the queen and back into your flagship. The Swarm is briefly confused. Then it eats you.'],
   influence:['A hundred species, one banner, one volley. The Swarm breaks against it.','You give a stirring speech. Your allies show up, say "yeah... no," and warp away. The Swarm waits politely for the speech to end. Then it eats you.'],
@@ -3595,8 +3686,8 @@ function end(win,title,msg,fight){if(!TUT)shopStamp(title);else SHOPHINT_P=null;
  if(TUT)return tutFinish(win,title,msg);
  clearSave();
  const before=header();
- const wasDlc=dlc;let CR=null;if(!TUT){if(!wasDlc)record(emp.diff,win);lifeRecord(wasDlc,emp&&emp.diff,win);CR=awardCredits(wasDlc,emp&&emp.diff,win)}
- const unlock=win&&!wasDlc&&title==='Victory'&&!TUT;dlc=false;
+ const wasDlc=dlc,wasWar=WAR&&!dlc&&!TUT;let CR=null;if(!TUT){if(!wasDlc&&!wasWar)record(emp.diff,win);lifeRecord(wasWar?'war':wasDlc,emp&&emp.diff,win);CR=awardCredits(wasDlc,emp&&emp.diff,win)}
+ const unlock=win&&!wasDlc&&!wasWar&&title==='Victory'&&!TUT;dlc=false;
  achEnd(win,wasDlc,CR,title);
  const dlcThreat=wasDlc?(win?0:10):null; // the campaign settles the Thal for good: 0/10 on a win, 10/10 on a loss
  const grave=!!fight&&wasDlc&&route==='military'&&!TUT; // only the two final-battle titles, never The Line Ends / Coup / Fallen Sovereign

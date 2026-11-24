@@ -11,9 +11,9 @@ import { createHash } from "node:crypto";
 const DIFFS = ["Easy", "Normal", "Hard"], KEEP = 20;
 const pidOf = (id) => createHash("sha256").update("ss2:" + id).digest("hex").slice(0, 12);
 const hashPass = (pw) => pidOf("admin-pass:" + pw);
-const cleanRun = (r) => ({ m: r && r.m === "dlc" ? "dlc" : "main", d: DIFFS.includes(r && r.d) ? r.d : "Normal", w: r && r.w ? 1 : 0, t: Math.min(Math.max(parseInt(r && r.t, 10) || 0, 0), 9e12) });
+const cleanRun = (r) => ({ m: r && (r.m === "dlc" || r.m === "war") ? r.m : "main", d: DIFFS.includes(r && r.d) ? r.d : "Normal", w: r && r.w ? 1 : 0, t: Math.min(Math.max(parseInt(r && r.t, 10) || 0, 0), 9e12) });
 // win/played per mode and difficulty, from the latest runs
-const lifeOf = (runs) => { const z = () => ({ Easy: { w: 0, n: 0 }, Normal: { w: 0, n: 0 }, Hard: { w: 0, n: 0 } }), o = { main: z(), dlc: z() };
+const lifeOf = (runs) => { const z = () => ({ Easy: { w: 0, n: 0 }, Normal: { w: 0, n: 0 }, Hard: { w: 0, n: 0 } }), o = { main: z(), dlc: z(), war: z() };
   for (const r of runs) { o[r.m][r.d].n++; o[r.m][r.d].w += r.w; } return o; };
 const cleanId = (v) => String(v || "").replace(/[^A-Za-z0-9-]/g, "").slice(0, 40);
 
