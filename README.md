@@ -1,6 +1,6 @@
 # Star Sovereign II, 3rd Edition
 
-A pixel-art sci-fi roleplay game that runs in the browser. You rule a star empire for twelve turns, then face what comes for you at the end. Win to unlock the DLC, The Thal Reckoning.
+A pixel-art sci-fi roleplay game that runs in the browser. You rule a star empire for twelve turns, then face what comes for you at the end.
 
 ## Deploy on Netlify
 1. Upload everything in this repository to GitHub, including the `netlify` folder.
@@ -9,7 +9,7 @@ A pixel-art sci-fi roleplay game that runs in the browser. You rule a star empir
 
 ## Arcade names and the scoreboard
 - On a player's first visit, the game asks for an arcade name. It is saved on that device.
-- Each device keeps lifetime win rates for Easy, Normal and Hard, separately for the main story and the DLC.
+- Each device keeps lifetime win rates for Easy, Normal and Hard.
 - Results are sent to `/api/scores`, a Netlify Function in `netlify/functions/scores.mjs`. It stores one record per device in Netlify Blobs, so everyone sees the same scoreboard.
 - Players can remove themselves from the scoreboard (Remove me, then tap again to confirm). This deletes their name and lifetime stats.
 - If the function isn't available (for example, when the page is opened as a plain file), the scoreboard shows only that device.
@@ -20,11 +20,11 @@ Scores are reported by the player's browser, so a determined player could fake t
 - **Tutorial:** a guided run for each difficulty, with a tip each turn. Tutorial runs aren't saved and don't count.
 - **Empire storylines:** each empire has 3 events of its own (2 appear per run) and its own voice lines on shared events.
 - **Experimental button** (bottom of the start screen, off by default): turns on Quantum suicide and reveals the Narrative mode button (branching events).
-- **Quantum suicide:** a final-battle option. It gives a 10% chance of +10 power. Afterwards, the next run (or the DLC, if you go straight into it) has a 1 in 3 chance of sudden quantum death.
+- **Quantum suicide:** a final-battle option. It gives a 10% chance of +10 power. Afterwards, the next run has a 1 in 3 chance of sudden quantum death.
 
 ## Achievements and credits
 - **Achievements** (button next to Scoreboard): 20 in all, 10 common and 10 rare, kept on each device. A small banner appears when one unlocks.
-- **Credits** for Systems multiplayer, per run: main story win 8 / 25 / 50 (Easy / Normal / Hard), loss 2 / 5 / 8; DLC win 12 / 35 / 70, loss 3 / 7 / 12; winning both back to back adds 20% of both wins. Each empire's button and the Rules show this.
+- **Credits** for Systems multiplayer, per run: main story win 8 / 25 / 50 (Easy / Normal / Hard), loss 2 / 5 / 8. Each empire's button and the Rules show this.
 
 ## Systems multiplayer (shared galaxy: survival, trade, diplomacy and war)
 - **One week per game.** Each day is harder than the last. On day 7 the Reflection comes: a mirror of every player's fleet, which all players fight together. Then everything resets and players name new systems. Technologies, ship upgrades and generals carry over, and every week starts a little harder. The in-game **Rules** button lists the exact numbers.
@@ -70,8 +70,7 @@ Scores are reported by the player's browser, so a determined player could fake t
 - **Animations:** trade ships fly along trade routes on the galaxy map, raids fly between stars, and invasions play out inside the target system.
 - **Credits** come from finished runs, with harder difficulties paying more:
   - Main story, win / loss: Easy 8 / 2, Normal 25 / 5, Hard 50 / 8.
-  - DLC, win / loss: Easy 12 / 3, Normal 35 / 7, Hard 70 / 12.
-  - Going from a main-story win straight into the DLC adds 20%. Tutorial runs earn nothing.
+  - Tutorial runs earn nothing.
 
 ## Co-op, the AI scourge and the road to Type II
 - **Work together.** Colonies, ship upgrades, planetary defenses and every development project need rare goods from the other players in the galaxy. Costs only ask for rare goods someone actually holds (another player's specialty, or rare goods an AI empire took in a war). If you are the only player, every cost uses your own rare good, so you're never locked out. With 2 or more players, each needs the others'. Smugglers sell 3 of a foreign rare good for 25 credits as an expensive fallback.
